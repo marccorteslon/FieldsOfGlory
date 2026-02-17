@@ -52,10 +52,26 @@ public class AttackPart_Joust : MonoBehaviour
     void UpdateCursorState()
     {
         bool attackStarted = joustManager.attackPartIsOn;
+
+        // Activar/desactivar la retícula
         crosshair.gameObject.SetActive(attackStarted);
-        Cursor.visible = attackStarted;
-        Cursor.lockState = attackStarted ? CursorLockMode.Confined : CursorLockMode.None;
+
+        if (attackStarted)
+        {
+            // Ocultar cursor del sistema
+            Cursor.visible = false;
+
+            // Bloquearlo al centro (más limpio que Confined)
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            // Mostrar cursor cuando no estamos atacando
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
+
 
     void MoveCrosshair()
     {
