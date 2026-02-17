@@ -7,6 +7,10 @@ TagManager:
   - Objective
   - Objective1
   - Objective2
+  - Head
+  - Body
+  - Shield
+  - Horse
   layers:
   - Default
   - TransparentFX

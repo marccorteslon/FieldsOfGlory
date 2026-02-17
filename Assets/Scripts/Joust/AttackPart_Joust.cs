@@ -9,26 +9,25 @@ public class AttackPart_Joust : MonoBehaviour
     public Camera cam;
     public Canvas canvas;
 
-    [Header("Control")]
-    public float mouseSensitivity = 800f;
-    public float stickSensitivity = 800f;
+    [Header("Shake Settings")]
+    public float shakeAmount = 20f;
+    public float shakeSpeed = 25f;
+    public bool enableShake = true;
 
     [Header("Manager")]
-    public JoustManager joustManager; // Referencia al manager
+    public JoustManager joustManager;
 
-    private Vector2 currentPosition;
     private bool hasClicked = false;
     private bool previousAttackState = false;
+    private float shakeTime;
 
     void Start()
     {
-        currentPosition = Vector2.zero;
         UpdateCursorState();
     }
 
     void Update()
     {
-        // Leer directamente del manager
         bool attackStarted = joustManager.attackPartIsOn;
 
         if (attackStarted != previousAttackState)
@@ -38,14 +37,14 @@ public class AttackPart_Joust : MonoBehaviour
 
             if (attackStarted)
             {
-                currentPosition = Vector2.zero;
                 hasClicked = false;
+                shakeTime = Random.Range(0f, 100f);
             }
         }
 
         if (!attackStarted) return;
 
-        MoveCrosshair();
+        UpdateCrosshairPosition();
         CheckRaycast();
     }
 
@@ -53,56 +52,51 @@ public class AttackPart_Joust : MonoBehaviour
     {
         bool attackStarted = joustManager.attackPartIsOn;
 
-        // Activar/desactivar la retícula
         crosshair.gameObject.SetActive(attackStarted);
 
         if (attackStarted)
         {
-            // Ocultar cursor del sistema
-            Cursor.visible = false;
-
-            // Bloquearlo al centro (más limpio que Confined)
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-        else
-        {
-            // Mostrar cursor cuando no estamos atacando
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
         }
     }
 
-
-    void MoveCrosshair()
+    void UpdateCrosshairPosition()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-        float stickX = Input.GetAxis("RightStickHorizontal");
-        float stickY = Input.GetAxis("RightStickVertical");
+        Vector2 mouseScreenPos = Input.mousePosition;
 
-        Vector2 input = new Vector2(mouseX, mouseY) * mouseSensitivity +
-                        new Vector2(stickX, stickY) * stickSensitivity;
-
-        currentPosition += input * Time.deltaTime;
-        ClampToCanvas();
-        crosshair.anchoredPosition = currentPosition;
-    }
-
-    void ClampToCanvas()
-    {
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-        float halfWidth = canvasRect.rect.width / 2f;
-        float halfHeight = canvasRect.rect.height / 2f;
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect,
+            mouseScreenPos,
+            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam,
+            out localPoint
+        );
 
-        currentPosition.x = Mathf.Clamp(currentPosition.x, -halfWidth, halfWidth);
-        currentPosition.y = Mathf.Clamp(currentPosition.y, -halfHeight, halfHeight);
+        Vector2 finalPosition = localPoint;
+
+        if (enableShake)
+        {
+            shakeTime += Time.deltaTime * shakeSpeed;
+
+            float offsetX = Mathf.PerlinNoise(shakeTime, 0f) - 0.5f;
+            float offsetY = Mathf.PerlinNoise(0f, shakeTime) - 0.5f;
+
+            Vector2 shakeOffset = new Vector2(offsetX, offsetY) * shakeAmount;
+            finalPosition += shakeOffset;
+        }
+
+        crosshair.anchoredPosition = finalPosition;
     }
 
     void CheckRaycast()
     {
         if (hasClicked) return;
 
-        Ray ray = cam.ScreenPointToRay(crosshair.position);
+        // Convertimos la posición del crosshair a pantalla
+        Vector2 crossScreenPos = RectTransformUtility.WorldToScreenPoint(cam, crosshair.position);
+        Ray ray = cam.ScreenPointToRay(crossScreenPos);
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
@@ -112,9 +106,28 @@ public class AttackPart_Joust : MonoBehaviour
             if (clickPressed || r2Pressed)
             {
                 hasClicked = true;
-                Debug.Log("Has atacado. Próxima fase: defensa.");
 
-                // Notificar al manager para pasar a la siguiente fase
+                string hitTag = hit.collider.tag;
+
+                if (hitTag == "Head" || hitTag == "Body" || hitTag == "Shield" || hitTag == "Horse")
+                {
+                    Debug.Log($"Has dado a {hitTag}");
+                }
+                else
+                {
+                    Debug.Log("Has fallado");
+                }
+
+                joustManager.EndAttackPhase();
+            }
+        }
+        else
+        {
+            // Si clicas pero no hay ningún collider en el ray
+            if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Fire1"))
+            {
+                hasClicked = true;
+                Debug.Log("Has fallado");
                 joustManager.EndAttackPhase();
             }
         }
