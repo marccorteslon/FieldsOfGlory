@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   horse: {fileID: 11400000, guid: d73e1d6e3fe56354188b6dea9e3ce3a3, type: 2}
-  lance: {fileID: 0}
+  lance: {fileID: 11400000, guid: e7101b5d5fb517b4fa7843f358dbd2d3, type: 2}
   shield: {fileID: 11400000, guid: aacc7b920151fdd4c99e1eed34f09dd8, type: 2}
   armor: {fileID: 0}
 --- !u!114 &5460468
@@ -182,7 +182,7 @@ MonoBehaviour:
   eq: {fileID: 5460467}
   loadout: {fileID: 5460466}
   testHorse: {fileID: 11400000, guid: d73e1d6e3fe56354188b6dea9e3ce3a3, type: 2}
-  testLance: {fileID: 0}
+  testLance: {fileID: 11400000, guid: e7101b5d5fb517b4fa7843f358dbd2d3, type: 2}
   testShield: {fileID: 11400000, guid: aacc7b920151fdd4c99e1eed34f09dd8, type: 2}
   testArmor: {fileID: 0}
 --- !u!4 &5460469
