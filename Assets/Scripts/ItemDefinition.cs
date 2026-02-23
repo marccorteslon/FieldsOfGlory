@@ -1,8 +1,17 @@
 using UnityEngine;
 
+using UnityEngine;
+
 public abstract class ItemDefinition : ScriptableObject
 {
-    public string id;           // por ahora opcional, útil luego
+    [Header("Identity")]
+    public string id;
     public string displayName;
     public Sprite icon;
+
+    [Header("Economy & Info")]
+    [TextArea(3, 6)]
+    public string description;
+
+    public int price;
 }

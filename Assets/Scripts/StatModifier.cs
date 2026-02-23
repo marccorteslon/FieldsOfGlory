@@ -2,6 +2,7 @@ using System;
 
 [Serializable]
 public struct StatModifier
+// Representa una modificación concreta a una stat (tipo, modo y valor).
 {
     public StatType stat;
     public StatModType type;

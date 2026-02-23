@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EquipmentManager : MonoBehaviour
+// Gestiona el equipo actual del personaje y notifica cuando cambia el equipamiento.
 {
     [Header("Equipped (runtime)")]
     [SerializeField] private EquipmentDefinition horse;

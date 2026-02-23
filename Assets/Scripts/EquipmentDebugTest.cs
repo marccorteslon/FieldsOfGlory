@@ -1,6 +1,7 @@
 using UnityEngine;
 
 public class EquipmentDebugTest : MonoBehaviour
+// Script de prueba para equipar/desequipar items con teclas y mostrar las stats por consola.
 {
     public EquipmentManager eq;
     public LoadoutStatsComponent loadout;
@@ -32,7 +33,7 @@ public class EquipmentDebugTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P))
         {
             var s = loadout.stats;
-            Debug.Log($"MV:{s.Get(StatType.MV)} mV:{s.Get(StatType.mV)} | BF:{s.Get(StatType.BF)} BL:{s.Get(StatType.BL)} M:{s.Get(StatType.M)} | BB:{s.Get(StatType.BB)}");
+            Debug.Log($"MV:{s.Get(StatType.MV)} V:{s.Get(StatType.V)} | BF:{s.Get(StatType.BF)} BL:{s.Get(StatType.BL)} M:{s.Get(StatType.M)} | BB:{s.Get(StatType.BB)}");
         }
     }
 }

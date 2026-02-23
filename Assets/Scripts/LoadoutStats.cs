@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public class LoadoutStats
+// Calcula y almacena las estadísticas finales resultantes del equipamiento actual.
 {
     private readonly Dictionary<StatType, float> _final = new();
 
