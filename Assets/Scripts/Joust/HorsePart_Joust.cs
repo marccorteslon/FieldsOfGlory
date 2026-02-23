@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-//RESUMEN SCRIPT: Este es el script que controla la parte del caballo de la Justa, los colores del velocimetro para la velocidad del caballo se generas automaticamente según los valores que le pongas
+//RESUMEN SCRIPT: Controla la fase del caballo, detecta la zona del indicador y suma puntos usando MV y V del loadout.
 
 public class HorsePart_Joust : MonoBehaviour
 {
@@ -10,6 +10,9 @@ public class HorsePart_Joust : MonoBehaviour
     public RectTransform movingIndicatorPrefab;
     public JoustManager joustManager;
     public ScoreManager scoreManager;
+
+    [Header("Loadout (Ghost Player)")]
+    public LoadoutStatsComponent loadout;
 
     [Header("Zone Proportions (0-1)")]
     [Range(0f, 0.5f)] public float redProportion = 0.15f;
@@ -25,15 +28,21 @@ public class HorsePart_Joust : MonoBehaviour
     public Color greenColor = Color.green;
     public Color indicatorColor = Color.white;
 
-    [Header("Horse Values")]
-    public int MV = 3;
-    public int mV = 1;
+    [Header("Fallback Horse Values (si no hay loadout)")]
+    public int fallbackMV = 3;
+    public int fallbackV = 1;
 
     private RectTransform movingIndicator;
     private float sliderHeight;
     private float direction = 1f;
     private int clickCount = 0;
     private bool isActive = true;
+
+    void Awake()
+    {
+        if (loadout == null)
+            loadout = FindObjectOfType<LoadoutStatsComponent>();
+    }
 
     void Start()
     {
@@ -110,6 +119,18 @@ public class HorsePart_Joust : MonoBehaviour
             EvaluateZone();
     }
 
+    int GetMV()
+    {
+        if (loadout == null) return fallbackMV;
+        return Mathf.RoundToInt(loadout.stats.Get(StatType.MV));
+    }
+
+    int GetV()
+    {
+        if (loadout == null) return fallbackV;
+        return Mathf.RoundToInt(loadout.stats.Get(StatType.V));
+    }
+
     void EvaluateZone()
     {
         float y = movingIndicator.anchoredPosition.y;
@@ -120,8 +141,8 @@ public class HorsePart_Joust : MonoBehaviour
         else if (normalized <= redProportion + yellowProportion || normalized >= 1f - (redProportion + yellowProportion)) zone = "Amarillo";
         else zone = "Verde";
 
-        // Actualizamos el ScoreManager
-        scoreManager.AddHorsePhaseScore(zone, MV, mV);
+        // Saca MV y V del equipo del GhostPlayer
+        scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
 
         clickCount++;
         if (clickCount >= 3)

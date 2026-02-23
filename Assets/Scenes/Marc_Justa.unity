@@ -119,6 +119,87 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &13782959
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 13782963}
+  - component: {fileID: 13782962}
+  - component: {fileID: 13782961}
+  - component: {fileID: 13782960}
+  m_Layer: 0
+  m_Name: GhostPlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &13782960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13782959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af17c3446597ec445a7a6aba305c7ff3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eq: {fileID: 13782962}
+  loadout: {fileID: 13782961}
+  testHorse: {fileID: 11400000, guid: f70ac657a5636b444b4424116a064847, type: 2}
+  testLance: {fileID: 11400000, guid: 6a0c407348ffe7e4d9abf20abadd6c50, type: 2}
+  testShield: {fileID: 11400000, guid: 936d4d640d858d44abc9739b272c5523, type: 2}
+  testArmor: {fileID: 0}
+--- !u!114 &13782961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13782959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 835b680fc0b93ab4d85dd43af63a25fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equipment: {fileID: 13782962}
+--- !u!114 &13782962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13782959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d58d32a6025aef489b572cfefc2b0bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horse: {fileID: 11400000, guid: f70ac657a5636b444b4424116a064847, type: 2}
+  lance: {fileID: 11400000, guid: 6a0c407348ffe7e4d9abf20abadd6c50, type: 2}
+  shield: {fileID: 11400000, guid: 936d4d640d858d44abc9739b272c5523, type: 2}
+  armor: {fileID: 0}
+--- !u!4 &13782963
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13782959}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -4.9856453, y: 2.550064, z: 5.735209}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &110582135
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,8 +362,9 @@ MonoBehaviour:
   enableShake: 1
   joustManager: {fileID: 1318912931}
   scoreManager: {fileID: 1318912933}
-  BF: 4
-  BL: 2
+  loadout: {fileID: 13782961}
+  fallbackBF: 4
+  fallbackBL: 2
 --- !u!1 &561476284
 GameObject:
   m_ObjectHideFlags: 0
@@ -1804,8 +1886,9 @@ MonoBehaviour:
   attackText: {fileID: 766113011}
   joustManager: {fileID: 1318912931}
   scoreManager: {fileID: 1318912933}
+  loadout: {fileID: 13782961}
   defenseTime: 4
-  BB: 2
+  fallbackBB: 2
 --- !u!1 &1318912930
 GameObject:
   m_ObjectHideFlags: 0
@@ -2038,6 +2121,7 @@ MonoBehaviour:
   movingIndicatorPrefab: {fileID: 2041526717}
   joustManager: {fileID: 1318912931}
   scoreManager: {fileID: 1318912933}
+  loadout: {fileID: 13782961}
   redProportion: 0.25
   yellowProportion: 0.3
   greenProportion: 0.15
@@ -2046,8 +2130,8 @@ MonoBehaviour:
   yellowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   greenColor: {r: 0, g: 1, b: 0, a: 1}
   indicatorColor: {r: 1, g: 1, b: 1, a: 1}
-  MV: 3
-  mV: 1
+  fallbackMV: 3
+  fallbackV: 1
 --- !u!1 &1544291415
 GameObject:
   m_ObjectHideFlags: 0
@@ -3017,3 +3101,4 @@ SceneRoots:
   - {fileID: 1544291418}
   - {fileID: 1872672736}
   - {fileID: 1072184710}
+  - {fileID: 13782963}

@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-//RESUMEN SCRIPT: Controla la fase de defensa de la Justa usando texto para mostrar el ataque.
+//RESUMEN SCRIPT: Controla la fase de defensa y aplica mitigación/puntos usando BB del loadout.
 
 public class DefensePart_Joust : MonoBehaviour
 {
@@ -9,12 +9,25 @@ public class DefensePart_Joust : MonoBehaviour
     public JoustManager joustManager;
     public ScoreManager scoreManager;
 
+    [Header("Loadout (Ghost Player)")]
+    public LoadoutStatsComponent loadout;
+
+    [Header("Defense")]
     public float defenseTime = 2f;
+
     private string[] attackSides = { "Izquierda", "Derecha", "Arriba", "Abajo" };
     private string currentAttackSide;
     private bool awaitingDefense = false;
     private float timer = 0f;
-    public int BB = 2; // Penalización si bloqueas bien
+
+    [Header("Fallback Shield Stat (si no hay loadout)")]
+    public int fallbackBB = 2;
+
+    void Awake()
+    {
+        if (loadout == null)
+            loadout = FindObjectOfType<LoadoutStatsComponent>();
+    }
 
     void OnEnable()
     {
@@ -37,6 +50,12 @@ public class DefensePart_Joust : MonoBehaviour
         {
             EndDefense(false);
         }
+    }
+
+    int GetBB()
+    {
+        if (loadout == null) return fallbackBB;
+        return Mathf.RoundToInt(loadout.stats.Get(StatType.BB));
     }
 
     void StartNewAttack()
@@ -80,7 +99,10 @@ public class DefensePart_Joust : MonoBehaviour
     void EndDefense(bool blockedCorrectly)
     {
         awaitingDefense = false;
-        scoreManager.ApplyDefense(blockedCorrectly, BB);
+
+        // BB desde el loadout
+        scoreManager.ApplyDefense(blockedCorrectly, GetBB());
+
         joustManager.EndDefensePhase();
 
         if (attackText != null)

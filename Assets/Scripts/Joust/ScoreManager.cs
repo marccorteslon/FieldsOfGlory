@@ -52,7 +52,7 @@ public class ScoreManager : MonoBehaviour
     // ---------------- Fase Defensa ----------------
     public void ApplyDefense(bool blockedCorrectly, int BB)
     {
-        int penalty = blockedCorrectly ? BB : 4;
+        int penalty = blockedCorrectly ? 4 - BB : 4;
         totalScore -= penalty;
         Debug.Log($"[Defensa] Bloqueo correcto: {blockedCorrectly} → Penalización: {penalty} | Total: {totalScore}");
     }
