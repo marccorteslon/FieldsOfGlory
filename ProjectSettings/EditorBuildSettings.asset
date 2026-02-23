@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: c14b75cbd6cb9d842aff3b68da7dcc7f
+  - enabled: 1
     path: Assets/Scenes/Marc_Justa.unity
     guid: a26ef11774aa28448bde5ca3c3889439
   m_configObjects:
