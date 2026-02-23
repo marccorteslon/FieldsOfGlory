@@ -1,7 +1,7 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-//RESUMEN SCRIPT: Este es el centro neuralgico de los script referentes a la Justa, controla cuando entra y sale cada uno, donde se encuentra la camara en cada punto, etc...
-
+// RESUMEN SCRIPT: Centro neuralgico de los scripts de la Justa, controla fases, cámara y conexión con WinManager
 public class JoustManager : MonoBehaviour
 {
     [Header("Phase States")]
@@ -12,7 +12,7 @@ public class JoustManager : MonoBehaviour
     [Header("Phase Scripts")]
     public HorsePart_Joust horsePart;
     public AttackPart_Joust attackPart;
-    // public DefensePart_Joust defensePart; // Se podría añadir más tarde
+    public DefensePart_Joust defensePart;
 
     [Header("Camera References")]
     public Camera mainCamera;             // Cámara principal
@@ -24,6 +24,9 @@ public class JoustManager : MonoBehaviour
     public float cameraTransitionSpeed = 2f; // Velocidad de transición
     private bool movingCamera = false;
     private Transform targetCameraPoint;
+
+    [Header("Win System")]
+    public WinManager winManager; // Referencia al manager de puntos acumulativos
 
     void Start()
     {
@@ -73,8 +76,8 @@ public class JoustManager : MonoBehaviour
         if (attackPart != null)
             attackPart.gameObject.SetActive(attackPartIsOn);
 
-        // if (defensePart != null)
-        //     defensePart.gameObject.SetActive(defensePartIsOn);
+        if (defensePart != null)
+            defensePart.gameObject.SetActive(defensePartIsOn);
     }
 
     // ---------------------- Terminar fase caballo ----------------------
@@ -116,5 +119,11 @@ public class JoustManager : MonoBehaviour
         UpdatePhases();
 
         Debug.Log("La justa ha terminado.");
+
+        // Procesar puntos acumulativos y decidir victoria/derrota
+        if (winManager != null)
+        {
+            winManager.ProcessRoundEnd();
+        }
     }
 }

@@ -280,6 +280,9 @@ MonoBehaviour:
   shakeSpeed: 1
   enableShake: 1
   joustManager: {fileID: 1318912931}
+  scoreManager: {fileID: 1318912933}
+  BF: 4
+  BL: 2
 --- !u!1 &561476284
 GameObject:
   m_ObjectHideFlags: 0
@@ -1094,6 +1097,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 766113009}
   m_CullTransparentMesh: 1
+--- !u!1 &792966343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 792966345}
+  - component: {fileID: 792966344}
+  m_Layer: 0
+  m_Name: WinManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &792966344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792966343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaa416396f512dd43bbe9e16fb23b5fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  winPoints: 30
+  currentWinPoints: 0
+  minPointsFraction: 0.33333334
+  scoreManager: {fileID: 1318912933}
+  joustManager: {fileID: 1318912931}
+  roundNumber: 1
+--- !u!4 &792966345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792966343}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -5.7651978, y: 7.6224365, z: -17.634789}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &804319293
 GameObject:
   m_ObjectHideFlags: 0
@@ -1750,7 +1803,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackText: {fileID: 766113011}
   joustManager: {fileID: 1318912931}
+  scoreManager: {fileID: 1318912933}
   defenseTime: 4
+  BB: 2
 --- !u!1 &1318912930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,6 +1816,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1318912932}
   - component: {fileID: 1318912931}
+  - component: {fileID: 1318912933}
   m_Layer: 0
   m_Name: JoustManager
   m_TagString: Untagged
@@ -1785,11 +1841,13 @@ MonoBehaviour:
   defensePartIsOn: 0
   horsePart: {fileID: 1474064707}
   attackPart: {fileID: 439726610}
+  defensePart: {fileID: 1255058673}
   mainCamera: {fileID: 1549101157}
   horseCameraPoint: {fileID: 1814985969}
   attackCameraPoint: {fileID: 956387658}
   defenseCameraPoint: {fileID: 1687147326}
   cameraTransitionSpeed: 2
+  winManager: {fileID: 792966344}
 --- !u!4 &1318912932
 Transform:
   m_ObjectHideFlags: 0
@@ -1808,6 +1866,19 @@ Transform:
   - {fileID: 1255058672}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1318912933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318912930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f60583dd6f6c3f43a7386bd6d502eb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  totalScore: 0
 --- !u!1 &1372035017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1966,6 +2037,7 @@ MonoBehaviour:
   sliderArea: {fileID: 1213908371}
   movingIndicatorPrefab: {fileID: 2041526717}
   joustManager: {fileID: 1318912931}
+  scoreManager: {fileID: 1318912933}
   redProportion: 0.25
   yellowProportion: 0.3
   greenProportion: 0.15
@@ -1974,6 +2046,8 @@ MonoBehaviour:
   yellowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   greenColor: {r: 0, g: 1, b: 0, a: 1}
   indicatorColor: {r: 1, g: 1, b: 1, a: 1}
+  MV: 3
+  mV: 1
 --- !u!1 &1544291415
 GameObject:
   m_ObjectHideFlags: 0
@@ -2925,6 +2999,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 792966345}
   - {fileID: 1318912932}
   - {fileID: 1549101158}
   - {fileID: 1988414395}

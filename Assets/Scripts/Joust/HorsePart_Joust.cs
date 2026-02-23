@@ -8,7 +8,8 @@ public class HorsePart_Joust : MonoBehaviour
     [Header("UI References")]
     public RectTransform sliderArea;
     public RectTransform movingIndicatorPrefab;
-    public JoustManager joustManager; // Referencia al manager
+    public JoustManager joustManager;
+    public ScoreManager scoreManager;
 
     [Header("Zone Proportions (0-1)")]
     [Range(0f, 0.5f)] public float redProportion = 0.15f;
@@ -24,17 +25,20 @@ public class HorsePart_Joust : MonoBehaviour
     public Color greenColor = Color.green;
     public Color indicatorColor = Color.white;
 
+    [Header("Horse Values")]
+    public int MV = 3;
+    public int mV = 1;
+
     private RectTransform movingIndicator;
     private float sliderHeight;
     private float direction = 1f;
     private int clickCount = 0;
-    private bool isActive = true; // Controla si el slider se mueve y acepta input
+    private bool isActive = true;
 
     void Start()
     {
         sliderHeight = sliderArea.rect.height;
 
-        // Normalizar proporciones si no suman 1
         float total = 2 * redProportion + 2 * yellowProportion + greenProportion;
         if (total != 1f)
         {
@@ -59,7 +63,6 @@ public class HorsePart_Joust : MonoBehaviour
     void DrawZones()
     {
         float currentYMin = 0f;
-
         float[] proportions = { redProportion, yellowProportion, greenProportion, yellowProportion, redProportion };
         Color[] colors = { redColor, yellowColor, greenColor, yellowColor, redColor };
 
@@ -93,17 +96,7 @@ public class HorsePart_Joust : MonoBehaviour
         pos.y += direction * moveSpeed * Time.deltaTime;
 
         float limit = sliderHeight / 2f;
-
-        if (pos.y > limit)
-        {
-            pos.y = limit;
-            direction *= -1f;
-        }
-        else if (pos.y < -limit)
-        {
-            pos.y = -limit;
-            direction *= -1f;
-        }
+        if (pos.y > limit || pos.y < -limit) direction *= -1f;
 
         movingIndicator.anchoredPosition = pos;
     }
@@ -121,21 +114,28 @@ public class HorsePart_Joust : MonoBehaviour
     {
         float y = movingIndicator.anchoredPosition.y;
         float normalized = (y + sliderHeight / 2f) / sliderHeight;
+        string zone;
 
-        if (normalized <= redProportion || normalized >= 1f - redProportion)
-            Debug.Log("Has pulsado en ROJO");
-        else if (normalized <= redProportion + yellowProportion ||
-                 normalized >= 1f - (redProportion + yellowProportion))
-            Debug.Log("Has pulsado en AMARILLO");
-        else
-            Debug.Log("Has pulsado en VERDE");
+        if (normalized <= redProportion || normalized >= 1f - redProportion) zone = "Rojo";
+        else if (normalized <= redProportion + yellowProportion || normalized >= 1f - (redProportion + yellowProportion)) zone = "Amarillo";
+        else zone = "Verde";
+
+        // Actualizamos el ScoreManager
+        scoreManager.AddHorsePhaseScore(zone, MV, mV);
 
         clickCount++;
-
         if (clickCount >= 3)
         {
-            joustManager.EndHorsePhase(); // Avisamos al manager
-            isActive = false; // Detenemos movimiento e input, pero el GameObject sigue activo
+            joustManager.EndHorsePhase();
+            isActive = false;
         }
+    }
+
+    public void ResetHorsePhase()
+    {
+        isActive = true;
+        clickCount = 0;
+        direction = 1f;
+        movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
     }
 }
