@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-//RESUMEN SCRIPT: Este script controla la parte del ataque de la Justa, cuando la variable attackPartIsOn del JoustManager.cs se vuelve true, se empieza a ejecutar esto
+//RESUMEN SCRIPT: Controla la fase de ataque (apuntado + carga) y aplica puntos usando BF y BL del loadout.
 
 public class AttackPart_Joust : MonoBehaviour
 {
@@ -21,15 +21,24 @@ public class AttackPart_Joust : MonoBehaviour
     public JoustManager joustManager;
     public ScoreManager scoreManager;
 
-    [Header("Lanza Stats")]
-    public int BF = 4; // Bonificador fuerza
-    public int BL = 2; // Bonificador localización
+    [Header("Loadout (Ghost Player)")]
+    public LoadoutStatsComponent loadout;
+
+    [Header("Fallback Lance Stats (si no hay loadout)")]
+    public int fallbackBF = 4;
+    public int fallbackBL = 2;
 
     private bool previousAttackState = false;
     private bool isCharging = false;
     private float chargeTimer = 0f;
     private float currentShakeAmount;
     private float shakeTime;
+
+    void Awake()
+    {
+        if (loadout == null)
+            loadout = FindObjectOfType<LoadoutStatsComponent>();
+    }
 
     void Start()
     {
@@ -58,6 +67,18 @@ public class AttackPart_Joust : MonoBehaviour
 
         UpdateCrosshair();
         HandleChargeInput();
+    }
+
+    int GetBF()
+    {
+        if (loadout == null) return fallbackBF;
+        return Mathf.RoundToInt(loadout.stats.Get(StatType.BF));
+    }
+
+    int GetBL()
+    {
+        if (loadout == null) return fallbackBL;
+        return Mathf.RoundToInt(loadout.stats.Get(StatType.BL));
     }
 
     void HandleChargeInput()
@@ -123,7 +144,10 @@ public class AttackPart_Joust : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
         {
             float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime) * 100f;
-            scoreManager.AddAttackScore(hit.collider.tag, BF, BL, chargePercent, 0, 0);
+
+            // BF y BL desde el loadout
+            scoreManager.AddAttackScore(hit.collider.tag, GetBF(), GetBL(), chargePercent, 0, 0);
+
             Debug.Log($"Golpe con tag {hit.collider.tag} aplicado.");
         }
         else
