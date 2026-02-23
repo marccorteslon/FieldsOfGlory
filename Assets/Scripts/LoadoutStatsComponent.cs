@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class LoadoutStatsComponent : MonoBehaviour
 {
+    // Componente que recalcula automáticamente las stats finales cuando cambia el equipo.
     public EquipmentManager equipment;
     public LoadoutStats stats = new LoadoutStats();
 
