@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class WinManager : MonoBehaviour
 {
@@ -11,6 +12,16 @@ public class WinManager : MonoBehaviour
 
     public int roundNumber = 1;
 
+    [Header("UI Panels")]
+    public GameObject roundWinPanel;
+    public GameObject roundLosePanel;
+    public GameObject gameWinPanel;
+
+    [Header("UI Timing")]
+    public float panelDisplayTime = 3f;
+
+    private bool gameEnded = false;
+
     // ---------------- Llamar al final de cada ronda ----------------
     public void ProcessRoundEnd()
     {
@@ -19,6 +30,8 @@ public class WinManager : MonoBehaviour
             Debug.LogError("WinManager: ScoreManager o JoustManager no asignado.");
             return;
         }
+
+        if (gameEnded) return; // ya terminó la partida, no procesar más
 
         int roundScore = scoreManager.GetScore();
         currentWinPoints += roundScore;
@@ -31,47 +44,77 @@ public class WinManager : MonoBehaviour
         {
             if (currentWinPoints >= winPoints)
             {
-                WinGame();
+                ShowGameWinPanel(); // victoria de la PARTIDA
             }
             else
             {
-                roundNumber++;
-                StartNextRound();
+                StartCoroutine(ShowRoundWinPanel()); // victoria de RONDA
             }
         }
         else
         {
-            LoseGame();
+            StartCoroutine(ShowRoundLosePanel()); // derrota de ronda
         }
+    }
+
+    IEnumerator ShowRoundWinPanel()
+    {
+        if (roundWinPanel != null)
+            roundWinPanel.SetActive(true);
+
+        yield return new WaitForSeconds(panelDisplayTime);
+
+        if (roundWinPanel != null)
+            roundWinPanel.SetActive(false);
+
+        roundNumber++;
+        StartNextRound();
+    }
+
+    IEnumerator ShowRoundLosePanel()
+    {
+        if (roundLosePanel != null)
+            roundLosePanel.SetActive(true);
+
+        yield return new WaitForSeconds(panelDisplayTime);
+
+        if (roundLosePanel != null)
+            roundLosePanel.SetActive(false);
+
+        LoseGame();
+    }
+
+    void ShowGameWinPanel()
+    {
+        gameEnded = true;
+
+        if (gameWinPanel != null)
+            gameWinPanel.SetActive(true);
+
+        Debug.Log("¡Has ganado la partida completa!");
     }
 
     void StartNextRound()
     {
         Debug.Log("Empezando la siguiente ronda...");
 
-        // Reset de fases
+        // Reset fases
         joustManager.horsePartIsOn = true;
         joustManager.attackPartIsOn = false;
         joustManager.defensePartIsOn = false;
         joustManager.UpdatePhases();
 
-        // Reset de score de la ronda
+        // Reset score de la ronda
         scoreManager.totalScore = 0;
 
-        // Reset cámara
-        if (joustManager.mainCamera != null && joustManager.horseCameraPoint != null)
-        {
-            joustManager.mainCamera.transform.position = joustManager.horseCameraPoint.position;
-            joustManager.mainCamera.transform.rotation = joustManager.horseCameraPoint.rotation;
-        }
-
-        // Si tu HorsePart_Joust tiene indicadores en movimiento, reinicia su estado
+        // Reset indicadores de fase caballo
         if (joustManager.horsePart != null)
         {
             joustManager.horsePart.ResetHorsePhase();
         }
 
-        // Aquí puedes resetear UI, sliders o retículas del ataque/defensa si hace falta
+        // ---------------- Reset posiciones jugador, enemigo y cámara ----------------
+        joustManager.ResetPositions();
     }
 
     void WinGame()

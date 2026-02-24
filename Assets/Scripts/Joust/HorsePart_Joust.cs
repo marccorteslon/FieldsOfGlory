@@ -147,7 +147,6 @@ public class HorsePart_Joust : MonoBehaviour
         clickCount++;
         if (clickCount >= 3)
         {
-            joustManager.EndHorsePhase();
             isActive = false;
         }
     }

@@ -25,11 +25,59 @@ public class JoustManager : MonoBehaviour
     private bool movingCamera = false;
     private Transform targetCameraPoint;
 
+    [Header("Camera Follow")]
+    public float followSpeed = 5f;
+
+    private Transform currentCameraPoint;
+
     [Header("Win System")]
     public WinManager winManager; // Referencia al manager de puntos acumulativos
 
+    [Header("Joust Movement")]
+    public Transform player;
+    public Transform enemy;
+
+    public float horsePhaseSpeed = 10f;
+    public float combatPhaseSpeed = 4f;
+
+    private float currentSpeed;
+
+    [Header("Horse Phase Timer")]
+    public float horsePhaseDuration = 5f;
+    private float horseTimer = 0f;
+    private bool horseTimerRunning = false;
+
+    // ---------------- Posiciones iniciales para reset de ronda ----------------
+    [HideInInspector] public Vector3 initialPlayerPos;
+    [HideInInspector] public Quaternion initialPlayerRot;
+
+    [HideInInspector] public Vector3 initialEnemyPos;
+    [HideInInspector] public Quaternion initialEnemyRot;
+
+    [HideInInspector] public Vector3 initialCameraPos;
+    [HideInInspector] public Quaternion initialCameraRot;
+
     void Start()
     {
+        // Guardar posiciones iniciales
+        if (player != null)
+        {
+            initialPlayerPos = player.position;
+            initialPlayerRot = player.rotation;
+        }
+
+        if (enemy != null)
+        {
+            initialEnemyPos = enemy.position;
+            initialEnemyRot = enemy.rotation;
+        }
+
+        if (mainCamera != null)
+        {
+            initialCameraPos = mainCamera.transform.position;
+            initialCameraRot = mainCamera.transform.rotation;
+        }
+
         // Inicializar la cámara en el punto de caballo
         if (mainCamera != null && horseCameraPoint != null)
         {
@@ -38,33 +86,54 @@ public class JoustManager : MonoBehaviour
         }
 
         UpdatePhases();
+        currentSpeed = horsePhaseSpeed;
+        horseTimerRunning = true;
+        currentCameraPoint = horseCameraPoint;
+    }
+
+    void Update()
+    {
+        MoveJousters();
+        HandleHorseTimer();
+    }
+
+    void HandleHorseTimer()
+    {
+        if (!horseTimerRunning) return;
+
+        horseTimer += Time.deltaTime;
+
+        if (horseTimer >= horsePhaseDuration)
+        {
+            horseTimerRunning = false;
+            EndHorsePhase();
+        }
+    }
+
+    void MoveJousters()
+    {
+        if (player != null)
+            player.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
+
+        if (enemy != null)
+            enemy.Translate(Vector3.back * currentSpeed * Time.deltaTime);
     }
 
     void LateUpdate()
     {
-        // Lerp de cámara si estamos moviéndonos
-        if (movingCamera && mainCamera != null && targetCameraPoint != null)
-        {
-            mainCamera.transform.position = Vector3.Lerp(
-                mainCamera.transform.position,
-                targetCameraPoint.position,
-                Time.deltaTime * cameraTransitionSpeed
-            );
+        if (mainCamera == null || currentCameraPoint == null) return;
 
-            mainCamera.transform.rotation = Quaternion.Slerp(
-                mainCamera.transform.rotation,
-                targetCameraPoint.rotation,
-                Time.deltaTime * cameraTransitionSpeed
-            );
+        mainCamera.transform.position = Vector3.Lerp(
+            mainCamera.transform.position,
+            currentCameraPoint.position,
+            Time.deltaTime * followSpeed
+        );
 
-            // Comprobar si llegó al destino
-            if (Vector3.Distance(mainCamera.transform.position, targetCameraPoint.position) < 0.01f)
-            {
-                mainCamera.transform.position = targetCameraPoint.position;
-                mainCamera.transform.rotation = targetCameraPoint.rotation;
-                movingCamera = false;
-            }
-        }
+        mainCamera.transform.rotation = Quaternion.Slerp(
+            mainCamera.transform.rotation,
+            currentCameraPoint.rotation,
+            Time.deltaTime * followSpeed
+        );
     }
 
     // ---------------------- Activar/Desactivar fases según estado ----------------------
@@ -86,12 +155,8 @@ public class JoustManager : MonoBehaviour
         horsePartIsOn = false;
         attackPartIsOn = true;
 
-        // Mover cámara a punto de ataque
-        if (attackCameraPoint != null)
-        {
-            targetCameraPoint = attackCameraPoint;
-            movingCamera = true;
-        }
+        currentSpeed = combatPhaseSpeed;
+        currentCameraPoint = attackCameraPoint;
 
         UpdatePhases();
     }
@@ -102,12 +167,7 @@ public class JoustManager : MonoBehaviour
         attackPartIsOn = false;
         defensePartIsOn = true;
 
-        // Mover cámara a punto de defensa
-        if (defenseCameraPoint != null)
-        {
-            targetCameraPoint = defenseCameraPoint;
-            movingCamera = true;
-        }
+        currentCameraPoint = defenseCameraPoint;
 
         UpdatePhases();
     }
@@ -125,5 +185,32 @@ public class JoustManager : MonoBehaviour
         {
             winManager.ProcessRoundEnd();
         }
+    }
+
+    // ---------------------- Reset completo de posiciones al iniciar nueva ronda ----------------------
+    public void ResetPositions()
+    {
+        if (player != null)
+        {
+            player.position = initialPlayerPos;
+            player.rotation = initialPlayerRot;
+        }
+
+        if (enemy != null)
+        {
+            enemy.position = initialEnemyPos;
+            enemy.rotation = initialEnemyRot;
+        }
+
+        if (mainCamera != null)
+        {
+            mainCamera.transform.position = horseCameraPoint.position;
+            mainCamera.transform.rotation = horseCameraPoint.rotation;
+            currentCameraPoint = horseCameraPoint;
+        }
+
+        currentSpeed = horsePhaseSpeed;
+        horseTimer = 0f;
+        horseTimerRunning = true;
     }
 }
