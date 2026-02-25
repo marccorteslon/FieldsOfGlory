@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-//RESUMEN SCRIPT: Controla la fase de defensa y aplica mitigación/puntos usando BB del loadout.
+// RESUMEN SCRIPT: Controla la fase de defensa y aplica mitigación/puntos usando BB del loadout.
 
 public class DefensePart_Joust : MonoBehaviour
 {
@@ -20,6 +20,8 @@ public class DefensePart_Joust : MonoBehaviour
     private bool awaitingDefense = false;
     private float timer = 0f;
 
+    private bool defenseStarted = false; // controlamos inicio real
+
     [Header("Fallback Shield Stat (si no hay loadout)")]
     public int fallbackBB = 2;
 
@@ -33,12 +35,25 @@ public class DefensePart_Joust : MonoBehaviour
     {
         if (attackText != null)
             attackText.gameObject.SetActive(false);
-        StartNewAttack();
+
+        awaitingDefense = false;
+        defenseStarted = false;
     }
 
     void Update()
     {
-        if (!joustManager.defensePartIsOn || !awaitingDefense) return;
+        // Si no estamos realmente en la fase defensa, no hacemos nada
+        if (!joustManager.defensePartIsOn)
+            return;
+
+        // Detectar primer frame real de defensa
+        if (!defenseStarted)
+        {
+            defenseStarted = true;
+            StartNewAttack();
+        }
+
+        if (!awaitingDefense) return;
 
         timer += Time.deltaTime;
 
@@ -61,11 +76,13 @@ public class DefensePart_Joust : MonoBehaviour
     void StartNewAttack()
     {
         currentAttackSide = attackSides[Random.Range(0, attackSides.Length)];
+
         if (attackText != null)
         {
             attackText.text = $"¡Enemigo ataca {currentAttackSide}!";
             attackText.gameObject.SetActive(true);
         }
+
         awaitingDefense = true;
         timer = 0f;
     }
@@ -100,7 +117,6 @@ public class DefensePart_Joust : MonoBehaviour
     {
         awaitingDefense = false;
 
-        // BB desde el loadout
         scoreManager.ApplyDefense(blockedCorrectly, GetBB());
 
         joustManager.EndDefensePhase();

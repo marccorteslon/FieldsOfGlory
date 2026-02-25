@@ -1,7 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-//RESUMEN SCRIPT: Controla la fase del caballo, detecta la zona del indicador y suma puntos usando MV y V del loadout.
+// RESUMEN SCRIPT: Controla la fase del caballo, detecta la zona del indicador,
+// suma puntos usando MV y V del loadout
+// y muestra feedback visual + contador de clicks.
 
 public class HorsePart_Joust : MonoBehaviour
 {
@@ -10,6 +13,10 @@ public class HorsePart_Joust : MonoBehaviour
     public RectTransform movingIndicatorPrefab;
     public JoustManager joustManager;
     public ScoreManager scoreManager;
+
+    [Header("UI Feedback")]
+    public TextMeshProUGUI resultText;   // Texto que muestra Rojo/Amarillo/Verde
+    public TextMeshProUGUI counterText;  // Texto tipo 0/3
 
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;
@@ -38,6 +45,8 @@ public class HorsePart_Joust : MonoBehaviour
     private int clickCount = 0;
     private bool isActive = true;
 
+    private const int maxClicks = 3;
+
     void Awake()
     {
         if (loadout == null)
@@ -59,14 +68,39 @@ public class HorsePart_Joust : MonoBehaviour
 
         DrawZones();
         CreateIndicator();
+        InitializeUI();
     }
 
     void Update()
     {
-        if (!joustManager.horsePartIsOn || !isActive) return;
+        if (!joustManager.horsePartIsOn)
+        {
+            HideUI();
+            return;
+        }
+
+        if (!isActive) return;
 
         MoveIndicator();
         HandleInput();
+    }
+
+    void InitializeUI()
+    {
+        if (resultText != null)
+            resultText.gameObject.SetActive(false);
+
+        if (counterText != null)
+            counterText.text = "0/" + maxClicks;
+    }
+
+    void HideUI()
+    {
+        if (resultText != null)
+            resultText.gameObject.SetActive(false);
+
+        if (counterText != null)
+            counterText.gameObject.SetActive(false);
     }
 
     void DrawZones()
@@ -105,7 +139,8 @@ public class HorsePart_Joust : MonoBehaviour
         pos.y += direction * moveSpeed * Time.deltaTime;
 
         float limit = sliderHeight / 2f;
-        if (pos.y > limit || pos.y < -limit) direction *= -1f;
+        if (pos.y > limit || pos.y < -limit)
+            direction *= -1f;
 
         movingIndicator.anchoredPosition = pos;
     }
@@ -137,17 +172,48 @@ public class HorsePart_Joust : MonoBehaviour
         float normalized = (y + sliderHeight / 2f) / sliderHeight;
         string zone;
 
-        if (normalized <= redProportion || normalized >= 1f - redProportion) zone = "Rojo";
-        else if (normalized <= redProportion + yellowProportion || normalized >= 1f - (redProportion + yellowProportion)) zone = "Amarillo";
-        else zone = "Verde";
+        if (normalized <= redProportion || normalized >= 1f - redProportion)
+            zone = "Rojo";
+        else if (normalized <= redProportion + yellowProportion || normalized >= 1f - (redProportion + yellowProportion))
+            zone = "Amarillo";
+        else
+            zone = "Verde";
 
-        // Saca MV y V del equipo del GhostPlayer
         scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
 
+        ShowResult(zone);
+
         clickCount++;
-        if (clickCount >= 3)
-        {
+
+        if (counterText != null)
+            counterText.text = clickCount + "/" + maxClicks;
+
+        if (clickCount >= maxClicks)
             isActive = false;
+    }
+
+    void ShowResult(string zone)
+    {
+        if (resultText == null) return;
+
+        resultText.gameObject.SetActive(true);
+
+        switch (zone)
+        {
+            case "Rojo":
+                resultText.text = "VERY BAD!";
+                resultText.color = redColor;
+                break;
+
+            case "Amarillo":
+                resultText.text = "GOOD!";
+                resultText.color = yellowColor;
+                break;
+
+            case "Verde":
+                resultText.text = "PERFECT!";
+                resultText.color = greenColor;
+                break;
         }
     }
 
@@ -156,6 +222,16 @@ public class HorsePart_Joust : MonoBehaviour
         isActive = true;
         clickCount = 0;
         direction = 1f;
+
         movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
+
+        if (counterText != null)
+        {
+            counterText.gameObject.SetActive(true);
+            counterText.text = "0/" + maxClicks;
+        }
+
+        if (resultText != null)
+            resultText.gameObject.SetActive(false);
     }
 }
