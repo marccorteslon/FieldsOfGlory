@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Justa.unity
     guid: a26ef11774aa28448bde5ca3c3889439
+  - enabled: 1
+    path: Assets/Scenes/Shop.unity
+    guid: 92d86df748261b446b8312b762b9fc31
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

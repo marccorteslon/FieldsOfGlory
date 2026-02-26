@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement; // <-- Necesario para cambiar de escena
 
 public class WinManager : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class WinManager : MonoBehaviour
     [Header("UI Timing")]
     public float panelDisplayTime = 3f;
 
+    [Header("Scene Settings")]
+    public string nextSceneName = "Shop";
+
     private bool gameEnded = false;
 
     // ---------------- Llamar al final de cada ronda ----------------
@@ -33,7 +37,7 @@ public class WinManager : MonoBehaviour
         }
         if (progressManager == null)
             progressManager = FindObjectOfType<ProgressManager>();
-        
+
         if (gameEnded) return; // ya terminó la partida, no procesar más
 
         int roundScore = scoreManager.GetScore();
@@ -47,7 +51,7 @@ public class WinManager : MonoBehaviour
         {
             if (currentWinPoints >= winPoints)
             {
-                ShowGameWinPanel(); // victoria de la PARTIDA
+                StartCoroutine(ShowGameWinPanel()); // victoria de la PARTIDA
             }
             else
             {
@@ -87,7 +91,7 @@ public class WinManager : MonoBehaviour
         LoseGame();
     }
 
-    void ShowGameWinPanel()
+    IEnumerator ShowGameWinPanel()
     {
         gameEnded = true;
 
@@ -96,6 +100,19 @@ public class WinManager : MonoBehaviour
 
         Debug.Log("¡Has ganado la partida completa!");
         WinGame();
+
+        // Espera 3 segundos antes de cambiar de escena
+        yield return new WaitForSeconds(3f);
+
+        // Cambiar de escena
+        if (!string.IsNullOrEmpty(nextSceneName))
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        }
     }
 
     void StartNextRound()
@@ -140,8 +157,6 @@ public class WinManager : MonoBehaviour
         {
             Debug.LogError("No se encontró ProgressManager en la escena.");
         }
-
-        // Aquí irá la apertura de tienda más adelante
     }
 
     void LoseGame()
@@ -149,5 +164,4 @@ public class WinManager : MonoBehaviour
         Debug.Log("No alcanzaste los puntos mínimos de esta ronda. Has perdido.");
         // Mostrar UI de derrota o reiniciar partida
     }
-    
 }

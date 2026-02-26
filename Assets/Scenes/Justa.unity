@@ -1962,7 +1962,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   progressManager: {fileID: 1096380475}
-  winPoints: 1
+  winPoints: 24
   currentWinPoints: 0
   minPointsFraction: 0.33333334
   scoreManager: {fileID: 1318912933}
@@ -1972,6 +1972,7 @@ MonoBehaviour:
   roundLosePanel: {fileID: 1984878981}
   gameWinPanel: {fileID: 1095796556}
   panelDisplayTime: 3
+  nextSceneName: Shop
 --- !u!4 &792966345
 Transform:
   m_ObjectHideFlags: 0
