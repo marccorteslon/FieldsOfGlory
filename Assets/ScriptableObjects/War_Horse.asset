@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: War_Horse
   displayName: Destrero Skoldtio
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 19f20bd0225441b459be623cc952b279, type: 3}
   description: "Un caballo de guerra norte\xF1o."
   price: 25
   slot: 0

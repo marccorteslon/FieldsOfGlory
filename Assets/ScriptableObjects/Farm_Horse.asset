@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Farm_Horse
   displayName: "Percher\xF3n de Montelirio"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 19f20bd0225441b459be623cc952b279, type: 3}
   description: 'Un caballo de tiro, originario de las colinas de Montelirio. '
   price: 0
   slot: 0

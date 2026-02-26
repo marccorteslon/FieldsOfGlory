@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement; // <-- Necesario para cambiar de escena
+using UnityEngine.SceneManagement;
 
 public class WinManager : MonoBehaviour
 {
@@ -61,6 +61,7 @@ public class WinManager : MonoBehaviour
         else
         {
             StartCoroutine(ShowRoundLosePanel()); // derrota de ronda
+
         }
     }
 
@@ -162,6 +163,7 @@ public class WinManager : MonoBehaviour
     void LoseGame()
     {
         Debug.Log("No alcanzaste los puntos mínimos de esta ronda. Has perdido.");
-        // Mostrar UI de derrota o reiniciar partida
+        
+       
     }
 }
