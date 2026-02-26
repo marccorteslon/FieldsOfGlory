@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// RESUMEN SCRIPT: Centro neuralgico de los scripts de la Justa, controla fases, cámara y conexión con WinManager
+// Centro neuralgico de la Justa.
+
 public class JoustManager : MonoBehaviour
 {
     [Header("Phase States")]
@@ -15,23 +16,17 @@ public class JoustManager : MonoBehaviour
     public DefensePart_Joust defensePart;
 
     [Header("Camera References")]
-    public Camera mainCamera;             // Cámara principal
-    public Transform horseCameraPoint;    // Posición/rotación de fase caballo
-    public Transform attackCameraPoint;   // Posición/rotación de fase ataque
-    public Transform defenseCameraPoint;  // Posición/rotación de fase defensa
-
-    [Header("Camera Movement")]
-    public float cameraTransitionSpeed = 2f; // Velocidad de transición
-    private bool movingCamera = false;
-    private Transform targetCameraPoint;
+    public Camera mainCamera;
+    public Transform horseCameraPoint;
+    public Transform attackCameraPoint;
+    public Transform defenseCameraPoint;
 
     [Header("Camera Follow")]
     public float followSpeed = 5f;
-
     private Transform currentCameraPoint;
 
     [Header("Win System")]
-    public WinManager winManager; // Referencia al manager de puntos acumulativos
+    public WinManager winManager;
 
     [Header("Joust Movement")]
     public Transform player;
@@ -39,7 +34,6 @@ public class JoustManager : MonoBehaviour
 
     public float horsePhaseSpeed = 10f;
     public float combatPhaseSpeed = 4f;
-
     private float currentSpeed;
 
     [Header("Horse Phase Timer")]
@@ -47,19 +41,23 @@ public class JoustManager : MonoBehaviour
     private float horseTimer = 0f;
     private bool horseTimerRunning = false;
 
-    // ---------------- Posiciones iniciales para reset de ronda ----------------
+    [Header("Attack Timer")]
+    public float attackDuration = 3f; // configurable desde inspector
+    private float attackTimer = 0f;
+    private bool attackTimerRunning = false;
+
+    [Header("Defense Timer")]
+    public float defenseDuration = 2f;
+    private float defenseTimer = 0f;
+    private bool defenseTimerRunning = false;
+
     [HideInInspector] public Vector3 initialPlayerPos;
     [HideInInspector] public Quaternion initialPlayerRot;
-
     [HideInInspector] public Vector3 initialEnemyPos;
     [HideInInspector] public Quaternion initialEnemyRot;
 
-    [HideInInspector] public Vector3 initialCameraPos;
-    [HideInInspector] public Quaternion initialCameraRot;
-
     void Start()
     {
-        // Guardar posiciones iniciales
         if (player != null)
         {
             initialPlayerPos = player.position;
@@ -72,51 +70,25 @@ public class JoustManager : MonoBehaviour
             initialEnemyRot = enemy.rotation;
         }
 
-        if (mainCamera != null)
-        {
-            initialCameraPos = mainCamera.transform.position;
-            initialCameraRot = mainCamera.transform.rotation;
-        }
-
-        // Inicializar la cámara en el punto de caballo
         if (mainCamera != null && horseCameraPoint != null)
         {
             mainCamera.transform.position = horseCameraPoint.position;
             mainCamera.transform.rotation = horseCameraPoint.rotation;
         }
 
-        UpdatePhases();
+        currentCameraPoint = horseCameraPoint;
         currentSpeed = horsePhaseSpeed;
         horseTimerRunning = true;
-        currentCameraPoint = horseCameraPoint;
+
+        UpdatePhases();
     }
 
     void Update()
     {
         MoveJousters();
         HandleHorseTimer();
-    }
-
-    void HandleHorseTimer()
-    {
-        if (!horseTimerRunning) return;
-
-        horseTimer += Time.deltaTime;
-
-        if (horseTimer >= horsePhaseDuration)
-        {
-            horseTimerRunning = false;
-            EndHorsePhase();
-        }
-    }
-
-    void MoveJousters()
-    {
-        if (player != null)
-            player.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
-
-        if (enemy != null)
-            enemy.Translate(Vector3.back * currentSpeed * Time.deltaTime);
+        HandleAttackTimer();
+        HandleDefenseTimer();
     }
 
     void LateUpdate()
@@ -136,7 +108,62 @@ public class JoustManager : MonoBehaviour
         );
     }
 
-    // ---------------------- Activar/Desactivar fases según estado ----------------------
+    void MoveJousters()
+    {
+        if (player != null)
+            player.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
+
+        if (enemy != null)
+            enemy.Translate(Vector3.back * currentSpeed * Time.deltaTime);
+    }
+
+    void HandleHorseTimer()
+    {
+        if (!horseTimerRunning) return;
+
+        horseTimer += Time.deltaTime;
+
+        if (horseTimer >= horsePhaseDuration)
+        {
+            horseTimerRunning = false;
+            EndHorsePhase();
+        }
+    }
+
+    void HandleAttackTimer()
+    {
+        if (!attackTimerRunning) return;
+
+        attackTimer += Time.deltaTime;
+
+        if (attackTimer >= attackDuration)
+        {
+            attackTimerRunning = false;
+
+            if (attackPart != null)
+            {
+                attackPart.ForceAttack();
+            }
+        }
+    }
+
+    void HandleDefenseTimer()
+    {
+        if (!defenseTimerRunning) return;
+
+        defenseTimer += Time.deltaTime;
+
+        if (defenseTimer >= defenseDuration)
+        {
+            defenseTimerRunning = false;
+
+            if (defensePart != null)
+            {
+                defensePart.ForceEndDefense(false);
+            }
+        }
+    }
+
     public void UpdatePhases()
     {
         if (horsePart != null)
@@ -149,7 +176,6 @@ public class JoustManager : MonoBehaviour
             defensePart.gameObject.SetActive(defensePartIsOn);
     }
 
-    // ---------------------- Terminar fase caballo ----------------------
     public void EndHorsePhase()
     {
         horsePartIsOn = false;
@@ -158,36 +184,42 @@ public class JoustManager : MonoBehaviour
         currentSpeed = combatPhaseSpeed;
         currentCameraPoint = attackCameraPoint;
 
+        attackTimer = 0f;
+        attackTimerRunning = true;
+
         UpdatePhases();
     }
 
-    // ---------------------- Terminar fase ataque ----------------------
     public void EndAttackPhase()
     {
+        attackTimerRunning = false;
+
         attackPartIsOn = false;
         defensePartIsOn = true;
 
         currentCameraPoint = defenseCameraPoint;
 
+        defenseTimer = 0f;
+        defenseTimerRunning = true;
+
         UpdatePhases();
     }
 
-    // ---------------------- Terminar fase defensa ----------------------
     public void EndDefensePhase()
     {
         defensePartIsOn = false;
+        defenseTimerRunning = false;
+
         UpdatePhases();
 
         Debug.Log("La justa ha terminado.");
 
-        // Procesar puntos acumulativos y decidir victoria/derrota
         if (winManager != null)
         {
             winManager.ProcessRoundEnd();
         }
     }
 
-    // ---------------------- Reset completo de posiciones al iniciar nueva ronda ----------------------
     public void ResetPositions()
     {
         if (player != null)
@@ -202,7 +234,7 @@ public class JoustManager : MonoBehaviour
             enemy.rotation = initialEnemyRot;
         }
 
-        if (mainCamera != null)
+        if (mainCamera != null && horseCameraPoint != null)
         {
             mainCamera.transform.position = horseCameraPoint.position;
             mainCamera.transform.rotation = horseCameraPoint.rotation;

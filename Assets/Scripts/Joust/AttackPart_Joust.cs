@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-//RESUMEN SCRIPT: Controla la fase de ataque (apuntado + carga) y aplica puntos usando BF y BL del loadout.
-
 public class AttackPart_Joust : MonoBehaviour
 {
     [Header("References")]
@@ -21,10 +19,10 @@ public class AttackPart_Joust : MonoBehaviour
     public JoustManager joustManager;
     public ScoreManager scoreManager;
 
-    [Header("Loadout (Ghost Player)")]
+    [Header("Loadout")]
     public LoadoutStatsComponent loadout;
 
-    [Header("Fallback Lance Stats (si no hay loadout)")]
+    [Header("Fallback Lance Stats")]
     public int fallbackBF = 4;
     public int fallbackBL = 2;
 
@@ -51,6 +49,7 @@ public class AttackPart_Joust : MonoBehaviour
     void Update()
     {
         bool attackStarted = joustManager.attackPartIsOn;
+
         if (attackStarted != previousAttackState)
         {
             crosshair.gameObject.SetActive(attackStarted);
@@ -117,6 +116,7 @@ public class AttackPart_Joust : MonoBehaviour
     void UpdateCrosshair()
     {
         Vector2 mouseScreenPos = Input.mousePosition;
+
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvas.GetComponent<RectTransform>(),
             mouseScreenPos,
@@ -144,17 +144,21 @@ public class AttackPart_Joust : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
         {
             float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime) * 100f;
-
-            // BF y BL desde el loadout
             scoreManager.AddAttackScore(hit.collider.tag, GetBF(), GetBL(), chargePercent, 0, 0);
-
-            Debug.Log($"Golpe con tag {hit.collider.tag} aplicado.");
-        }
-        else
-        {
-            Debug.Log("Ataque fallido.");
         }
 
         joustManager.EndAttackPhase();
+    }
+
+    // Permite que JoustManager fuerce el ataque
+    public void ForceAttack()
+    {
+        if (isCharging)
+        {
+            isCharging = false;
+            powerSlider.gameObject.SetActive(false);
+        }
+
+        PerformAttack();
     }
 }

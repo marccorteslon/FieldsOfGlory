@@ -1,7 +1,8 @@
 using UnityEngine;
 using TMPro;
 
-// RESUMEN SCRIPT: Controla la fase de defensa y aplica mitigación/puntos usando BB del loadout.
+// Controla input y resultado de la defensa.
+// El temporizador ahora lo gestiona JoustManager.
 
 public class DefensePart_Joust : MonoBehaviour
 {
@@ -12,18 +13,14 @@ public class DefensePart_Joust : MonoBehaviour
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;
 
-    [Header("Defense")]
-    public float defenseTime = 2f;
+    [Header("Fallback Shield Stat (si no hay loadout)")]
+    public int fallbackBB = 2;
 
     private string[] attackSides = { "Izquierda", "Derecha", "Arriba", "Abajo" };
     private string currentAttackSide;
+
     private bool awaitingDefense = false;
-    private float timer = 0f;
-
-    private bool defenseStarted = false; // controlamos inicio real
-
-    [Header("Fallback Shield Stat (si no hay loadout)")]
-    public int fallbackBB = 2;
+    private bool defenseStarted = false;
 
     void Awake()
     {
@@ -42,28 +39,22 @@ public class DefensePart_Joust : MonoBehaviour
 
     void Update()
     {
-        // Si no estamos realmente en la fase defensa, no hacemos nada
         if (!joustManager.defensePartIsOn)
             return;
 
-        // Detectar primer frame real de defensa
+        // Primer frame real de defensa
         if (!defenseStarted)
         {
             defenseStarted = true;
             StartNewAttack();
         }
 
-        if (!awaitingDefense) return;
-
-        timer += Time.deltaTime;
+        if (!awaitingDefense)
+            return;
 
         if (CheckDefenseInput())
         {
             EndDefense(true);
-        }
-        else if (timer >= defenseTime)
-        {
-            EndDefense(false);
         }
     }
 
@@ -84,7 +75,6 @@ public class DefensePart_Joust : MonoBehaviour
         }
 
         awaitingDefense = true;
-        timer = 0f;
     }
 
     bool CheckDefenseInput()
@@ -113,18 +103,26 @@ public class DefensePart_Joust : MonoBehaviour
         return correctKey || correctStick;
     }
 
+    public void ForceEndDefense(bool blockedCorrectly)
+    {
+        if (!awaitingDefense)
+            return;
+
+        EndDefense(blockedCorrectly);
+    }
+
     void EndDefense(bool blockedCorrectly)
     {
         awaitingDefense = false;
 
         scoreManager.ApplyDefense(blockedCorrectly, GetBB());
 
-        joustManager.EndDefensePhase();
-
         if (attackText != null)
         {
             attackText.text = "";
             attackText.gameObject.SetActive(false);
         }
+
+        joustManager.EndDefensePhase();
     }
 }

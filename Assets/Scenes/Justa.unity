@@ -2857,7 +2857,6 @@ MonoBehaviour:
   joustManager: {fileID: 1318912931}
   scoreManager: {fileID: 1318912933}
   loadout: {fileID: 13782961}
-  defenseTime: 4
   fallbackBB: 2
 --- !u!1 &1318912930
 GameObject:
@@ -2899,7 +2898,6 @@ MonoBehaviour:
   horseCameraPoint: {fileID: 1814985969}
   attackCameraPoint: {fileID: 956387658}
   defenseCameraPoint: {fileID: 1687147326}
-  cameraTransitionSpeed: 2
   followSpeed: 5
   winManager: {fileID: 792966344}
   player: {fileID: 13782963}
@@ -2907,12 +2905,12 @@ MonoBehaviour:
   horsePhaseSpeed: 12
   combatPhaseSpeed: 4
   horsePhaseDuration: 5
+  attackDuration: 3
+  defenseDuration: 3
   initialPlayerPos: {x: 0, y: 0, z: 0}
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
   initialEnemyPos: {x: 0, y: 0, z: 0}
   initialEnemyRot: {x: 0, y: 0, z: 0, w: 0}
-  initialCameraPos: {x: 0, y: 0, z: 0}
-  initialCameraRot: {x: 0, y: 0, z: 0, w: 0}
 --- !u!4 &1318912932
 Transform:
   m_ObjectHideFlags: 0
