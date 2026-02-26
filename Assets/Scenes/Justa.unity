@@ -2458,8 +2458,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fa25afed9fb9d14ab08d2d136cf6ada, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  equipment: {fileID: 13782962}
+  itemDatabase: {fileID: 11400000, guid: 6bd44f823b4b689488d9bbffeccd3251, type: 2}
   data:
     money: 0
+    equippedHorseId: 
+    equippedLanceId: 
+    equippedShieldId: 
+    equippedArmorId: 
 --- !u!4 &1096380476
 Transform:
   m_ObjectHideFlags: 0
