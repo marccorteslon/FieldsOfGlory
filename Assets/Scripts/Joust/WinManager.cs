@@ -3,6 +3,7 @@ using System.Collections;
 
 public class WinManager : MonoBehaviour
 {
+    public ProgressManager progressManager;
     public int winPoints = 30;
     public int currentWinPoints = 0;
     [Range(0f, 1f)] public float minPointsFraction = 1f / 3f;
@@ -30,7 +31,9 @@ public class WinManager : MonoBehaviour
             Debug.LogError("WinManager: ScoreManager o JoustManager no asignado.");
             return;
         }
-
+        if (progressManager == null)
+            progressManager = FindObjectOfType<ProgressManager>();
+        
         if (gameEnded) return; // ya terminó la partida, no procesar más
 
         int roundScore = scoreManager.GetScore();
@@ -92,6 +95,7 @@ public class WinManager : MonoBehaviour
             gameWinPanel.SetActive(true);
 
         Debug.Log("¡Has ganado la partida completa!");
+        WinGame();
     }
 
     void StartNextRound()
@@ -120,7 +124,24 @@ public class WinManager : MonoBehaviour
     void WinGame()
     {
         Debug.Log("¡Has alcanzado los puntos necesarios! ¡Has ganado la partida!");
-        // Mostrar UI de victoria o pasar a menú
+
+        if (progressManager == null)
+            progressManager = FindObjectOfType<ProgressManager>();
+
+        if (progressManager != null)
+        {
+            int reward = progressManager.CalculateReward(winPoints, roundNumber);
+
+            progressManager.AddMoney(reward);
+
+            Debug.Log($"[REWARD] HP enemigo: {winPoints} | Ronda: {roundNumber} | Dinero ganado: {reward}");
+        }
+        else
+        {
+            Debug.LogError("No se encontró ProgressManager en la escena.");
+        }
+
+        // Aquí irá la apertura de tienda más adelante
     }
 
     void LoseGame()
@@ -128,4 +149,5 @@ public class WinManager : MonoBehaviour
         Debug.Log("No alcanzaste los puntos mínimos de esta ronda. Has perdido.");
         // Mostrar UI de derrota o reiniciar partida
     }
+    
 }
