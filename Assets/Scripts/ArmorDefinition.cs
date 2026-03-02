@@ -1,17 +1,10 @@
 using UnityEngine;
 
-public class ArmorDefinition : MonoBehaviour
-// Define una armadura equipable y fuerza automáticamente su slot a Armor.
+[CreateAssetMenu(menuName = "FieldsOfGlory/Items/Armor")]
+public class ArmorDefinition : EquipmentDefinition
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnValidate()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        slot = EquipmentSlot.Armor;
     }
 }
