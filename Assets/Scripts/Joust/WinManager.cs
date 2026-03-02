@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class WinManager : MonoBehaviour
 {
+    public ScoreUIManager scoreUIManager;
     public ProgressManager progressManager;
     public int winPoints = 30;
     public int currentWinPoints = 0;
@@ -42,6 +43,11 @@ public class WinManager : MonoBehaviour
 
         int roundScore = scoreManager.GetScore();
         currentWinPoints += roundScore;
+
+        if (scoreUIManager != null)
+        {
+            scoreUIManager.ConsolidateRound();
+        }
 
         Debug.Log($"[Ronda {roundNumber} Finalizada] Puntos de esta ronda: {roundScore} | Puntos totales: {currentWinPoints}/{winPoints}");
 
