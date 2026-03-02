@@ -11,6 +11,12 @@ public class ScoreUIManager : MonoBehaviour
     public Slider baseBar;          // Color Y (rondas anteriores)
     public Slider currentRoundBar;  // Color X (ronda actual)
 
+    [Header("Min Win Indicator")]
+    public Slider minWinSlider;     // Barra Slider para mostrar mínimo a alcanzar
+
+    [Header("Animation")]
+    public float minWinAnimSpeed = 2f; // velocidad de animación
+
     private int lastRoundScore = 0;
     private int basePoints = 0;     // puntos consolidados de rondas anteriores
 
@@ -21,11 +27,18 @@ public class ScoreUIManager : MonoBehaviour
 
         baseBar.value = 0;
         currentRoundBar.value = 0;
+
+        if (minWinSlider != null)
+        {
+            minWinSlider.maxValue = winManager.winPoints;
+            minWinSlider.value = 0;
+        }
     }
 
     void Update()
     {
         UpdateCurrentRoundProgress();
+        AnimateMinWinSlider();
     }
 
     void UpdateCurrentRoundProgress()
@@ -36,12 +49,9 @@ public class ScoreUIManager : MonoBehaviour
 
         lastRoundScore = currentScore;
 
-        // La barra de ronda actual es:
-        // puntos base + puntos actuales de la ronda
         currentRoundBar.value = basePoints + currentScore;
     }
 
-    // -------- Llamado desde WinManager al acabar la ronda --------
     public void ConsolidateRound()
     {
         basePoints += lastRoundScore;
@@ -52,7 +62,6 @@ public class ScoreUIManager : MonoBehaviour
         lastRoundScore = 0;
     }
 
-    // -------- Si quieres resetear completamente la partida --------
     public void ResetAll()
     {
         basePoints = 0;
@@ -60,5 +69,25 @@ public class ScoreUIManager : MonoBehaviour
 
         baseBar.value = 0;
         currentRoundBar.value = 0;
+
+        if (minWinSlider != null)
+            minWinSlider.value = 0;
+    }
+
+    void AnimateMinWinSlider()
+    {
+        if (minWinSlider == null || winManager == null) return;
+
+        // mínimo a lograr = 1/3 de winPoints
+        float minFraction = winManager.minPointsFraction;
+
+        // progreso visual = basePoints + 1/3 de winPoints
+        float targetValue = basePoints + winManager.winPoints * minFraction;
+
+        // no exceder máximo
+        targetValue = Mathf.Min(targetValue, winManager.winPoints);
+
+        // animación suave
+        minWinSlider.value = Mathf.Lerp(minWinSlider.value, targetValue, Time.deltaTime * minWinAnimSpeed);
     }
 }
