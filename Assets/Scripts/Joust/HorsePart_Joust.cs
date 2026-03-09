@@ -147,10 +147,10 @@ public class HorsePart_Joust : MonoBehaviour
 
     void HandleInput()
     {
-        bool spacePressed = Input.GetKeyDown(KeyCode.Space);
-        bool ps4X = Input.GetKeyDown(KeyCode.JoystickButton2);
+        bool mouseClick = Input.GetMouseButtonDown(0); // click izquierdo
+        bool ps4X = Input.GetKeyDown(KeyCode.JoystickButton2); // mando opcional
 
-        if (spacePressed || ps4X)
+        if (mouseClick || ps4X)
             EvaluateZone();
     }
 
