@@ -22,6 +22,11 @@ public class AttackPart_Joust : MonoBehaviour
     [Header("Loadout")]
     public LoadoutStatsComponent loadout;
 
+    [Header("Controller Aim")]
+    public float joystickSpeed = 800f;
+
+    private Vector2 crosshairPos;
+
     [Header("Fallback Lance Stats")]
     public int fallbackBF = 4;
     public int fallbackBL = 2;
@@ -44,6 +49,7 @@ public class AttackPart_Joust : MonoBehaviour
         powerSlider.minValue = 0;
         powerSlider.maxValue = 100;
         crosshair.gameObject.SetActive(false);
+        crosshairPos = crosshair.anchoredPosition;
     }
 
     void Update()
@@ -82,22 +88,29 @@ public class AttackPart_Joust : MonoBehaviour
 
     void HandleChargeInput()
     {
-        if (Input.GetMouseButtonDown(0) || Input.GetButtonDown("Fire1"))
+        float r2Axis = Input.GetAxis("Attack");
+
+        bool r2Held = r2Axis > 0.2f;
+        bool r2Down = r2Axis > 0.2f && !isCharging;
+        bool r2Up = r2Axis <= 0.2f && isCharging;
+
+        if (r2Down)
         {
             isCharging = true;
             chargeTimer = 0f;
             powerSlider.gameObject.SetActive(true);
         }
 
-        if (isCharging)
+        if (isCharging && r2Held)
         {
             chargeTimer += Time.deltaTime;
+
             float percent = Mathf.Clamp01(chargeTimer / maxChargeTime);
             powerSlider.value = percent * 100f;
             currentShakeAmount = baseShakeAmount + (baseShakeAmount * percent);
         }
 
-        if ((Input.GetMouseButtonUp(0) || Input.GetButtonUp("Fire1")) && isCharging)
+        if (r2Up)
         {
             isCharging = false;
             powerSlider.gameObject.SetActive(false);
@@ -115,22 +128,23 @@ public class AttackPart_Joust : MonoBehaviour
 
     void UpdateCrosshair()
     {
-        Vector2 mouseScreenPos = Input.mousePosition;
+        float horizontal = Input.GetAxis("RightStickHorizontal");
+        float vertical = -Input.GetAxis("RightStickVertical");
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvas.GetComponent<RectTransform>(),
-            mouseScreenPos,
-            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam,
-            out Vector2 localPoint
-        );
+        Vector2 stickInput = new Vector2(horizontal, vertical);
 
-        Vector2 finalPosition = localPoint;
+        // mover retícula con joystick
+        crosshairPos += stickInput * joystickSpeed * Time.deltaTime;
+
+        Vector2 finalPosition = crosshairPos;
 
         if (enableShake)
         {
             shakeTime += Time.deltaTime * shakeSpeed;
+
             float offsetX = Mathf.PerlinNoise(shakeTime, 0f) - 0.5f;
             float offsetY = Mathf.PerlinNoise(0f, shakeTime) - 0.5f;
+
             finalPosition += new Vector2(offsetX, offsetY) * currentShakeAmount;
         }
 
