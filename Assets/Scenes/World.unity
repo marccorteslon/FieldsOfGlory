@@ -729,7 +729,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -880, y: -525}
+  m_AnchoredPosition: {x: -880, y: -460.35486}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &134534738
@@ -2636,8 +2636,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 975939695}
   m_HandleRect: {fileID: 975939694}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.2950832
+  m_Value: 0.9999999
+  m_Size: 0.29508317
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3611,7 +3611,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1844002215}
   m_HandleRect: {fileID: 1844002214}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -4628,7 +4628,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1607394984}
   m_HandleRect: {fileID: 1607394983}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -6074,10 +6074,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -7048,8 +7048,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 35552373}
   m_HandleRect: {fileID: 35552372}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.29508325
+  m_Value: 0.9999999
+  m_Size: 0.29508322
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7501,8 +7501,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1109355412}
   m_HandleRect: {fileID: 1109355411}
   m_Direction: 0
-  m_Value: 0
-  m_Size: 0.99999976
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
