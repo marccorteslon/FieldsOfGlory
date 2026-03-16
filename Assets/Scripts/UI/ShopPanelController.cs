@@ -10,6 +10,9 @@ public class ShopPanelController : MonoBehaviour
     public ProgressManager progress;
     public EquipmentManager equipment;
 
+    [Header("Navigation")]
+    public GameObject shopPanelObject;
+
     [Header("Money UI")]
     public TMP_Text moneyText;
 
@@ -23,21 +26,19 @@ public class ShopPanelController : MonoBehaviour
         public TMP_Text modifiersText;
         public Image iconImage;
         public Button purchaseButton;
-        public TMP_Text priceText; // opcional (puedes dejarlo null)
+        public TMP_Text priceText;
     }
 
     [Header("UI Slots (4)")]
     public ShopSlotUI[] slots = new ShopSlotUI[4];
 
-    private EquipmentDefinition[] _resolved = new EquipmentDefinition[4];
+    private EquipmentDefinition[] resolved = new EquipmentDefinition[4];
+    private GameObject currentTownPanel;
 
     void Awake()
     {
         if (progress == null) progress = FindObjectOfType<ProgressManager>();
         if (equipment == null) equipment = FindObjectOfType<EquipmentManager>();
-
-        // ItemDatabase mejor asignarla en inspector; si no, intenta encontrarla
-        // (Si no hay ninguna en escena, no podrá resolver ids)
     }
 
     void Start()
@@ -45,6 +46,20 @@ public class ShopPanelController : MonoBehaviour
         RefreshMoneyUI();
         RefreshShopUI();
         HookButtons();
+    }
+
+    public void SetOriginTownPanel(GameObject townPanel)
+    {
+        currentTownPanel = townPanel;
+    }
+
+    public void ExitShop()
+    {
+        if (shopPanelObject != null)
+            shopPanelObject.SetActive(false);
+
+        if (currentTownPanel != null)
+            currentTownPanel.SetActive(true);
     }
 
     public void RefreshMoneyUI()
@@ -61,7 +76,6 @@ public class ShopPanelController : MonoBehaviour
             return;
         }
 
-        // Asegura lookup
         itemDatabase.BuildLookup();
 
         for (int i = 0; i < 4; i++)
@@ -73,7 +87,7 @@ public class ShopPanelController : MonoBehaviour
             if (!string.IsNullOrEmpty(id))
                 item = itemDatabase.GetById(id);
 
-            _resolved[i] = item;
+            resolved[i] = item;
 
             if (item == null)
             {
@@ -90,20 +104,20 @@ public class ShopPanelController : MonoBehaviour
             }
 
             if (ui.nameText) ui.nameText.text = item.displayName;
+
             if (ui.iconImage)
             {
                 ui.iconImage.sprite = item.icon;
                 ui.iconImage.enabled = item.icon != null;
             }
 
-            int price = item.price;
-            if (ui.priceText) ui.priceText.text = price.ToString();
+            if (ui.priceText) ui.priceText.text = item.price.ToString();
 
             if (ui.modifiersText)
                 ui.modifiersText.text = FormatModifiers(item);
 
             if (ui.purchaseButton)
-                ui.purchaseButton.interactable = true; // luego se valida dinero al click
+                ui.purchaseButton.interactable = true;
         }
     }
 
@@ -124,7 +138,7 @@ public class ShopPanelController : MonoBehaviour
     {
         if (index < 0 || index >= 4) return;
 
-        var item = _resolved[index];
+        var item = resolved[index];
         if (item == null)
         {
             Debug.LogWarning("[Shop] No hay item en ese slot.");
@@ -138,6 +152,7 @@ public class ShopPanelController : MonoBehaviour
         }
 
         int cost = item.price;
+
         if (!progress.TrySpendMoney(cost))
         {
             Debug.Log("[Shop] No tienes dinero suficiente.");
@@ -145,10 +160,7 @@ public class ShopPanelController : MonoBehaviour
             return;
         }
 
-        // Equipar (usa el slot que ya viene fijado en HorseDefinition/LanceDefinition/etc)
         equipment.Equip(item);
-
-        // Guardar equipados + money (tu ProgressManager ya tiene SaveEquipped si lo añadiste)
         progress.SaveEquipped();
         RefreshMoneyUI();
 
@@ -157,7 +169,6 @@ public class ShopPanelController : MonoBehaviour
 
     string FormatModifiers(EquipmentDefinition item)
     {
-        // Formato simple: +2 BF, +1.5 BL, -1 M ...
         var sb = new StringBuilder();
 
         if (!string.IsNullOrEmpty(item.description))

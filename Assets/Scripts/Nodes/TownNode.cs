@@ -8,6 +8,7 @@ public class TownNode : MonoBehaviour
 
     [Header("UI Refs")]
     public ShopPanelController shopPanel;
+    public GameObject mapButtonsObject;
     public GameObject townPanelObject;
     public GameObject shopPanelObject;
     public GameObject tavernPanelObject;
@@ -18,6 +19,9 @@ public class TownNode : MonoBehaviour
 
     public void EnterTown()
     {
+        if (mapButtonsObject != null)
+            mapButtonsObject.SetActive(false);
+
         GameManager.dataRepository.GetCityById(
             cityId,
             OnCityLoaded,
@@ -38,6 +42,11 @@ public class TownNode : MonoBehaviour
             Debug.LogError("TownNode: shopPanel no asignado.");
             return;
         }
+
+        shopPanel.SetOriginTownPanel(townPanelObject);
+
+        if (townPanelObject != null)
+            townPanelObject.SetActive(false);
 
         if (shopPanelObject != null)
             shopPanelObject.SetActive(true);
@@ -64,6 +73,9 @@ public class TownNode : MonoBehaviour
             return;
         }
 
+        if (townPanelObject != null)
+            townPanelObject.SetActive(false);
+
         if (shopPanelObject != null)
             shopPanelObject.SetActive(false);
 
@@ -83,6 +95,9 @@ public class TownNode : MonoBehaviour
 
         if (townPanelObject != null)
             townPanelObject.SetActive(false);
+
+        if (mapButtonsObject != null)
+            mapButtonsObject.SetActive(true);
 
         currentCity = null;
         currentShop = null;
