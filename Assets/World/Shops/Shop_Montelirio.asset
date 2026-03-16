@@ -13,4 +13,7 @@ MonoBehaviour:
   m_Name: Shop_Montelirio
   m_EditorClassIdentifier: 
   shopId: shop_montelirio
-  itemIds: []
+  itemIds:
+  - War_Horse
+  - Fast_Horse
+  - Shadow_Horse

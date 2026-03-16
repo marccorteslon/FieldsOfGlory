@@ -3,7 +3,13 @@ using UnityEngine;
 
 public class TownNode : MonoBehaviour
 {
+    [Header("Town Data")]
     public string cityId;
+
+    [Header("UI Refs")]
+    public ShopPanelController shopPanel;
+    public GameObject shopPanelObject;   // opcional, por si quieres activar el panel
+    public GameObject tavernPanelObject; // opcional, por si luego quieres activar la taberna
 
     public void EnterTown()
     {
@@ -21,7 +27,28 @@ public class TownNode : MonoBehaviour
             shop =>
             {
                 Debug.Log("Shop loaded: " + shop.shopId);
-                // aqui bres la UI de tienda
+
+                if (shopPanel == null)
+                {
+                    Debug.LogError("TownNode: shopPanel no asignado.");
+                    return;
+                }
+
+                // Abrir panel de tienda si has asignado un GO
+                if (shopPanelObject != null)
+                    shopPanelObject.SetActive(true);
+
+                // Rellenar exactamente 4 slots
+                for (int i = 0; i < shopPanel.itemIds.Length; i++)
+                    shopPanel.itemIds[i] = string.Empty;
+
+                int count = Mathf.Min(shop.itemIds.Count, shopPanel.itemIds.Length);
+                for (int i = 0; i < count; i++)
+                    shopPanel.itemIds[i] = shop.itemIds[i];
+
+                // Refrescar UI
+                shopPanel.RefreshMoneyUI();
+                shopPanel.RefreshShopUI();
             },
             OnError
         );
@@ -31,7 +58,13 @@ public class TownNode : MonoBehaviour
             tavern =>
             {
                 Debug.Log("Tavern loaded: " + tavern.tavernId);
-                // aqui bres la UI de taberna
+
+                // De momento solo lo deja preparado por si quieres activar panel luego
+                if (tavernPanelObject != null)
+                {
+                    // No lo activo automáticamente para no pisar la tienda.
+                    // Cuando quieras usar la taberna, aquí conectas su UI.
+                }
             },
             OnError
         );

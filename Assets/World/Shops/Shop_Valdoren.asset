@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: Shop_Valdoren
   m_EditorClassIdentifier: 
   shopId: shop_valdoren
-  itemIds: []
+  itemIds:
+  - Jousting_Shield
+  - Tower_Shield
+  - Lion_Shield
+  - Training_Shield
