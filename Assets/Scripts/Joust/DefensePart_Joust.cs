@@ -28,6 +28,10 @@ public class DefensePart_Joust : MonoBehaviour
     public string leftStickVerticalAxis = "LeftStickVertical";
     public float minimumStickMagnitude = 0.65f;
 
+    [Header("Joystick Visual")]
+    public RectTransform joystickVisual;
+    public float joystickVisualRadius = 100f;
+
     private bool awaitingDefense = false;
     private bool defenseStarted = false;
 
@@ -59,6 +63,8 @@ public class DefensePart_Joust : MonoBehaviour
             defenseStarted = true;
             StartNewAttack();
         }
+
+        UpdateJoystickVisual();
 
         if (!awaitingDefense)
             return;
@@ -133,6 +139,22 @@ public class DefensePart_Joust : MonoBehaviour
             return;
 
         EndDefense(blockedCorrectly);
+    }
+
+    void UpdateJoystickVisual()
+    {
+        if (joystickVisual == null) return;
+
+        float horizontal = Input.GetAxis(leftStickHorizontalAxis);
+        float vertical = Input.GetAxis(leftStickVerticalAxis);
+
+        Vector2 stickInput = new Vector2(horizontal, vertical);
+
+        // limitar a radio
+        if (stickInput.magnitude > 1f)
+            stickInput.Normalize();
+
+        joystickVisual.anchoredPosition = stickInput * joystickVisualRadius;
     }
 
     void EndDefense(bool blockedCorrectly)
