@@ -1,12 +1,9 @@
 using UnityEngine;
-using TMPro;
-
-// Controla input y resultado de la defensa.
-// El temporizador ahora lo gestiona JoustManager.
+using UnityEngine.UI;
 
 public class DefensePart_Joust : MonoBehaviour
 {
-    public TextMeshProUGUI attackText;
+    [Header("Manager")]
     public JoustManager joustManager;
     public ScoreManager scoreManager;
 
@@ -16,11 +13,25 @@ public class DefensePart_Joust : MonoBehaviour
     [Header("Fallback Shield Stat (si no hay loadout)")]
     public int fallbackBB = 2;
 
-    private string[] attackSides = { "Izquierda", "Derecha", "Arriba", "Abajo" };
-    private string currentAttackSide;
+    [Header("UI Defensa")]
+    public RectTransform defenseCircle;
+    public RectTransform attackIndicator;
+    public Image attackIndicatorImage;
+
+    [Header("Attack Settings")]
+    public float circleRadius = 120f;
+    public float angleTolerance = 30f;
+    public Color indicatorColor = Color.red;
+
+    [Header("Input Settings")]
+    public string leftStickHorizontalAxis = "LeftStickHorizontal";
+    public string leftStickVerticalAxis = "LeftStickVertical";
+    public float minimumStickMagnitude = 0.65f;
 
     private bool awaitingDefense = false;
     private bool defenseStarted = false;
+
+    private Vector2 targetDirection;
 
     void Awake()
     {
@@ -30,19 +41,19 @@ public class DefensePart_Joust : MonoBehaviour
 
     void OnEnable()
     {
-        if (attackText != null)
-            attackText.gameObject.SetActive(false);
-
         awaitingDefense = false;
         defenseStarted = false;
+        ShowDefenseUI(false);
     }
 
     void Update()
     {
         if (!joustManager.defensePartIsOn)
+        {
+            ShowDefenseUI(false);
             return;
+        }
 
-        // Primer frame real de defensa
         if (!defenseStarted)
         {
             defenseStarted = true;
@@ -66,41 +77,54 @@ public class DefensePart_Joust : MonoBehaviour
 
     void StartNewAttack()
     {
-        currentAttackSide = attackSides[Random.Range(0, attackSides.Length)];
+        float randomAngle = Random.Range(0f, 360f);
+        float radians = randomAngle * Mathf.Deg2Rad;
 
-        if (attackText != null)
-        {
-            attackText.text = $"¡Enemigo ataca {currentAttackSide}!";
-            attackText.gameObject.SetActive(true);
-        }
+        targetDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)).normalized;
+
+        UpdateAttackIndicatorVisual();
+        ShowDefenseUI(true);
 
         awaitingDefense = true;
     }
 
+    void UpdateAttackIndicatorVisual()
+    {
+        if (attackIndicator == null)
+            return;
+
+        attackIndicator.anchoredPosition = targetDirection * circleRadius;
+
+        if (attackIndicatorImage != null)
+            attackIndicatorImage.color = indicatorColor;
+    }
+
     bool CheckDefenseInput()
     {
-        bool correctKey = currentAttackSide switch
-        {
-            "Izquierda" => Input.GetKey(KeyCode.LeftArrow),
-            "Derecha" => Input.GetKey(KeyCode.RightArrow),
-            "Arriba" => Input.GetKey(KeyCode.UpArrow),
-            "Abajo" => Input.GetKey(KeyCode.DownArrow),
-            _ => false
-        };
+        float horizontal = Input.GetAxis(leftStickHorizontalAxis);
+        float vertical = Input.GetAxis(leftStickVerticalAxis);
 
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        Vector2 stickInput = new Vector2(horizontal, vertical);
 
-        bool correctStick = currentAttackSide switch
-        {
-            "Izquierda" => horizontal < -0.5f,
-            "Derecha" => horizontal > 0.5f,
-            "Arriba" => vertical > 0.5f,
-            "Abajo" => vertical < -0.5f,
-            _ => false
-        };
+        if (stickInput.magnitude < minimumStickMagnitude)
+            return false;
 
-        return correctKey || correctStick;
+        Vector2 stickDirection = stickInput.normalized;
+
+        float angleDifference = Vector2.Angle(stickDirection, targetDirection);
+
+        Debug.Log($"Stick: {stickDirection} | Target: {targetDirection} | Angle: {angleDifference}");
+
+        return angleDifference <= angleTolerance;
+    }
+
+    void ShowDefenseUI(bool show)
+    {
+        if (defenseCircle != null)
+            defenseCircle.gameObject.SetActive(show);
+
+        if (attackIndicator != null)
+            attackIndicator.gameObject.SetActive(show);
     }
 
     public void ForceEndDefense(bool blockedCorrectly)
@@ -115,14 +139,9 @@ public class DefensePart_Joust : MonoBehaviour
     {
         awaitingDefense = false;
 
+        ShowDefenseUI(false);
+
         scoreManager.ApplyDefense(blockedCorrectly, GetBB());
-
-        if (attackText != null)
-        {
-            attackText.text = "";
-            attackText.gameObject.SetActive(false);
-        }
-
         joustManager.EndDefensePhase();
     }
 }

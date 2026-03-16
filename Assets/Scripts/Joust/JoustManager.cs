@@ -55,6 +55,9 @@ public class JoustManager : MonoBehaviour
     [Header("Controls UI")]
     public TextMeshProUGUI controlsText;
 
+    [Header("Tutorial")]
+    public JoustTutorialManager tutorialManager;
+
     [HideInInspector] public Vector3 initialPlayerPos;
     [HideInInspector] public Quaternion initialPlayerRot;
     [HideInInspector] public Vector3 initialEnemyPos;
@@ -85,6 +88,11 @@ public class JoustManager : MonoBehaviour
         horseTimerRunning = true;
 
         UpdatePhases();
+
+        if (tutorialManager != null)
+        {
+            tutorialManager.ShowHorseTutorial();
+        }
     }
 
     void Update()
@@ -220,6 +228,9 @@ public class JoustManager : MonoBehaviour
         attackTimerRunning = true;
 
         UpdatePhases();
+
+        if (tutorialManager != null)
+            tutorialManager.ShowAttackTutorial();
     }
 
     public void EndAttackPhase()
@@ -235,6 +246,9 @@ public class JoustManager : MonoBehaviour
         defenseTimerRunning = true;
 
         UpdatePhases();
+
+        if (tutorialManager != null)
+            tutorialManager.ShowDefenseTutorial();
     }
 
     public void EndDefensePhase()
