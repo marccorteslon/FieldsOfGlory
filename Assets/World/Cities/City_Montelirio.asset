@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a0f04cf6011ce240bd23bcaa551d881, type: 3}
+  m_Name: City_Montelirio
+  m_EditorClassIdentifier: 
+  cityId: city_montelirio
+  displayName: Montelirio
+  shopId: shop_montelirio
+  tavernId: tavern_montelirio

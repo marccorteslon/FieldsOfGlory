@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 049186596c169234a83de4af40b9768f, type: 3}
+  m_Name: MainCityDatabase
+  m_EditorClassIdentifier: 
+  cities:
+  - {fileID: 11400000, guid: 2d38c13f968a5ee48b8c5d4b877b8c85, type: 2}
+  - {fileID: 11400000, guid: 001ec98f4e4396d4096a6b4dba7a7936, type: 2}
