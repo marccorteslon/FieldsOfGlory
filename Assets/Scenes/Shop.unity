@@ -1022,6 +1022,7 @@ GameObject:
   m_Component:
   - component: {fileID: 317514749}
   - component: {fileID: 317514748}
+  - component: {fileID: 317514750}
   m_Layer: 0
   m_Name: ShopManager
   m_TagString: Untagged
@@ -1059,6 +1060,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &317514750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317514747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 970185db280eadd4fa18db473f7c7434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemDatabase: {fileID: 11400000, guid: 6bd44f823b4b689488d9bbffeccd3251, type: 2}
+  progress: {fileID: 1882092256}
+  equipment: {fileID: 1032917313}
+  moneyText: {fileID: 2130564460}
+  itemIds:
+  - Balsa_Lance
+  - Jousting_Shield
+  - War_Horse
+  - Barrel_Armor
+  slots:
+  - nameText: {fileID: 289009015}
+    modifiersText: {fileID: 1745598244}
+    iconImage: {fileID: 1204379166}
+    purchaseButton: {fileID: 497319387}
+    priceText: {fileID: 1359264023}
+  - nameText: {fileID: 1018250804}
+    modifiersText: {fileID: 1745128204}
+    iconImage: {fileID: 1541364026}
+    purchaseButton: {fileID: 631101943}
+    priceText: {fileID: 1718428837}
+  - nameText: {fileID: 657621059}
+    modifiersText: {fileID: 1434209602}
+    iconImage: {fileID: 1258525324}
+    purchaseButton: {fileID: 1481683560}
+    priceText: {fileID: 1143001949}
+  - nameText: {fileID: 130225136}
+    modifiersText: {fileID: 1133580851}
+    iconImage: {fileID: 573171616}
+    purchaseButton: {fileID: 1400620328}
+    priceText: {fileID: 2006641063}
 --- !u!1 &323085756
 GameObject:
   m_ObjectHideFlags: 0
@@ -3378,7 +3421,6 @@ GameObject:
   - component: {fileID: 1095491740}
   - component: {fileID: 1095491742}
   - component: {fileID: 1095491741}
-  - component: {fileID: 1095491743}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -3450,48 +3492,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095491739}
   m_CullTransparentMesh: 1
---- !u!114 &1095491743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095491739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 970185db280eadd4fa18db473f7c7434, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemDatabase: {fileID: 11400000, guid: 6bd44f823b4b689488d9bbffeccd3251, type: 2}
-  progress: {fileID: 1882092256}
-  equipment: {fileID: 1032917313}
-  moneyText: {fileID: 2130564460}
-  itemIds:
-  - Balsa_Lance
-  - Jousting_Shield
-  - War_Horse
-  - Barrel_Armor
-  slots:
-  - nameText: {fileID: 289009015}
-    modifiersText: {fileID: 1745598244}
-    iconImage: {fileID: 1204379166}
-    purchaseButton: {fileID: 497319387}
-    priceText: {fileID: 1359264023}
-  - nameText: {fileID: 1018250804}
-    modifiersText: {fileID: 1745128204}
-    iconImage: {fileID: 1541364026}
-    purchaseButton: {fileID: 631101943}
-    priceText: {fileID: 1718428837}
-  - nameText: {fileID: 657621059}
-    modifiersText: {fileID: 1434209602}
-    iconImage: {fileID: 1258525324}
-    purchaseButton: {fileID: 1481683560}
-    priceText: {fileID: 1143001949}
-  - nameText: {fileID: 130225136}
-    modifiersText: {fileID: 1133580851}
-    iconImage: {fileID: 573171616}
-    purchaseButton: {fileID: 1400620328}
-    priceText: {fileID: 2006641063}
 --- !u!1 &1107634163
 GameObject:
   m_ObjectHideFlags: 0

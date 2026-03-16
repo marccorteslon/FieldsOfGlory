@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 // Centro neuralgico de la Justa.
 
@@ -50,6 +51,9 @@ public class JoustManager : MonoBehaviour
     public float defenseDuration = 2f;
     private float defenseTimer = 0f;
     private bool defenseTimerRunning = false;
+
+    [Header("Controls UI")]
+    public TextMeshProUGUI controlsText;
 
     [HideInInspector] public Vector3 initialPlayerPos;
     [HideInInspector] public Quaternion initialPlayerRot;
@@ -174,6 +178,34 @@ public class JoustManager : MonoBehaviour
 
         if (defensePart != null)
             defensePart.gameObject.SetActive(defensePartIsOn);
+
+        UpdateControlsUI();
+    }
+
+    void UpdateControlsUI()
+    {
+        if (controlsText == null) return;
+
+        if (horsePartIsOn)
+        {
+            controlsText.text =
+                "X (Mando) -> Cargar caballo";
+        }
+        else if (attackPartIsOn)
+        {
+            controlsText.text =
+                "Stick Der -> Mover\n" +
+                "R2 -> Cargar ataque\n";
+        }
+        else if (defensePartIsOn)
+        {
+            controlsText.text =
+                "Stick Izq -> Bloquear direccion";
+        }
+        else
+        {
+            controlsText.text = "";
+        }
     }
 
     public void EndHorsePhase()
