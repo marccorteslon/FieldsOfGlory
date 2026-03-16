@@ -8,8 +8,13 @@ public class TownNode : MonoBehaviour
 
     [Header("UI Refs")]
     public ShopPanelController shopPanel;
-    public GameObject shopPanelObject;   // opcional, por si quieres activar el panel
-    public GameObject tavernPanelObject; // opcional, por si luego quieres activar la taberna
+    public GameObject townPanelObject;
+    public GameObject shopPanelObject;
+    public GameObject tavernPanelObject;
+
+    private CityDefinition currentCity;
+    private ShopDefinition currentShop;
+    private TavernDefinition currentTavern;
 
     public void EnterTown()
     {
@@ -20,35 +25,80 @@ public class TownNode : MonoBehaviour
         );
     }
 
+    public void EnterShop()
+    {
+        if (currentShop == null)
+        {
+            Debug.LogError("TownNode: no hay tienda cargada para este pueblo.");
+            return;
+        }
+
+        if (shopPanel == null)
+        {
+            Debug.LogError("TownNode: shopPanel no asignado.");
+            return;
+        }
+
+        if (shopPanelObject != null)
+            shopPanelObject.SetActive(true);
+
+        if (tavernPanelObject != null)
+            tavernPanelObject.SetActive(false);
+
+        for (int i = 0; i < shopPanel.itemIds.Length; i++)
+            shopPanel.itemIds[i] = string.Empty;
+
+        int count = Mathf.Min(currentShop.itemIds.Count, shopPanel.itemIds.Length);
+        for (int i = 0; i < count; i++)
+            shopPanel.itemIds[i] = currentShop.itemIds[i];
+
+        shopPanel.RefreshMoneyUI();
+        shopPanel.RefreshShopUI();
+    }
+
+    public void EnterTavern()
+    {
+        if (currentTavern == null)
+        {
+            Debug.LogError("TownNode: no hay taberna cargada para este pueblo.");
+            return;
+        }
+
+        if (shopPanelObject != null)
+            shopPanelObject.SetActive(false);
+
+        if (tavernPanelObject != null)
+            tavernPanelObject.SetActive(true);
+
+        Debug.Log("Tavern opened: " + currentTavern.tavernId);
+    }
+
+    public void ExitTown()
+    {
+        if (shopPanelObject != null)
+            shopPanelObject.SetActive(false);
+
+        if (tavernPanelObject != null)
+            tavernPanelObject.SetActive(false);
+
+        if (townPanelObject != null)
+            townPanelObject.SetActive(false);
+
+        currentCity = null;
+        currentShop = null;
+        currentTavern = null;
+    }
+
     void OnCityLoaded(CityDefinition city)
     {
+        currentCity = city;
+
         GameManager.dataRepository.GetShopById(
             city.shopId,
             shop =>
             {
+                currentShop = shop;
                 Debug.Log("Shop loaded: " + shop.shopId);
-
-                if (shopPanel == null)
-                {
-                    Debug.LogError("TownNode: shopPanel no asignado.");
-                    return;
-                }
-
-                // Abrir panel de tienda si has asignado un GO
-                if (shopPanelObject != null)
-                    shopPanelObject.SetActive(true);
-
-                // Rellenar exactamente 4 slots
-                for (int i = 0; i < shopPanel.itemIds.Length; i++)
-                    shopPanel.itemIds[i] = string.Empty;
-
-                int count = Mathf.Min(shop.itemIds.Count, shopPanel.itemIds.Length);
-                for (int i = 0; i < count; i++)
-                    shopPanel.itemIds[i] = shop.itemIds[i];
-
-                // Refrescar UI
-                shopPanel.RefreshMoneyUI();
-                shopPanel.RefreshShopUI();
             },
             OnError
         );
@@ -57,17 +107,20 @@ public class TownNode : MonoBehaviour
             city.tavernId,
             tavern =>
             {
+                currentTavern = tavern;
                 Debug.Log("Tavern loaded: " + tavern.tavernId);
-
-                // De momento solo lo deja preparado por si quieres activar panel luego
-                if (tavernPanelObject != null)
-                {
-                    // No lo activo automáticamente para no pisar la tienda.
-                    // Cuando quieras usar la taberna, aquí conectas su UI.
-                }
             },
             OnError
         );
+
+        if (townPanelObject != null)
+            townPanelObject.SetActive(true);
+
+        if (shopPanelObject != null)
+            shopPanelObject.SetActive(false);
+
+        if (tavernPanelObject != null)
+            tavernPanelObject.SetActive(false);
     }
 
     void OnError(Exception ex)
