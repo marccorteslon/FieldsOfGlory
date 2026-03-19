@@ -44,8 +44,9 @@ public class JoustTutorialManager : MonoBehaviour
 
     void Update()
     {
-        // Botón B mando Xbox
-        if (currentPanel != null && Input.GetKeyDown(KeyCode.JoystickButton1))
+        // Botón B mando Xbox o tecla X teclado
+        if (currentPanel != null &&
+            (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.X)))
         {
             CloseTutorial();
         }
