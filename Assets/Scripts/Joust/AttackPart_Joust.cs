@@ -24,18 +24,24 @@ public class AttackPart_Joust : MonoBehaviour
 
     [Header("Controller Aim")]
     public float joystickSpeed = 800f;
+    public string rightStickHorizontalAxis = "RightStickHorizontal";
+    public string rightStickVerticalAxis = "RightStickVertical";
 
-    private Vector2 crosshairPos;
+    [Header("Gamepad Attack")]
+    public string attackAxis = "Attack";
+    public float attackPressThreshold = 0.2f;
 
     [Header("Fallback Lance Stats")]
     public int fallbackBF = 4;
     public int fallbackBL = 2;
 
+    private Vector2 crosshairPos;
     private bool previousAttackState = false;
     private bool isCharging = false;
     private float chargeTimer = 0f;
     private float currentShakeAmount;
     private float shakeTime;
+    private bool gamepadAttackWasHeldLastFrame = false;
 
     void Awake()
     {
@@ -48,8 +54,10 @@ public class AttackPart_Joust : MonoBehaviour
         powerSlider.gameObject.SetActive(false);
         powerSlider.minValue = 0;
         powerSlider.maxValue = 100;
+
         crosshair.gameObject.SetActive(false);
-        crosshairPos = crosshair.anchoredPosition;
+        crosshairPos = Vector2.zero;
+        currentShakeAmount = baseShakeAmount;
     }
 
     void Update()
@@ -64,6 +72,8 @@ public class AttackPart_Joust : MonoBehaviour
             if (attackStarted)
             {
                 ResetCharge();
+                crosshairPos = Vector2.zero;
+                crosshair.anchoredPosition = crosshairPos;
                 shakeTime = Random.Range(0f, 100f);
             }
         }
@@ -88,20 +98,36 @@ public class AttackPart_Joust : MonoBehaviour
 
     void HandleChargeInput()
     {
-        float r2Axis = Input.GetAxis("Attack");
+        bool startCharge = false;
+        bool holdCharge = false;
+        bool releaseCharge = false;
 
-        bool r2Held = r2Axis > 0.2f;
-        bool r2Down = r2Axis > 0.2f && !isCharging;
-        bool r2Up = r2Axis <= 0.2f && isCharging;
+        if (InputModeManager.IsGamepad())
+        {
+            float attackValue = Input.GetAxis(attackAxis);
+            bool held = attackValue > attackPressThreshold;
 
-        if (r2Down)
+            startCharge = held && !gamepadAttackWasHeldLastFrame && !isCharging;
+            holdCharge = held;
+            releaseCharge = !held && gamepadAttackWasHeldLastFrame && isCharging;
+
+            gamepadAttackWasHeldLastFrame = held;
+        }
+        else
+        {
+            startCharge = Input.GetMouseButtonDown(0) && !isCharging;
+            holdCharge = Input.GetMouseButton(0);
+            releaseCharge = Input.GetMouseButtonUp(0) && isCharging;
+        }
+
+        if (startCharge)
         {
             isCharging = true;
             chargeTimer = 0f;
             powerSlider.gameObject.SetActive(true);
         }
 
-        if (isCharging && r2Held)
+        if (isCharging && holdCharge)
         {
             chargeTimer += Time.deltaTime;
 
@@ -110,7 +136,7 @@ public class AttackPart_Joust : MonoBehaviour
             currentShakeAmount = baseShakeAmount + (baseShakeAmount * percent);
         }
 
-        if (r2Up)
+        if (releaseCharge)
         {
             isCharging = false;
             powerSlider.gameObject.SetActive(false);
@@ -122,38 +148,78 @@ public class AttackPart_Joust : MonoBehaviour
     {
         isCharging = false;
         chargeTimer = 0f;
-        powerSlider.value = 0;
         currentShakeAmount = baseShakeAmount;
+        gamepadAttackWasHeldLastFrame = false;
+
+        if (powerSlider != null)
+            powerSlider.value = 0f;
     }
 
     void UpdateCrosshair()
     {
-        float horizontal = Input.GetAxis("RightStickHorizontal");
-        float vertical = -Input.GetAxis("RightStickVertical");
-
-        Vector2 stickInput = new Vector2(horizontal, vertical);
-
-        // mover retícula con joystick
-        crosshairPos += stickInput * joystickSpeed * Time.deltaTime;
+        if (InputModeManager.IsGamepad())
+            UpdateCrosshairWithGamepad();
+        else
+            UpdateCrosshairWithMouse();
 
         Vector2 finalPosition = crosshairPos;
 
         if (enableShake)
         {
             shakeTime += Time.deltaTime * shakeSpeed;
-
             float offsetX = Mathf.PerlinNoise(shakeTime, 0f) - 0.5f;
             float offsetY = Mathf.PerlinNoise(0f, shakeTime) - 0.5f;
-
             finalPosition += new Vector2(offsetX, offsetY) * currentShakeAmount;
         }
 
         crosshair.anchoredPosition = finalPosition;
     }
 
+    void UpdateCrosshairWithMouse()
+    {
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect,
+            Input.mousePosition,
+            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam,
+            out Vector2 localPoint))
+        {
+            crosshairPos = localPoint;
+        }
+    }
+
+    void UpdateCrosshairWithGamepad()
+    {
+        float horizontal = Input.GetAxis(rightStickHorizontalAxis);
+        float vertical = Input.GetAxis(rightStickVerticalAxis);
+
+        Vector2 stickInput = new Vector2(horizontal, vertical);
+        crosshairPos += stickInput * joystickSpeed * Time.deltaTime;
+
+        ClampCrosshairToCanvas();
+    }
+
+    void ClampCrosshairToCanvas()
+    {
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        Rect rect = canvasRect.rect;
+
+        float halfWidth = rect.width * 0.5f;
+        float halfHeight = rect.height * 0.5f;
+
+        crosshairPos.x = Mathf.Clamp(crosshairPos.x, -halfWidth, halfWidth);
+        crosshairPos.y = Mathf.Clamp(crosshairPos.y, -halfHeight, halfHeight);
+    }
+
     void PerformAttack()
     {
-        Ray ray = cam.ScreenPointToRay(crosshair.position);
+        Vector3 screenPoint = RectTransformUtility.WorldToScreenPoint(
+            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam,
+            crosshair.position
+        );
+
+        Ray ray = cam.ScreenPointToRay(screenPoint);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
         {
@@ -164,7 +230,6 @@ public class AttackPart_Joust : MonoBehaviour
         joustManager.EndAttackPhase();
     }
 
-    // Permite que JoustManager fuerce el ataque
     public void ForceAttack()
     {
         if (isCharging)
