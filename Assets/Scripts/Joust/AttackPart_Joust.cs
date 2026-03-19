@@ -133,7 +133,7 @@ public class AttackPart_Joust : MonoBehaviour
 
         Vector2 stickInput = new Vector2(horizontal, vertical);
 
-        // mover retícula con joystick
+        // mover reticula con joystick
         crosshairPos += stickInput * joystickSpeed * Time.deltaTime;
 
         Vector2 finalPosition = crosshairPos;

@@ -8,6 +8,7 @@ public class TownNode : MonoBehaviour
 
     [Header("UI Refs")]
     public ShopPanelController shopPanel;
+    public ProgressManager progressManager;
     public GameObject mapButtonsObject;
     public GameObject townPanelObject;
     public GameObject shopPanelObject;
@@ -19,6 +20,12 @@ public class TownNode : MonoBehaviour
 
     public void EnterTown()
     {
+        if (progressManager == null)
+            progressManager = FindObjectOfType<ProgressManager>();
+
+        if (progressManager != null)
+            progressManager.SetCurrentCity(cityId);
+
         if (mapButtonsObject != null)
             mapButtonsObject.SetActive(false);
 

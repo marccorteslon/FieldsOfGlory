@@ -9,4 +9,9 @@ public class ProgressSaveData
     public string equippedLanceId;
     public string equippedShieldId;
     public string equippedArmorId;
+
+    public string currentCityId;
+
+    public int currentDay = 1;
+    public int currentMonth = 1;
 }

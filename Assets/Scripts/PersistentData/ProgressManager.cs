@@ -8,22 +8,26 @@ public class ProgressManager : MonoBehaviour
 
     public ProgressSaveData data;
 
-    private bool _equipmentLoaded;
+    private bool equipmentLoaded;
 
     void Awake()
     {
         data = ProgressSaveSystem.Load();
 
-        if (equipment == null) equipment = FindObjectOfType<EquipmentManager>();
+        if (equipment == null)
+            equipment = FindObjectOfType<EquipmentManager>();
 
-        // Prepara DB
         if (itemDatabase != null)
             itemDatabase.BuildLookup();
 
-        // Carga equipamiento guardado una vez
+        if (data.currentDay <= 0)
+            data.currentDay = 1;
+
+        if (data.currentMonth <= 0)
+            data.currentMonth = 1;
+
         LoadEquipped();
 
-        // Auto-guardado cuando cambie el equipo
         if (equipment != null)
             equipment.OnEquipmentChanged += SaveEquipped;
     }
@@ -35,12 +39,28 @@ public class ProgressManager : MonoBehaviour
     }
 
     public int Money => data.money;
+    public string CurrentCityId => data.currentCityId;
+    public int CurrentDay => data.currentDay;
+    public int CurrentMonth => data.currentMonth;
 
     public void AddMoney(int amount)
     {
         data.money += Mathf.Max(0, amount);
-        ProgressSaveSystem.Save(data);
+        SaveProgress();
         Debug.Log($"[Progress] Dinero actual: {data.money}");
+    }
+
+    public bool TrySpendMoney(int cost)
+    {
+        if (cost < 0) cost = 0;
+
+        if (data.money < cost)
+            return false;
+
+        data.money -= cost;
+        SaveProgress();
+        Debug.Log($"[Progress] Gastados {cost}. Dinero actual: {data.money}");
+        return true;
     }
 
     public int CalculateReward(int enemyHpWinPoints, int winRoundNumber)
@@ -64,14 +84,14 @@ public class ProgressManager : MonoBehaviour
         data.equippedShieldId = equipment.GetEquipped(EquipmentSlot.Shield)?.id;
         data.equippedArmorId = equipment.GetEquipped(EquipmentSlot.Armor)?.id;
 
-        ProgressSaveSystem.Save(data);
+        SaveProgress();
         Debug.Log("[Progress] Equipamiento guardado en JSON.");
     }
 
     public void LoadEquipped()
     {
-        if (_equipmentLoaded) return; // evita duplicados
-        _equipmentLoaded = true;
+        if (equipmentLoaded) return;
+        equipmentLoaded = true;
 
         if (equipment == null) return;
 
@@ -93,16 +113,47 @@ public class ProgressManager : MonoBehaviour
 
         Debug.Log("[Progress] Equipamiento cargado desde JSON.");
     }
-    public bool TrySpendMoney(int cost)
+
+    public void SetCurrentCity(string cityId)
     {
-        if (cost < 0) cost = 0;
+        if (string.IsNullOrWhiteSpace(cityId))
+            return;
 
-        if (data.money < cost)
-            return false;
+        data.currentCityId = cityId;
+        SaveProgress();
+        Debug.Log($"[Progress] Ciudad actual guardada: {cityId}");
+    }
 
-        data.money -= cost;
+    public void AdvanceDays(int days)
+    {
+        if (days <= 0) return;
+
+        data.currentDay += days;
+
+        while (data.currentDay > 30)
+        {
+            data.currentDay -= 30;
+            data.currentMonth++;
+
+            if (data.currentMonth > 12)
+                data.currentMonth = 1;
+        }
+
+        SaveProgress();
+        Debug.Log($"[Progress] Fecha actual: Día {data.currentDay}, Mes {data.currentMonth}");
+    }
+
+    public void SetDate(int day, int month)
+    {
+        data.currentDay = Mathf.Clamp(day, 1, 30);
+        data.currentMonth = Mathf.Clamp(month, 1, 12);
+
+        SaveProgress();
+        Debug.Log($"[Progress] Fecha fijada: Día {data.currentDay}, Mes {data.currentMonth}");
+    }
+
+    public void SaveProgress()
+    {
         ProgressSaveSystem.Save(data);
-        Debug.Log($"[Progress] Gastados {cost}. Dinero actual: {data.money}");
-        return true;
     }
 }

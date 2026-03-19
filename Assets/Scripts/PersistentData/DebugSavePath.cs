@@ -15,11 +15,11 @@ public class DebugSavePath : MonoBehaviour
         Debug.Log("Folder exists? " + Directory.Exists(folder));
         Debug.Log("File exists? " + File.Exists(file));
 
-        // Asegura que la carpeta existe
+        // Miramos que existe la carpeta
         Directory.CreateDirectory(folder);
         Debug.Log("After CreateDirectory - Folder exists? " + Directory.Exists(folder));
 
-        // Fuerza un write de prueba (para comprobar permisos y que aparece)
+        // Forzamos write
         try
         {
             if (!File.Exists(file))

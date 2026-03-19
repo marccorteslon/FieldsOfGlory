@@ -359,6 +359,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cityId: city_montelirio
   shopPanel: {fileID: 317149680}
+  progressManager: {fileID: 0}
   mapButtonsObject: {fileID: 1982604936}
   townPanelObject: {fileID: 206196438}
   shopPanelObject: {fileID: 317149678}
@@ -8001,6 +8002,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cityId: city_valdoren
   shopPanel: {fileID: 317149680}
+  progressManager: {fileID: 0}
   mapButtonsObject: {fileID: 1982604936}
   townPanelObject: {fileID: 145894466}
   shopPanelObject: {fileID: 317149678}
@@ -8184,6 +8186,9 @@ MonoBehaviour:
     equippedLanceId: 
     equippedShieldId: 
     equippedArmorId: 
+    currentCityId: 
+    currentDay: 1
+    currentMonth: 1
 --- !u!114 &1696376388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8735,6 +8740,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825776031}
   m_CullTransparentMesh: 1
+--- !u!1 &1838615563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1838615565}
+  - component: {fileID: 1838615564}
+  m_Layer: 0
+  m_Name: TravelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1838615564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838615563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1ae90199173ab747a048667d7f219e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  travelDatabase: {fileID: 11400000, guid: 9d6243e70d6cb86478209fa3fc8ceed2, type: 2}
+  progress: {fileID: 1696376387}
+--- !u!4 &1838615565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838615563}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1832.76, y: 79.78528, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1844002213
 GameObject:
   m_ObjectHideFlags: 0
@@ -9983,3 +10034,4 @@ SceneRoots:
   - {fileID: 1696376389}
   - {fileID: 1297937962}
   - {fileID: 165861173}
+  - {fileID: 1838615565}
