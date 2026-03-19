@@ -2380,6 +2380,7 @@ GameObject:
   - component: {fileID: 329704379}
   - component: {fileID: 329704378}
   - component: {fileID: 329704377}
+  - component: {fileID: 329704381}
   m_Layer: 5
   m_Name: Button_Joust_Montelirio
   m_TagString: Untagged
@@ -2514,6 +2515,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 329704375}
   m_CullTransparentMesh: 1
+--- !u!114 &329704381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 329704375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f75fd3f40a4bc344bb7eac67274799b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cityId: city_montelirio
+  day: 2
+  month: 1
+  progressManager: {fileID: 1696376387}
+  targetObject: {fileID: 329704375}
+  requireCurrentCityMatch: 1
 --- !u!1 &334152575
 GameObject:
   m_ObjectHideFlags: 0
@@ -10464,6 +10483,7 @@ GameObject:
   - component: {fileID: 2087231849}
   - component: {fileID: 2087231848}
   - component: {fileID: 2087231847}
+  - component: {fileID: 2087231851}
   m_Layer: 5
   m_Name: Button_Joust_Valdoren
   m_TagString: Untagged
@@ -10598,6 +10618,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2087231845}
   m_CullTransparentMesh: 1
+--- !u!114 &2087231851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087231845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f75fd3f40a4bc344bb7eac67274799b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cityId: city_valdoren
+  day: 1
+  month: 1
+  progressManager: {fileID: 1696376387}
+  targetObject: {fileID: 2087231845}
+  requireCurrentCityMatch: 1
 --- !u!1 &2111928554
 GameObject:
   m_ObjectHideFlags: 0
