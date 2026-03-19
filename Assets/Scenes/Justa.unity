@@ -1160,7 +1160,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can close with "B" key on Controller
+  m_text: 'You can close with "B" key on Controller
+
+    Also with "X" on PC'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1467,10 +1469,7 @@ MonoBehaviour:
   scoreManager: {fileID: 1318912933}
   loadout: {fileID: 13782961}
   joystickSpeed: 800
-  rightStickHorizontalAxis: RightStickHorizontal
-  rightStickVerticalAxis: RightStickVertical
-  attackAxis: Attack
-  attackPressThreshold: 0.2
+  stickDeadzone: 0.2
   fallbackBF: 1
   fallbackBL: 1
 --- !u!1 &442811294
@@ -4036,7 +4035,7 @@ MonoBehaviour:
   roundLosePanel: {fileID: 1984878981}
   gameWinPanel: {fileID: 1095796556}
   panelDisplayTime: 3
-  nextSceneName: Shop
+  nextSceneName: World
 --- !u!4 &792966345
 Transform:
   m_ObjectHideFlags: 0
@@ -4291,7 +4290,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can close with "B" key on Controller
+  m_text: 'You can close with "B" key on Controller
+
+    Also with "X" on PC'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5390,7 +5391,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1069755530
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5477,7 +5478,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1318912936}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: InputModeManager, Assembly-CSharp
         m_MethodName: SetInputMode
         m_Mode: 3
@@ -6769,11 +6770,9 @@ MonoBehaviour:
   circleRadius: 120
   angleTolerance: 30
   indicatorColor: {r: 1, g: 0, b: 0, a: 1}
-  keyboardHorizontalAxis: Horizontal
-  keyboardVerticalAxis: Vertical
   leftStickHorizontalAxis: Horizontal
   leftStickVerticalAxis: Vertical
-  minimumInputMagnitude: 0.65
+  minimumStickMagnitude: 0.65
   joystickVisual: {fileID: 1540007537}
   joystickVisualRadius: 100
 --- !u!1 &1284089753
@@ -6975,8 +6974,6 @@ GameObject:
   - component: {fileID: 1318912933}
   - component: {fileID: 1318912934}
   - component: {fileID: 1318912935}
-  - component: {fileID: 1318912937}
-  - component: {fileID: 1318912936}
   m_Layer: 0
   m_Name: JoustManager
   m_TagString: Untagged
@@ -7085,33 +7082,6 @@ MonoBehaviour:
   horseTutorialPanel: {fileID: 965889663}
   attackTutorialPanel: {fileID: 1769145118}
   defenseTutorialPanel: {fileID: 666490015}
---- !u!114 &1318912936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1318912930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22d4b0a945d400f4e8dc11785b945fab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultInputMode: 0
---- !u!114 &1318912937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1318912930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a3f881aaa5a163449a52418c8f89593, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dropdown: {fileID: 1069755531}
-  inputModeManager: {fileID: 1318912936}
 --- !u!1 &1372035017
 GameObject:
   m_ObjectHideFlags: 0
@@ -7693,7 +7663,6 @@ MonoBehaviour:
   indicatorColor: {r: 1, g: 1, b: 1, a: 1}
   fallbackMV: 3
   fallbackV: 1
-  horseGamepadButton: 332
 --- !u!1 &1489688937
 GameObject:
   m_ObjectHideFlags: 0
@@ -8715,7 +8684,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can close with "B" key on Controller
+  m_text: 'You can close with "B" key on Controller
+
+    Also with "X" on PC'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

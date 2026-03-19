@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+// RESUMEN SCRIPT: Controla la fase del caballo, detecta la zona del indicador,
+// suma puntos usando MV y V del loadout
+// y muestra feedback visual + contador de clicks.
+
 public class HorsePart_Joust : MonoBehaviour
 {
     [Header("UI References")]
@@ -11,8 +15,8 @@ public class HorsePart_Joust : MonoBehaviour
     public ScoreManager scoreManager;
 
     [Header("UI Feedback")]
-    public TextMeshProUGUI resultText;
-    public TextMeshProUGUI counterText;
+    public TextMeshProUGUI resultText;   // Texto que muestra Rojo/Amarillo/Verde
+    public TextMeshProUGUI counterText;  // Texto tipo 0/3
 
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;
@@ -31,12 +35,9 @@ public class HorsePart_Joust : MonoBehaviour
     public Color greenColor = Color.green;
     public Color indicatorColor = Color.white;
 
-    [Header("Fallback Horse Values")]
+    [Header("Fallback Horse Values (si no hay loadout)")]
     public int fallbackMV = 3;
     public int fallbackV = 1;
-
-    [Header("Gamepad Input")]
-    public KeyCode horseGamepadButton = KeyCode.JoystickButton2;
 
     private RectTransform movingIndicator;
     private float sliderHeight;
@@ -57,7 +58,7 @@ public class HorsePart_Joust : MonoBehaviour
         sliderHeight = sliderArea.rect.height;
 
         float total = 2 * redProportion + 2 * yellowProportion + greenProportion;
-        if (!Mathf.Approximately(total, 1f))
+        if (total != 1f)
         {
             float factor = 1f / total;
             redProportion *= factor;
@@ -90,10 +91,7 @@ public class HorsePart_Joust : MonoBehaviour
             resultText.gameObject.SetActive(false);
 
         if (counterText != null)
-        {
-            counterText.gameObject.SetActive(true);
             counterText.text = "0/" + maxClicks;
-        }
     }
 
     void HideUI()
@@ -115,7 +113,6 @@ public class HorsePart_Joust : MonoBehaviour
         {
             GameObject zone = new GameObject("Zone_" + i, typeof(Image));
             zone.transform.SetParent(sliderArea, false);
-
             Image img = zone.GetComponent<Image>();
             img.color = colors[i];
 
@@ -142,31 +139,20 @@ public class HorsePart_Joust : MonoBehaviour
         pos.y += direction * moveSpeed * Time.deltaTime;
 
         float limit = sliderHeight / 2f;
-
-        if (pos.y > limit)
-        {
-            pos.y = limit;
-            direction = -1f;
-        }
-        else if (pos.y < -limit)
-        {
-            pos.y = -limit;
-            direction = 1f;
-        }
+        if (pos.y > limit || pos.y < -limit)
+            direction *= -1f;
 
         movingIndicator.anchoredPosition = pos;
     }
 
     void HandleInput()
     {
-        bool pressed = false;
+        bool mouseClick = Input.GetMouseButtonDown(0);
 
-        if (InputModeManager.IsGamepad())
-            pressed = Input.GetKeyDown(horseGamepadButton);
-        else
-            pressed = Input.GetMouseButtonDown(0);
+        // Botón X mando Xbox
+        bool xboxX = Input.GetKeyDown(KeyCode.JoystickButton2);
 
-        if (pressed)
+        if (mouseClick || xboxX)
             EvaluateZone();
     }
 
@@ -186,7 +172,6 @@ public class HorsePart_Joust : MonoBehaviour
     {
         float y = movingIndicator.anchoredPosition.y;
         float normalized = (y + sliderHeight / 2f) / sliderHeight;
-
         string zone;
 
         if (normalized <= redProportion || normalized >= 1f - redProportion)
@@ -197,6 +182,7 @@ public class HorsePart_Joust : MonoBehaviour
             zone = "Verde";
 
         scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
+
         ShowResult(zone);
 
         clickCount++;
@@ -220,10 +206,12 @@ public class HorsePart_Joust : MonoBehaviour
                 resultText.text = "VERY BAD!";
                 resultText.color = redColor;
                 break;
+
             case "Amarillo":
                 resultText.text = "GOOD!";
                 resultText.color = yellowColor;
                 break;
+
             case "Verde":
                 resultText.text = "PERFECT!";
                 resultText.color = greenColor;
@@ -237,8 +225,7 @@ public class HorsePart_Joust : MonoBehaviour
         clickCount = 0;
         direction = 1f;
 
-        if (movingIndicator != null)
-            movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
+        movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
 
         if (counterText != null)
         {

@@ -10,7 +10,7 @@ public class DefensePart_Joust : MonoBehaviour
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;
 
-    [Header("Fallback Shield Stat")]
+    [Header("Fallback Shield Stat (si no hay loadout)")]
     public int fallbackBB = 2;
 
     [Header("UI Defensa")]
@@ -23,16 +23,10 @@ public class DefensePart_Joust : MonoBehaviour
     public float angleTolerance = 30f;
     public Color indicatorColor = Color.red;
 
-    [Header("Keyboard Input (WASD)")]
-    public string keyboardHorizontalAxis = "Horizontal";
-    public string keyboardVerticalAxis = "Vertical";
-
-    [Header("Gamepad Input")]
+    [Header("Input Settings")]
     public string leftStickHorizontalAxis = "LeftStickHorizontal";
     public string leftStickVerticalAxis = "LeftStickVertical";
-
-    [Header("Input Settings")]
-    public float minimumInputMagnitude = 0.65f;
+    public float minimumStickMagnitude = 0.65f;
 
     [Header("Joystick Visual")]
     public RectTransform joystickVisual;
@@ -40,6 +34,7 @@ public class DefensePart_Joust : MonoBehaviour
 
     private bool awaitingDefense = false;
     private bool defenseStarted = false;
+
     private Vector2 targetDirection;
 
     void Awake()
@@ -53,7 +48,6 @@ public class DefensePart_Joust : MonoBehaviour
         awaitingDefense = false;
         defenseStarted = false;
         ShowDefenseUI(false);
-        ResetJoystickVisual();
     }
 
     void Update()
@@ -61,7 +55,6 @@ public class DefensePart_Joust : MonoBehaviour
         if (!joustManager.defensePartIsOn)
         {
             ShowDefenseUI(false);
-            ResetJoystickVisual();
             return;
         }
 
@@ -77,7 +70,9 @@ public class DefensePart_Joust : MonoBehaviour
             return;
 
         if (CheckDefenseInput())
+        {
             EndDefense(true);
+        }
     }
 
     int GetBB()
@@ -95,6 +90,7 @@ public class DefensePart_Joust : MonoBehaviour
 
         UpdateAttackIndicatorVisual();
         ShowDefenseUI(true);
+
         awaitingDefense = true;
     }
 
@@ -109,44 +105,21 @@ public class DefensePart_Joust : MonoBehaviour
             attackIndicatorImage.color = indicatorColor;
     }
 
-    Vector2 GetCurrentDefenseInput()
-    {
-        float horizontal;
-        float vertical;
-
-        if (InputModeManager.IsGamepad())
-        {
-            horizontal = Input.GetAxis(leftStickHorizontalAxis);
-            vertical = Input.GetAxis(leftStickVerticalAxis);
-        }
-        else
-        {
-            horizontal = Input.GetAxis(keyboardHorizontalAxis);
-            vertical = Input.GetAxis(keyboardVerticalAxis);
-        }
-
-        Vector2 input = new Vector2(horizontal, vertical);
-
-        if (input.magnitude > 1f)
-            input.Normalize();
-
-        return input;
-    }
-
     bool CheckDefenseInput()
     {
-        Vector2 input = GetCurrentDefenseInput();
+        float horizontal = Input.GetAxis(leftStickHorizontalAxis);
+        float vertical = Input.GetAxis(leftStickVerticalAxis);
 
-        if (input.magnitude < minimumInputMagnitude)
+        Vector2 stickInput = new Vector2(horizontal, vertical);
+
+        if (stickInput.magnitude < minimumStickMagnitude)
             return false;
 
-        Vector2 inputDirection = input.normalized;
-        float angleDifference = Vector2.Angle(inputDirection, targetDirection);
+        Vector2 stickDirection = stickInput.normalized;
 
-        Debug.Log("Modo input actual: " + InputModeManager.CurrentInputMode +
-                  " | Input defensa: " + inputDirection +
-                  " | Target: " + targetDirection +
-                  " | Angle: " + angleDifference);
+        float angleDifference = Vector2.Angle(stickDirection, targetDirection);
+
+        Debug.Log($"Stick: {stickDirection} | Target: {targetDirection} | Angle: {angleDifference}");
 
         return angleDifference <= angleTolerance;
     }
@@ -158,9 +131,6 @@ public class DefensePart_Joust : MonoBehaviour
 
         if (attackIndicator != null)
             attackIndicator.gameObject.SetActive(show);
-
-        if (joystickVisual != null)
-            joystickVisual.gameObject.SetActive(show);
     }
 
     public void ForceEndDefense(bool blockedCorrectly)
@@ -175,14 +145,16 @@ public class DefensePart_Joust : MonoBehaviour
     {
         if (joystickVisual == null) return;
 
-        Vector2 input = GetCurrentDefenseInput();
-        joystickVisual.anchoredPosition = input * joystickVisualRadius;
-    }
+        float horizontal = Input.GetAxis(leftStickHorizontalAxis);
+        float vertical = Input.GetAxis(leftStickVerticalAxis);
 
-    void ResetJoystickVisual()
-    {
-        if (joystickVisual != null)
-            joystickVisual.anchoredPosition = Vector2.zero;
+        Vector2 stickInput = new Vector2(horizontal, vertical);
+
+        // limitar a radio
+        if (stickInput.magnitude > 1f)
+            stickInput.Normalize();
+
+        joystickVisual.anchoredPosition = stickInput * joystickVisualRadius;
     }
 
     void EndDefense(bool blockedCorrectly)
@@ -190,7 +162,6 @@ public class DefensePart_Joust : MonoBehaviour
         awaitingDefense = false;
 
         ShowDefenseUI(false);
-        ResetJoystickVisual();
 
         scoreManager.ApplyDefense(blockedCorrectly, GetBB());
         joustManager.EndDefensePhase();
