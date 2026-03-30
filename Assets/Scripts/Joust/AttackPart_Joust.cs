@@ -77,12 +77,15 @@ public class AttackPart_Joust : MonoBehaviour
                 ResetCharge();
                 shakeTime = Random.Range(0f, 100f);
 
-                // Al entrar en fase ataque, arrancamos desde la posición actual
                 crosshairPos = crosshair.anchoredPosition;
             }
         }
 
         if (!attackStarted) return;
+
+        // Bloquear totalmente mientras el tutorial estÃ© abierto
+        if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
+            return;
 
         UpdateCrosshair();
         HandleChargeInput();
@@ -149,13 +152,11 @@ public class AttackPart_Joust : MonoBehaviour
         float vertical = -Input.GetAxis("RightStickVertical");
         Vector2 stickInput = new Vector2(horizontal, vertical);
 
-        // Cambio a mando si el stick supera deadzone
         if (stickInput.magnitude > stickDeadzone)
         {
             currentInputMode = InputMode.Controller;
         }
 
-        // Cambio a mouse si realmente se ha movido
         float mouseX = Input.GetAxisRaw("Mouse X");
         float mouseY = Input.GetAxisRaw("Mouse Y");
 
@@ -189,7 +190,6 @@ public class AttackPart_Joust : MonoBehaviour
             }
         }
 
-        // Limitar la retícula al canvas
         Vector2 canvasSize = canvasRect.rect.size;
         Vector2 halfSize = canvasSize * 0.5f;
 
