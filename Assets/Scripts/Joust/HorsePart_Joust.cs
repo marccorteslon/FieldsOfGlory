@@ -79,6 +79,10 @@ public class HorsePart_Joust : MonoBehaviour
             return;
         }
 
+        // Bloquear totalmente el input y la lógica mientras haya tutorial abierto
+        if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
+            return;
+
         if (!isActive) return;
 
         MoveIndicator();
@@ -149,7 +153,7 @@ public class HorsePart_Joust : MonoBehaviour
     {
         bool mouseClick = Input.GetMouseButtonDown(0);
 
-        // Bot�n X mando Xbox
+        // Botón X mando Xbox
         bool xboxX = Input.GetKeyDown(KeyCode.JoystickButton2);
 
         if (mouseClick || xboxX)

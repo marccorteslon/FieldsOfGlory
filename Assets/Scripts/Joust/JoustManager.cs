@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-// Centro neuralgico de la Justa.
-
 public class JoustManager : MonoBehaviour
 {
     [Header("Phase States")]
@@ -43,7 +41,7 @@ public class JoustManager : MonoBehaviour
     private bool horseTimerRunning = false;
 
     [Header("Attack Timer")]
-    public float attackDuration = 3f; // configurable desde inspector
+    public float attackDuration = 3f;
     private float attackTimer = 0f;
     private bool attackTimerRunning = false;
 
@@ -89,7 +87,8 @@ public class JoustManager : MonoBehaviour
 
         UpdatePhases();
 
-        if (tutorialManager != null)
+        // ✅ SOLO SI NO SE HA VISTO
+        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
         {
             tutorialManager.ShowHorseTutorial();
         }
@@ -196,8 +195,7 @@ public class JoustManager : MonoBehaviour
 
         if (horsePartIsOn)
         {
-            controlsText.text =
-                "X (Mando) -> Cargar caballo";
+            controlsText.text = "X (Mando) -> Cargar caballo";
         }
         else if (attackPartIsOn)
         {
@@ -229,7 +227,7 @@ public class JoustManager : MonoBehaviour
 
         UpdatePhases();
 
-        if (tutorialManager != null)
+        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
             tutorialManager.ShowAttackTutorial();
     }
 
@@ -247,8 +245,12 @@ public class JoustManager : MonoBehaviour
 
         UpdatePhases();
 
-        if (tutorialManager != null)
+        // ✅ ÚLTIMA PARTE DEL TUTORIAL → marcar como visto
+        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
+        {
             tutorialManager.ShowDefenseTutorial();
+            tutorialManager.MarkTutorialAsSeen();
+        }
     }
 
     public void EndDefensePhase()
