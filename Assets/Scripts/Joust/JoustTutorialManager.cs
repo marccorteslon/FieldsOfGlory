@@ -9,6 +9,48 @@ public class JoustTutorialManager : MonoBehaviour
 
     private GameObject currentPanel;
 
+    private const string TutorialSeenKey = "JoustTutorialSeen";
+
+    // ---------------- CONTROL ESTADO ----------------
+
+    public bool ShouldShowTutorial()
+    {
+        return PlayerPrefs.GetInt(TutorialSeenKey, 0) == 0;
+    }
+
+    public void MarkTutorialAsSeen()
+    {
+        PlayerPrefs.SetInt(TutorialSeenKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    public void ResetTutorialProgress()
+    {
+        PlayerPrefs.SetInt(TutorialSeenKey, 0);
+        PlayerPrefs.Save();
+    }
+
+    // Saber si hay un panel de tutorial abierto
+    public bool IsTutorialOpen()
+    {
+        return currentPanel != null && currentPanel.activeSelf;
+    }
+
+    // BotÃ³n UI
+    public void ReactivateTutorialFromUI()
+    {
+        ResetTutorialProgress();
+    }
+
+    // Opcional: activarlo y mostrarlo ya
+    public void ReactivateAndShowNow()
+    {
+        ResetTutorialProgress();
+        ShowHorseTutorial();
+    }
+
+    // ---------------- SHOW ----------------
+
     public void ShowHorseTutorial()
     {
         ShowPanel(horseTutorialPanel);
@@ -39,12 +81,13 @@ public class JoustTutorialManager : MonoBehaviour
         if (currentPanel != null)
             currentPanel.SetActive(false);
 
+        currentPanel = null;
         Time.timeScale = 1f;
     }
 
     void Update()
     {
-        // Botón B mando Xbox o tecla X teclado
+        // B (mando) o X (teclado)
         if (currentPanel != null &&
             (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.X)))
         {
