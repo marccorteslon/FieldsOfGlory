@@ -28,7 +28,6 @@ public class WinManager : MonoBehaviour
 
     private bool gameEnded = false;
 
-    // ---------------- Llamar al final de cada ronda ----------------
     public void ProcessRoundEnd()
     {
         if (scoreManager == null || joustManager == null)
@@ -36,10 +35,11 @@ public class WinManager : MonoBehaviour
             Debug.LogError("WinManager: ScoreManager o JoustManager no asignado.");
             return;
         }
+
         if (progressManager == null)
             progressManager = FindObjectOfType<ProgressManager>();
 
-        if (gameEnded) return; // ya terminó la partida, no procesar más
+        if (gameEnded) return;
 
         int roundScore = scoreManager.GetScore();
         currentWinPoints += roundScore;
@@ -57,17 +57,16 @@ public class WinManager : MonoBehaviour
         {
             if (currentWinPoints >= winPoints)
             {
-                StartCoroutine(ShowGameWinPanel()); // victoria de la PARTIDA
+                StartCoroutine(ShowGameWinPanel());
             }
             else
             {
-                StartCoroutine(ShowRoundWinPanel()); // victoria de RONDA
+                StartCoroutine(ShowRoundWinPanel());
             }
         }
         else
         {
-            StartCoroutine(ShowRoundLosePanel()); // derrota de ronda
-
+            StartCoroutine(ShowRoundLosePanel());
         }
     }
 
@@ -108,10 +107,8 @@ public class WinManager : MonoBehaviour
         Debug.Log("¡Has ganado la partida completa!");
         WinGame();
 
-        // Espera 3 segundos antes de cambiar de escena
         yield return new WaitForSeconds(3f);
 
-        // Cambiar de escena
         if (!string.IsNullOrEmpty(nextSceneName))
         {
             SceneManager.LoadScene(nextSceneName);
@@ -126,22 +123,25 @@ public class WinManager : MonoBehaviour
     {
         Debug.Log("Empezando la siguiente ronda...");
 
+        // Reset score de la ronda ANTES de desbloquear la UI
+        scoreManager.totalScore = 0;
+
+        if (scoreUIManager != null)
+        {
+            scoreUIManager.PrepareNextRound();
+        }
+
         // Reset fases
         joustManager.horsePartIsOn = true;
         joustManager.attackPartIsOn = false;
         joustManager.defensePartIsOn = false;
         joustManager.UpdatePhases();
 
-        // Reset score de la ronda
-        scoreManager.totalScore = 0;
-
-        // Reset indicadores de fase caballo
         if (joustManager.horsePart != null)
         {
             joustManager.horsePart.ResetHorsePhase();
         }
 
-        // ---------------- Reset posiciones jugador, enemigo y cámara ----------------
         joustManager.ResetPositions();
     }
 
@@ -155,7 +155,6 @@ public class WinManager : MonoBehaviour
         if (progressManager != null)
         {
             int reward = progressManager.CalculateReward(winPoints, roundNumber);
-
             progressManager.AddMoney(reward);
 
             Debug.Log($"[REWARD] HP enemigo: {winPoints} | Ronda: {roundNumber} | Dinero ganado: {reward}");
@@ -169,7 +168,5 @@ public class WinManager : MonoBehaviour
     void LoseGame()
     {
         Debug.Log("No alcanzaste los puntos mínimos de esta ronda. Has perdido.");
-        
-       
     }
 }

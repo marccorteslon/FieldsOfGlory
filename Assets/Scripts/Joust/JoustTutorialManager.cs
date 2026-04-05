@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JoustTutorialManager : MonoBehaviour
 {
@@ -7,62 +8,64 @@ public class JoustTutorialManager : MonoBehaviour
     public GameObject attackTutorialPanel;
     public GameObject defenseTutorialPanel;
 
+    [Header("UI Toggle")]
+    public Toggle tutorialToggle; // Asignar desde el inspector
+
     private GameObject currentPanel;
 
-    private const string TutorialSeenKey = "JoustTutorialSeen";
+    private const string TutorialEnabledKey = "JoustTutorialEnabled";
 
-    // ---------------- CONTROL ESTADO ----------------
+    // ---------------- INIT ----------------
+
+    void Start()
+    {
+        // Cargar estado del toggle (por defecto ON)
+        bool enabled = PlayerPrefs.GetInt(TutorialEnabledKey, 1) == 1;
+
+        if (tutorialToggle != null)
+        {
+            tutorialToggle.isOn = enabled;
+            tutorialToggle.onValueChanged.AddListener(OnToggleChanged);
+        }
+    }
+
+    // ---------------- TOGGLE ----------------
+
+    void OnToggleChanged(bool isOn)
+    {
+        PlayerPrefs.SetInt(TutorialEnabledKey, isOn ? 1 : 0);
+        PlayerPrefs.Save();
+    }
 
     public bool ShouldShowTutorial()
     {
-        return PlayerPrefs.GetInt(TutorialSeenKey, 0) == 0;
+        return PlayerPrefs.GetInt(TutorialEnabledKey, 1) == 1;
     }
 
-    public void MarkTutorialAsSeen()
-    {
-        PlayerPrefs.SetInt(TutorialSeenKey, 1);
-        PlayerPrefs.Save();
-    }
+    // ---------------- CONTROL ----------------
 
-    public void ResetTutorialProgress()
-    {
-        PlayerPrefs.SetInt(TutorialSeenKey, 0);
-        PlayerPrefs.Save();
-    }
-
-    // Saber si hay un panel de tutorial abierto
     public bool IsTutorialOpen()
     {
         return currentPanel != null && currentPanel.activeSelf;
-    }
-
-    // Botón UI
-    public void ReactivateTutorialFromUI()
-    {
-        ResetTutorialProgress();
-    }
-
-    // Opcional: activarlo y mostrarlo ya
-    public void ReactivateAndShowNow()
-    {
-        ResetTutorialProgress();
-        ShowHorseTutorial();
     }
 
     // ---------------- SHOW ----------------
 
     public void ShowHorseTutorial()
     {
+        if (!ShouldShowTutorial()) return;
         ShowPanel(horseTutorialPanel);
     }
 
     public void ShowAttackTutorial()
     {
+        if (!ShouldShowTutorial()) return;
         ShowPanel(attackTutorialPanel);
     }
 
     public void ShowDefenseTutorial()
     {
+        if (!ShouldShowTutorial()) return;
         ShowPanel(defenseTutorialPanel);
     }
 
@@ -87,7 +90,6 @@ public class JoustTutorialManager : MonoBehaviour
 
     void Update()
     {
-        // B (mando) o X (teclado)
         if (currentPanel != null &&
             (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.X)))
         {
