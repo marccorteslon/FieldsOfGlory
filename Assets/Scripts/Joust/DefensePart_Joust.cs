@@ -58,6 +58,10 @@ public class DefensePart_Joust : MonoBehaviour
             return;
         }
 
+        // Bloquear defensa mientras el tutorial esté abierto
+        if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
+            return;
+
         if (!defenseStarted)
         {
             defenseStarted = true;
@@ -150,7 +154,6 @@ public class DefensePart_Joust : MonoBehaviour
 
         Vector2 stickInput = new Vector2(horizontal, vertical);
 
-        // limitar a radio
         if (stickInput.magnitude > 1f)
             stickInput.Normalize();
 
