@@ -27,6 +27,7 @@ public class WinManager : MonoBehaviour
     public string nextSceneName = "Shop";
 
     private bool gameEnded = false;
+    private bool tutorialDisabledAfterJoust = false;
 
     public void ProcessRoundEnd()
     {
@@ -49,6 +50,8 @@ public class WinManager : MonoBehaviour
             scoreUIManager.ConsolidateRound();
         }
 
+        DisableTutorialAfterThisJoust();
+
         Debug.Log($"[Ronda {roundNumber} Finalizada] Puntos de esta ronda: {roundScore} | Puntos totales: {currentWinPoints}/{winPoints}");
 
         int minPointsThisRound = Mathf.CeilToInt(winPoints * minPointsFraction);
@@ -67,6 +70,26 @@ public class WinManager : MonoBehaviour
         else
         {
             StartCoroutine(ShowRoundLosePanel());
+        }
+    }
+
+    void DisableTutorialAfterThisJoust()
+    {
+        if (tutorialDisabledAfterJoust)
+            return;
+
+        if (joustManager != null && joustManager.tutorialManager != null)
+        {
+            joustManager.tutorialManager.DisableTutorial();
+            tutorialDisabledAfterJoust = true;
+            Debug.Log("Tutorial desactivado tras completar la justa.");
+        }
+        else
+        {
+            PlayerPrefs.SetInt("JoustTutorialEnabled", 0);
+            PlayerPrefs.Save();
+            tutorialDisabledAfterJoust = true;
+            Debug.Log("Tutorial desactivado tras completar la justa (fallback con PlayerPrefs).");
         }
     }
 
@@ -123,7 +146,6 @@ public class WinManager : MonoBehaviour
     {
         Debug.Log("Empezando la siguiente ronda...");
 
-        // Reset score de la ronda ANTES de desbloquear la UI
         scoreManager.totalScore = 0;
 
         if (scoreUIManager != null)
@@ -131,7 +153,6 @@ public class WinManager : MonoBehaviour
             scoreUIManager.PrepareNextRound();
         }
 
-        // Reset fases
         joustManager.horsePartIsOn = true;
         joustManager.attackPartIsOn = false;
         joustManager.defensePartIsOn = false;

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class JoustTutorialManager : MonoBehaviour
 {
@@ -8,48 +7,37 @@ public class JoustTutorialManager : MonoBehaviour
     public GameObject attackTutorialPanel;
     public GameObject defenseTutorialPanel;
 
-    [Header("UI Toggle")]
-    public Toggle tutorialToggle; // Asignar desde el inspector
-
     private GameObject currentPanel;
 
     private const string TutorialEnabledKey = "JoustTutorialEnabled";
 
-    // ---------------- INIT ----------------
-
-    void Start()
+    void Awake()
     {
-        // Cargar estado del toggle (por defecto ON)
-        bool enabled = PlayerPrefs.GetInt(TutorialEnabledKey, 1) == 1;
-
-        if (tutorialToggle != null)
-        {
-            tutorialToggle.isOn = enabled;
-            tutorialToggle.onValueChanged.AddListener(OnToggleChanged);
-        }
+        HideAllTutorialPanelsImmediate();
+        Time.timeScale = 1f;
     }
 
-    // ---------------- TOGGLE ----------------
-
-    void OnToggleChanged(bool isOn)
+    public void EnableTutorial()
     {
-        PlayerPrefs.SetInt(TutorialEnabledKey, isOn ? 1 : 0);
+        PlayerPrefs.SetInt(TutorialEnabledKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    public void DisableTutorial()
+    {
+        PlayerPrefs.SetInt(TutorialEnabledKey, 0);
         PlayerPrefs.Save();
     }
 
     public bool ShouldShowTutorial()
     {
-        return PlayerPrefs.GetInt(TutorialEnabledKey, 1) == 1;
+        return PlayerPrefs.GetInt(TutorialEnabledKey, 0) == 1;
     }
-
-    // ---------------- CONTROL ----------------
 
     public bool IsTutorialOpen()
     {
         return currentPanel != null && currentPanel.activeSelf;
     }
-
-    // ---------------- SHOW ----------------
 
     public void ShowHorseTutorial()
     {
@@ -73,8 +61,10 @@ public class JoustTutorialManager : MonoBehaviour
     {
         if (panel == null) return;
 
+        HideAllTutorialPanelsImmediate();
+
         currentPanel = panel;
-        panel.SetActive(true);
+        currentPanel.SetActive(true);
 
         Time.timeScale = 0f;
     }
@@ -88,10 +78,29 @@ public class JoustTutorialManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    void HideAllTutorialPanelsImmediate()
+    {
+        if (horseTutorialPanel != null)
+            horseTutorialPanel.SetActive(false);
+
+        if (attackTutorialPanel != null)
+            attackTutorialPanel.SetActive(false);
+
+        if (defenseTutorialPanel != null)
+            defenseTutorialPanel.SetActive(false);
+
+        currentPanel = null;
+    }
+
     void Update()
     {
-        if (currentPanel != null &&
-            (Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.X)))
+        if (currentPanel == null || !currentPanel.activeSelf)
+            return;
+
+        bool closeWithController = Input.GetKeyDown(KeyCode.JoystickButton1);
+        bool closeWithKeyboard = Input.GetKeyDown(KeyCode.X);
+
+        if (closeWithController || closeWithKeyboard)
         {
             CloseTutorial();
         }
