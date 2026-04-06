@@ -8,17 +8,18 @@ public class ScoreUIManager : MonoBehaviour
     public WinManager winManager;
 
     [Header("Bars (Superpuestas)")]
-    public Slider baseBar;          // Color Y (rondas anteriores)
-    public Slider currentRoundBar;  // Color X (ronda actual)
+    public Slider baseBar;          // Puntos consolidados
+    public Slider currentRoundBar;  // Base + progreso actual de la ronda
 
     [Header("Min Win Indicator")]
-    public Slider minWinSlider;     // Barra Slider para mostrar mínimo a alcanzar
-
-    [Header("Animation")]
-    public float minWinAnimSpeed = 2f; // velocidad de animación
+    public Slider minWinSlider;
 
     private int lastRoundScore = 0;
-    private int basePoints = 0;     // puntos consolidados de rondas anteriores
+    private int basePoints = 0;
+
+    // Evita que currentRoundBar siga recalculándose
+    // después de consolidar la ronda anterior
+    private bool lockCurrentRoundBar = false;
 
     void Start()
     {
@@ -38,34 +39,54 @@ public class ScoreUIManager : MonoBehaviour
     void Update()
     {
         UpdateCurrentRoundProgress();
-        AnimateMinWinSlider();
+        UpdateMinWinSliderInstant();
     }
 
     void UpdateCurrentRoundProgress()
     {
+        if (lockCurrentRoundBar)
+            return;
+
         int currentScore = scoreManager.GetScore();
 
-        if (currentScore == lastRoundScore) return;
+        if (currentScore == lastRoundScore)
+            return;
 
         lastRoundScore = currentScore;
 
-        currentRoundBar.value = basePoints + currentScore;
+        currentRoundBar.value = Mathf.Min(basePoints + currentScore, winManager.winPoints);
     }
 
     public void ConsolidateRound()
     {
         basePoints += lastRoundScore;
+        basePoints = Mathf.Min(basePoints, winManager.winPoints);
 
+        // Actualizamos ambas barras al mismo tiempo
         baseBar.value = basePoints;
         currentRoundBar.value = basePoints;
 
+        // Bloqueamos la current para que no vuelva a sumarle
+        // el score viejo de la ronda recién terminada
+        lockCurrentRoundBar = true;
+
         lastRoundScore = 0;
+    }
+
+    public void PrepareNextRound()
+    {
+        // El score de la nueva ronda empieza desde 0,
+        // pero visualmente la barra current arranca desde la base ya consolidada
+        lastRoundScore = 0;
+        currentRoundBar.value = basePoints;
+        lockCurrentRoundBar = false;
     }
 
     public void ResetAll()
     {
         basePoints = 0;
         lastRoundScore = 0;
+        lockCurrentRoundBar = false;
 
         baseBar.value = 0;
         currentRoundBar.value = 0;
@@ -74,20 +95,13 @@ public class ScoreUIManager : MonoBehaviour
             minWinSlider.value = 0;
     }
 
-    void AnimateMinWinSlider()
+    void UpdateMinWinSliderInstant()
     {
         if (minWinSlider == null || winManager == null) return;
 
-        // mínimo a lograr = 1/3 de winPoints
-        float minFraction = winManager.minPointsFraction;
-
-        // progreso visual = basePoints + 1/3 de winPoints
-        float targetValue = basePoints + winManager.winPoints * minFraction;
-
-        // no exceder máximo
+        float targetValue = basePoints + (winManager.winPoints * winManager.minPointsFraction);
         targetValue = Mathf.Min(targetValue, winManager.winPoints);
 
-        // animación suave
-        minWinSlider.value = Mathf.Lerp(minWinSlider.value, targetValue, Time.deltaTime * minWinAnimSpeed);
+        minWinSlider.value = targetValue;
     }
 }

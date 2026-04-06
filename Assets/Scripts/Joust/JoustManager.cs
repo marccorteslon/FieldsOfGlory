@@ -87,7 +87,6 @@ public class JoustManager : MonoBehaviour
 
         UpdatePhases();
 
-        // ✅ SOLO SI NO SE HA VISTO
         if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
         {
             tutorialManager.ShowHorseTutorial();
@@ -245,11 +244,9 @@ public class JoustManager : MonoBehaviour
 
         UpdatePhases();
 
-        // ✅ ÚLTIMA PARTE DEL TUTORIAL → marcar como visto
         if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
         {
             tutorialManager.ShowDefenseTutorial();
-            tutorialManager.MarkTutorialAsSeen();
         }
     }
 
