@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Damage_Lance
   displayName: Lanza de Punta Hueca
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 724aa17f8c4c6ae4789075ccb352d44d, type: 3}
   description: Una tramposa lanza con punta hueca.
   price: 30
   slot: 1

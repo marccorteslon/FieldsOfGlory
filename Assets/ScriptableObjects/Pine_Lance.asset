@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Pine_Lance
   displayName: Lanza de madera de Pino
-  icon: {fileID: 21300000, guid: 19f20bd0225441b459be623cc952b279, type: 3}
+  icon: {fileID: 21300000, guid: 724aa17f8c4c6ae4789075ccb352d44d, type: 3}
   description: Una poderosa lanza hecha de madera de Pino
   price: 40
   slot: 1
