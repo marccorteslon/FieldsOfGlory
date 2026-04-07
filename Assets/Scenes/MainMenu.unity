@@ -5371,6 +5371,7 @@ GameObject:
   - component: {fileID: 989896901}
   - component: {fileID: 989896900}
   - component: {fileID: 989896902}
+  - component: {fileID: 989896903}
   m_Layer: 0
   m_Name: MenuManager
   m_TagString: Untagged
@@ -5422,6 +5423,18 @@ MonoBehaviour:
   horseTutorialPanel: {fileID: 0}
   attackTutorialPanel: {fileID: 0}
   defenseTutorialPanel: {fileID: 0}
+--- !u!114 &989896903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989896899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71d14c6547f112c47ac81728e552a3ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &993128742
 GameObject:
   m_ObjectHideFlags: 0
