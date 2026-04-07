@@ -736,6 +736,8 @@ MonoBehaviour:
   joustManager: {fileID: 1318912931}
   scoreManager: {fileID: 1318912933}
   loadout: {fileID: 13782961}
+  joystickSpeed: 800
+  stickDeadzone: 0.2
   fallbackBF: 4
   fallbackBL: 2
 --- !u!1 &557873223
@@ -1437,7 +1439,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1554,7 +1557,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -1857,7 +1861,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -2737,7 +2742,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -2856,11 +2862,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 865ffa7c01bbf0040ad4ea7d08079a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackText: {fileID: 766113011}
   joustManager: {fileID: 1318912931}
   scoreManager: {fileID: 1318912933}
   loadout: {fileID: 13782961}
   fallbackBB: 2
+  defenseCircle: {fileID: 0}
+  attackIndicator: {fileID: 0}
+  attackIndicatorImage: {fileID: 0}
+  circleRadius: 120
+  angleTolerance: 30
+  indicatorColor: {r: 1, g: 0, b: 0, a: 1}
+  leftStickHorizontalAxis: LeftStickHorizontal
+  leftStickVerticalAxis: LeftStickVertical
+  minimumStickMagnitude: 0.65
+  joystickVisual: {fileID: 0}
+  joystickVisualRadius: 100
 --- !u!1 &1316005992
 GameObject:
   m_ObjectHideFlags: 0
@@ -2899,6 +2915,9 @@ MonoBehaviour:
     equippedLanceId: 
     equippedShieldId: 
     equippedArmorId: 
+    currentCityId: 
+    currentDay: 1
+    currentMonth: 1
 --- !u!4 &1316005994
 Transform:
   m_ObjectHideFlags: 0
@@ -2975,6 +2994,8 @@ MonoBehaviour:
   horsePhaseDuration: 5
   attackDuration: 3
   defenseDuration: 2
+  controlsText: {fileID: 0}
+  tutorialManager: {fileID: 0}
   initialPlayerPos: {x: 0, y: 0, z: 0}
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
   initialEnemyPos: {x: 0, y: 0, z: 0}
@@ -3440,7 +3461,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -3915,7 +3937,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -4063,7 +4086,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
