@@ -1503,7 +1503,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.6203003, y: 27.756783}
+  m_AnchoredPosition: {x: -0.6203613, y: 27.756775}
   m_SizeDelta: {x: -2053.7397, y: -494.6409}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &257873150
@@ -1890,10 +1890,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &344555160
 GameObject:
   m_ObjectHideFlags: 0
@@ -2537,10 +2537,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &538471303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2991,10 +2991,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &600421105
 GameObject:
   m_ObjectHideFlags: 0
@@ -4653,7 +4653,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.71375, y: 0.65300006}
   m_AnchorMax: {x: 0.91875, y: 0.75052446}
-  m_AnchoredPosition: {x: -1, y: 1.0308075}
+  m_AnchoredPosition: {x: -1, y: 1.0308228}
   m_SizeDelta: {x: 88, y: 20.651001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &816809652
@@ -4780,10 +4780,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &829143444
 GameObject:
   m_ObjectHideFlags: 0
@@ -4958,7 +4958,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.08375, y: 0.65300006}
   m_AnchorMax: {x: 0.28750002, y: 0.75052446}
-  m_AnchoredPosition: {x: -0.5, y: 1.0308075}
+  m_AnchoredPosition: {x: -0.5, y: 1.0308228}
   m_SizeDelta: {x: 89, y: 20.651001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &832042793
@@ -5085,10 +5085,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &871153665
 GameObject:
   m_ObjectHideFlags: 0
@@ -5119,7 +5119,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 890043990}
   - {fileID: 439125024}
   - {fileID: 1642421946}
   m_Father: {fileID: 151416418}
@@ -5425,11 +5424,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3949609}
-  m_Father: {fileID: 871153666}
+  m_Father: {fileID: 1943576649}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -91.895645, y: 330.97733}
+  m_AnchoredPosition: {x: 185.5732, y: 153.36066}
   m_SizeDelta: {x: 100.1372, y: 25.739}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &890043991
@@ -5554,10 +5553,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &893871416
 GameObject:
   m_ObjectHideFlags: 0
@@ -5797,10 +5796,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &944774113
 GameObject:
   m_ObjectHideFlags: 0
@@ -6099,10 +6098,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &989896899
 GameObject:
   m_ObjectHideFlags: 0
@@ -7913,7 +7912,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.3925, y: 0.53777796}
   m_AnchorMax: {x: 0.6525, y: 0.9866662}
-  m_AnchoredPosition: {x: 0.4476471, y: -0.2000122}
+  m_AnchoredPosition: {x: 0.44763184, y: -0.2000122}
   m_SizeDelta: {x: 0.8952942, y: -0.8700981}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1503623515
@@ -8659,10 +8658,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &1642421945
 GameObject:
   m_ObjectHideFlags: 0
@@ -8822,10 +8821,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useHoverSound: 1
-  useClickSound: 1
   hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
+  useHoverSound: 1
+  useClickSound: 1
 --- !u!1 &1698080697
 GameObject:
   m_ObjectHideFlags: 0
@@ -9718,11 +9717,12 @@ RectTransform:
   - {fileID: 993128743}
   - {fileID: 1832585174}
   - {fileID: 1100785648}
+  - {fileID: 890043990}
   m_Father: {fileID: 151416418}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10.967712, y: -19.67743}
+  m_AnchoredPosition: {x: 10.967773, y: -19.67743}
   m_SizeDelta: {x: -300.6451, y: -39.3549}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1943576650
