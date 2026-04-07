@@ -8,8 +8,12 @@ public class ScoreUIManager : MonoBehaviour
     public WinManager winManager;
 
     [Header("Bars (Superpuestas)")]
-    public Slider baseBar;          // Puntos consolidados
-    public Slider currentRoundBar;  // Base + progreso actual de la ronda
+
+    // La barra general de progreso
+    public Slider baseBar;   
+    
+    // El progreso específico de la ronda
+    public Slider currentRoundBar;  
 
     [Header("Min Win Indicator")]
     public Slider minWinSlider;
@@ -17,8 +21,6 @@ public class ScoreUIManager : MonoBehaviour
     private int lastRoundScore = 0;
     private int basePoints = 0;
 
-    // Evita que currentRoundBar siga recalculándose
-    // después de consolidar la ronda anterior
     private bool lockCurrentRoundBar = false;
 
     void Start()
@@ -62,12 +64,9 @@ public class ScoreUIManager : MonoBehaviour
         basePoints += lastRoundScore;
         basePoints = Mathf.Min(basePoints, winManager.winPoints);
 
-        // Actualizamos ambas barras al mismo tiempo
         baseBar.value = basePoints;
         currentRoundBar.value = basePoints;
 
-        // Bloqueamos la current para que no vuelva a sumarle
-        // el score viejo de la ronda recién terminada
         lockCurrentRoundBar = true;
 
         lastRoundScore = 0;
@@ -75,8 +74,7 @@ public class ScoreUIManager : MonoBehaviour
 
     public void PrepareNextRound()
     {
-        // El score de la nueva ronda empieza desde 0,
-        // pero visualmente la barra current arranca desde la base ya consolidada
+        // El score de la nueva ronda empieza desde 0, pero visualmente la barra current arranca desde la base ya consolidada
         lastRoundScore = 0;
         currentRoundBar.value = basePoints;
         lockCurrentRoundBar = false;
@@ -95,7 +93,7 @@ public class ScoreUIManager : MonoBehaviour
             minWinSlider.value = 0;
     }
 
-    void UpdateMinWinSliderInstant()
+    void UpdateMinWinSliderInstant() // Actualizar el minimo de ronda para ganar
     {
         if (minWinSlider == null || winManager == null) return;
 

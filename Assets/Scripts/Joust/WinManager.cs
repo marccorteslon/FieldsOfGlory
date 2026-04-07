@@ -93,6 +93,7 @@ public class WinManager : MonoBehaviour
         }
     }
 
+    // Mostrar los distintos paneles
     IEnumerator ShowRoundWinPanel()
     {
         if (roundWinPanel != null)
@@ -112,14 +113,10 @@ public class WinManager : MonoBehaviour
         if (roundLosePanel != null)
             roundLosePanel.SetActive(true);
 
-        yield return new WaitForSeconds(panelDisplayTime);
-
-        if (roundLosePanel != null)
-            roundLosePanel.SetActive(false);
-
         LoseGame();
-    }
 
+        yield break;
+    }
     IEnumerator ShowGameWinPanel()
     {
         gameEnded = true;

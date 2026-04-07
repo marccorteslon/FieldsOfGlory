@@ -54,6 +54,7 @@ public class AttackPart_Joust : MonoBehaviour
 
     void Start()
     {
+        // La carga del ataque
         if (powerSlider != null)
         {
             powerSlider.gameObject.SetActive(false);
@@ -118,18 +119,18 @@ public class AttackPart_Joust : MonoBehaviour
 
     void HandleChargeInput()
     {
-        // -------- PC: Click izquierdo --------
+        // PC: Click izquierdo
         bool mouseDown = Input.GetMouseButtonDown(0);
         bool mouseHeld = Input.GetMouseButton(0);
         bool mouseUp = Input.GetMouseButtonUp(0);
 
-        // -------- Mando: eje Attack / R2 --------
+        // Mando: eje Attack / R2
         float r2Axis = Input.GetAxis("Attack");
         bool controllerHeld = r2Axis > 0.2f;
         bool controllerDown = controllerHeld && !isCharging;
         bool controllerUp = !controllerHeld && isCharging && currentInputMode == InputMode.Controller;
 
-        // Prioridad: si el jugador empieza con ratón, carga con ratón
+        // Si el jugador empieza con ratón, carga con ratón
         if (!isCharging)
         {
             if (mouseDown)
@@ -182,7 +183,7 @@ public class AttackPart_Joust : MonoBehaviour
         }
     }
 
-    void StartCharge(InputMode mode)
+    void StartCharge(InputMode mode) // Empezar a hacer la carga
     {
         currentInputMode = mode;
         isCharging = true;
@@ -196,7 +197,7 @@ public class AttackPart_Joust : MonoBehaviour
         }
     }
 
-    void ResetCharge()
+    void ResetCharge() // Al inicio de cada ronda, reiniciar
     {
         isCharging = false;
         chargeTimer = 0f;
@@ -209,7 +210,7 @@ public class AttackPart_Joust : MonoBehaviour
         }
     }
 
-    void UpdateCrosshair()
+    void UpdateCrosshair() // Movimiento del crosshair
     {
         if (crosshair == null || canvas == null) return;
 
@@ -276,7 +277,7 @@ public class AttackPart_Joust : MonoBehaviour
         crosshair.anchoredPosition = finalPosition;
     }
 
-    void PerformAttack()
+    void PerformAttack() // Atacar al soltar
     {
         if (cam == null || crosshair == null || scoreManager == null || joustManager == null)
             return;
@@ -292,7 +293,7 @@ public class AttackPart_Joust : MonoBehaviour
         joustManager.EndAttackPhase();
     }
 
-    public void ForceAttack()
+    public void ForceAttack() // Atacar si te quedas sin tiempo
     {
         if (isCharging)
         {
