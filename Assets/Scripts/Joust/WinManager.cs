@@ -115,8 +115,18 @@ public class WinManager : MonoBehaviour
 
         LoseGame();
 
-        yield break;
+        yield return new WaitForSeconds(5f);
+
+        if (!string.IsNullOrEmpty(nextSceneName))
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        }
     }
+
     IEnumerator ShowGameWinPanel()
     {
         gameEnded = true;
