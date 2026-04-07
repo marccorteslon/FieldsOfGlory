@@ -9,6 +9,7 @@ public class TownNode : MonoBehaviour
     [Header("UI Refs")]
     public ShopPanelController shopPanel;
     public ProgressManager progressManager;
+    public TownTravelUI travelUI;
     public GameObject mapButtonsObject;
     public GameObject townPanelObject;
     public GameObject shopPanelObject;
@@ -21,7 +22,7 @@ public class TownNode : MonoBehaviour
     public void EnterTown()
     {
         if (progressManager == null)
-            progressManager = FindObjectOfType<ProgressManager>();
+            progressManager = FindFirstObjectByType<ProgressManager>();
 
         if (progressManager != null)
             progressManager.SetCurrentCity(cityId);
@@ -143,6 +144,9 @@ public class TownNode : MonoBehaviour
 
         if (tavernPanelObject != null)
             tavernPanelObject.SetActive(false);
+
+        if (travelUI != null)
+            travelUI.RefreshTravelOptions(city.cityId);
     }
 
     void OnError(Exception ex)
