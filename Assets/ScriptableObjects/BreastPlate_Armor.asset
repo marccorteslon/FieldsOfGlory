@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Breastplate_Armor
   displayName: Coraza
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 99e3d521fe130674ab9b266c1381f42b, type: 3}
   description: Una coraza libre de impedimentos
   price: 30
   slot: 3

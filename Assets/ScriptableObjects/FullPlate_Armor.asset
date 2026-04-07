@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: FullPlate_Armor
   displayName: Armadura de Placas
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 99e3d521fe130674ab9b266c1381f42b, type: 3}
   description: Una segunda piel de placas de acero
   price: 50
   slot: 3
