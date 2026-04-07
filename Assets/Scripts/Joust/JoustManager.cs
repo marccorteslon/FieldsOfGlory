@@ -199,8 +199,8 @@ public class JoustManager : MonoBehaviour
         else if (attackPartIsOn)
         {
             controlsText.text =
-                "Stick Der -> Mover\n" +
-                "R2 -> Cargar ataque\n";
+                "PC: Ratón + Mantener/Soltar Click Izq\n" +
+                "Mando: Stick Der + R2\n";
         }
         else if (defensePartIsOn)
         {
