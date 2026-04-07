@@ -5969,7 +5969,6 @@ MonoBehaviour:
   horseTutorialPanel: {fileID: 965889663}
   attackTutorialPanel: {fileID: 1769145118}
   defenseTutorialPanel: {fileID: 666490015}
-  tutorialToggle: {fileID: 0}
 --- !u!1 &1372035017
 GameObject:
   m_ObjectHideFlags: 0
