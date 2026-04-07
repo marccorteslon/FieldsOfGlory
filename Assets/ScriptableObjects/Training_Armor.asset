@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Training_Armor
   displayName: Armadura de Entrenamiento
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 99e3d521fe130674ab9b266c1381f42b, type: 3}
   description: Una simple ropa acolchada
   price: 0
   slot: 3

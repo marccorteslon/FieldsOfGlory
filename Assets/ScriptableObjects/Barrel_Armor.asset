@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Barrel_Armor
   displayName: Armadura Barril
-  icon: {fileID: 21300000, guid: 19f20bd0225441b459be623cc952b279, type: 3}
+  icon: {fileID: 21300000, guid: 99e3d521fe130674ab9b266c1381f42b, type: 3}
   description: "\xBFUn Barril?"
   price: 20
   slot: 3
