@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TownTravelUI : MonoBehaviour
 {
+    [Header("Refs")]
     public TravelManager travelManager;
     public ProgressManager progressManager;
     public TMP_Dropdown destinationDropdown;
@@ -22,8 +23,17 @@ public class TownTravelUI : MonoBehaviour
 
     public void RefreshTravelOptions(string currentCityId)
     {
-        if (travelManager == null || destinationDropdown == null)
+        if (travelManager == null)
+        {
+            Debug.LogError("TownTravelUI: no hay TravelManager.");
             return;
+        }
+
+        if (destinationDropdown == null)
+        {
+            Debug.LogError("TownTravelUI: no hay TMP_Dropdown asignado.");
+            return;
+        }
 
         destinationCityIds.Clear();
         destinationDropdown.ClearOptions();
@@ -38,7 +48,9 @@ public class TownTravelUI : MonoBehaviour
                 continue;
 
             destinationCityIds.Add(destinationCityId);
-            options.Add(new TMP_Dropdown.OptionData($"{destinationCityId} ({route.travelDays} días)"));
+
+            string label = $"{destinationCityId} ({route.travelDays} días)";
+            options.Add(new TMP_Dropdown.OptionData(label));
         }
 
         destinationDropdown.AddOptions(options);
@@ -70,18 +82,5 @@ public class TownTravelUI : MonoBehaviour
 
         if (townNode != null)
             townNode.ExitTown();
-
-        TownNode[] allTowns = FindObjectsByType<TownNode>(FindObjectsSortMode.None);
-
-        foreach (var node in allTowns)
-        {
-            if (node.cityId == destinationCityId)
-            {
-                node.EnterTown();
-                return;
-            }
-        }
-
-        Debug.LogWarning("TownTravelUI: no se encontró TownNode para " + destinationCityId);
     }
 }

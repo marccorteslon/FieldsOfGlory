@@ -24,8 +24,18 @@ public class TownNode : MonoBehaviour
         if (progressManager == null)
             progressManager = FindFirstObjectByType<ProgressManager>();
 
-        if (progressManager != null)
-            progressManager.SetCurrentCity(cityId);
+        if (progressManager == null)
+        {
+            Debug.LogError("TownNode: no se encontró ProgressManager.");
+            return;
+        }
+
+        // SOLO puedes abrir el pueblo en el que estás
+        if (progressManager.CurrentCityId != cityId)
+        {
+            Debug.Log($"Primero debes viajar a {cityId}.");
+            return;
+        }
 
         if (mapButtonsObject != null)
             mapButtonsObject.SetActive(false);
