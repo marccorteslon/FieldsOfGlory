@@ -9,6 +9,7 @@ public class TownNode : MonoBehaviour
     [Header("UI Refs")]
     public ShopPanelController shopPanel;
     public ProgressManager progressManager;
+    public TownTravelUI travelUI;
     public GameObject mapButtonsObject;
     public GameObject townPanelObject;
     public GameObject shopPanelObject;
@@ -21,10 +22,20 @@ public class TownNode : MonoBehaviour
     public void EnterTown()
     {
         if (progressManager == null)
-            progressManager = FindObjectOfType<ProgressManager>();
+            progressManager = FindFirstObjectByType<ProgressManager>();
 
-        if (progressManager != null)
-            progressManager.SetCurrentCity(cityId);
+        if (progressManager == null)
+        {
+            Debug.LogError("TownNode: no se encontró ProgressManager.");
+            return;
+        }
+
+        // SOLO puedes abrir el pueblo en el que estás
+        if (progressManager.CurrentCityId != cityId)
+        {
+            Debug.Log($"Primero debes viajar a {cityId}.");
+            return;
+        }
 
         if (mapButtonsObject != null)
             mapButtonsObject.SetActive(false);
@@ -143,6 +154,9 @@ public class TownNode : MonoBehaviour
 
         if (tavernPanelObject != null)
             tavernPanelObject.SetActive(false);
+
+        if (travelUI != null)
+            travelUI.RefreshTravelOptions(city.cityId);
     }
 
     void OnError(Exception ex)

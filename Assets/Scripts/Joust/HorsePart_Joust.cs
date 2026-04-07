@@ -2,10 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// RESUMEN SCRIPT: Controla la fase del caballo, detecta la zona del indicador,
-// suma puntos usando MV y V del loadout
-// y muestra feedback visual + contador de clicks.
-
 public class HorsePart_Joust : MonoBehaviour
 {
     [Header("UI References")]
@@ -16,7 +12,7 @@ public class HorsePart_Joust : MonoBehaviour
 
     [Header("UI Feedback")]
     public TextMeshProUGUI resultText;   // Texto que muestra Rojo/Amarillo/Verde
-    public TextMeshProUGUI counterText;  // Texto tipo 0/3
+    public TextMeshProUGUI counterText;  
 
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;

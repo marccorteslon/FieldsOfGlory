@@ -2,22 +2,13 @@ using UnityEngine;
 
 public class TournamentAvailabilityButton : MonoBehaviour
 {
-    [Header("Tournament Data")]
-    public string cityId;
-    public int day = 1;
-    public int month = 1;
-
-    [Header("Refs")]
-    public ProgressManager progressManager;
-    public GameObject targetObject; 
-
-    [Header("Options")]
-    public bool requireCurrentCityMatch = true;
+    public TournamentManager tournamentManager;
+    public GameObject targetObject;
 
     void Awake()
     {
-        if (progressManager == null)
-            progressManager = FindObjectOfType<ProgressManager>();
+        if (tournamentManager == null)
+            tournamentManager = FindFirstObjectByType<TournamentManager>();
 
         if (targetObject == null)
             targetObject = gameObject;
@@ -30,18 +21,10 @@ public class TournamentAvailabilityButton : MonoBehaviour
 
     public void RefreshVisibility()
     {
-        if (progressManager == null || targetObject == null)
+        if (tournamentManager == null || targetObject == null)
             return;
 
-        bool correctDate =
-            progressManager.CurrentDay == day &&
-            progressManager.CurrentMonth == month;
-
-        bool correctCity = true;
-
-        if (requireCurrentCityMatch)
-            correctCity = progressManager.CurrentCityId == cityId;
-
-        targetObject.SetActive(correctDate && correctCity);
+        bool shouldShow = tournamentManager.HasTournamentInCurrentCityToday();
+        targetObject.SetActive(shouldShow);
     }
 }

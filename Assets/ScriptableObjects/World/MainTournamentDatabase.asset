@@ -9,12 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 247af026e3dd4914a90fa7f7df231d01, type: 3}
-  m_Name: Shop_Montelirio
+  m_Script: {fileID: 11500000, guid: e8f9c89dec4e8e846bd3b392fefef6e4, type: 3}
+  m_Name: MainTournamentDatabase
   m_EditorClassIdentifier: 
-  shopId: shop_montelirio
-  itemIds:
-  - War_Horse
-  - Fast_Horse
-  - Shadow_Horse
-  - Farm_Horse
+  tournaments:
+  - {fileID: 11400000, guid: 5e115674dc29551459c7aa4e15f5e369, type: 2}
+  - {fileID: 11400000, guid: bab93b3f934fb4b4f9ef711e417c4957, type: 2}

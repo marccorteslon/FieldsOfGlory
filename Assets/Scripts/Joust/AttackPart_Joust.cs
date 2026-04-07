@@ -54,22 +54,35 @@ public class AttackPart_Joust : MonoBehaviour
 
     void Start()
     {
-        powerSlider.gameObject.SetActive(false);
-        powerSlider.minValue = 0;
-        powerSlider.maxValue = 100;
+        // La carga del ataque
+        if (powerSlider != null)
+        {
+            powerSlider.gameObject.SetActive(false);
+            powerSlider.minValue = 0;
+            powerSlider.maxValue = 100;
+            powerSlider.value = 0;
+        }
 
-        crosshair.gameObject.SetActive(false);
-        crosshairPos = crosshair.anchoredPosition;
+        if (crosshair != null)
+        {
+            crosshair.gameObject.SetActive(false);
+            crosshairPos = crosshair.anchoredPosition;
+        }
+
         currentShakeAmount = baseShakeAmount;
     }
 
     void Update()
     {
+        if (joustManager == null) return;
+
         bool attackStarted = joustManager.attackPartIsOn;
 
         if (attackStarted != previousAttackState)
         {
-            crosshair.gameObject.SetActive(attackStarted);
+            if (crosshair != null)
+                crosshair.gameObject.SetActive(attackStarted);
+
             previousAttackState = attackStarted;
 
             if (attackStarted)
@@ -77,7 +90,8 @@ public class AttackPart_Joust : MonoBehaviour
                 ResetCharge();
                 shakeTime = Random.Range(0f, 100f);
 
-                crosshairPos = crosshair.anchoredPosition;
+                if (crosshair != null)
+                    crosshairPos = crosshair.anchoredPosition;
             }
         }
 
@@ -105,49 +119,101 @@ public class AttackPart_Joust : MonoBehaviour
 
     void HandleChargeInput()
     {
+        // PC: Click izquierdo
+        bool mouseDown = Input.GetMouseButtonDown(0);
+        bool mouseHeld = Input.GetMouseButton(0);
+        bool mouseUp = Input.GetMouseButtonUp(0);
+
+        // Mando: eje Attack / R2
         float r2Axis = Input.GetAxis("Attack");
         bool controllerHeld = r2Axis > 0.2f;
-        bool controllerDown = r2Axis > 0.2f && !isCharging;
-        bool controllerUp = r2Axis <= 0.2f && isCharging;
+        bool controllerDown = controllerHeld && !isCharging;
+        bool controllerUp = !controllerHeld && isCharging && currentInputMode == InputMode.Controller;
 
-        bool mouseHeld = Input.GetMouseButton(0);
-        bool mouseDown = Input.GetMouseButtonDown(0) && !isCharging;
-        bool mouseUp = Input.GetMouseButtonUp(0) && isCharging;
-
-        if (controllerDown || mouseDown)
+        // Si el jugador empieza con ratón, carga con ratón
+        if (!isCharging)
         {
-            isCharging = true;
-            chargeTimer = 0f;
-            powerSlider.gameObject.SetActive(true);
+            if (mouseDown)
+            {
+                StartCharge(InputMode.Mouse);
+            }
+            else if (controllerDown)
+            {
+                StartCharge(InputMode.Controller);
+            }
         }
 
-        if (isCharging && (controllerHeld || mouseHeld))
+        if (!isCharging)
+            return;
+
+        bool keepCharging = false;
+        bool releaseAttack = false;
+
+        if (currentInputMode == InputMode.Mouse)
+        {
+            keepCharging = mouseHeld;
+            releaseAttack = mouseUp;
+        }
+        else
+        {
+            keepCharging = controllerHeld;
+            releaseAttack = controllerUp;
+        }
+
+        if (keepCharging)
         {
             chargeTimer += Time.deltaTime;
 
             float percent = Mathf.Clamp01(chargeTimer / maxChargeTime);
-            powerSlider.value = percent * 100f;
+
+            if (powerSlider != null)
+                powerSlider.value = percent * 100f;
+
             currentShakeAmount = baseShakeAmount + (baseShakeAmount * percent);
         }
 
-        if (controllerUp || mouseUp)
+        if (releaseAttack)
         {
             isCharging = false;
-            powerSlider.gameObject.SetActive(false);
+
+            if (powerSlider != null)
+                powerSlider.gameObject.SetActive(false);
+
             PerformAttack();
         }
     }
 
-    void ResetCharge()
+    void StartCharge(InputMode mode) // Empezar a hacer la carga
+    {
+        currentInputMode = mode;
+        isCharging = true;
+        chargeTimer = 0f;
+        currentShakeAmount = baseShakeAmount;
+
+        if (powerSlider != null)
+        {
+            powerSlider.gameObject.SetActive(true);
+            powerSlider.value = 0f;
+        }
+    }
+
+    void ResetCharge() // Al inicio de cada ronda, reiniciar
     {
         isCharging = false;
         chargeTimer = 0f;
-        powerSlider.value = 0;
         currentShakeAmount = baseShakeAmount;
+
+        if (powerSlider != null)
+        {
+            powerSlider.value = 0f;
+            powerSlider.gameObject.SetActive(false);
+        }
     }
 
-    void UpdateCrosshair()
+    void UpdateCrosshair() // Movimiento del crosshair
     {
+        if (crosshair == null || canvas == null) return;
+
         float horizontal = Input.GetAxis("RightStickHorizontal");
         float vertical = -Input.GetAxis("RightStickVertical");
         Vector2 stickInput = new Vector2(horizontal, vertical);
@@ -211,8 +277,11 @@ public class AttackPart_Joust : MonoBehaviour
         crosshair.anchoredPosition = finalPosition;
     }
 
-    void PerformAttack()
+    void PerformAttack() // Atacar al soltar
     {
+        if (cam == null || crosshair == null || scoreManager == null || joustManager == null)
+            return;
+
         Ray ray = cam.ScreenPointToRay(crosshair.position);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
@@ -224,13 +293,15 @@ public class AttackPart_Joust : MonoBehaviour
         joustManager.EndAttackPhase();
     }
 
-    public void ForceAttack()
+    public void ForceAttack() // Atacar si te quedas sin tiempo
     {
         if (isCharging)
         {
             isCharging = false;
-            powerSlider.gameObject.SetActive(false);
         }
+
+        if (powerSlider != null)
+            powerSlider.gameObject.SetActive(false);
 
         PerformAttack();
     }

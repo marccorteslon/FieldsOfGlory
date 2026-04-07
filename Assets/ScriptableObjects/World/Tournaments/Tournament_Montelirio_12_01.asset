@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 247af026e3dd4914a90fa7f7df231d01, type: 3}
-  m_Name: Shop_Montelirio
+  m_Script: {fileID: 11500000, guid: e09e156310751914f8d9089c1ddc7b2b, type: 3}
+  m_Name: Tournament_Montelirio_12_01
   m_EditorClassIdentifier: 
-  shopId: shop_montelirio
-  itemIds:
-  - War_Horse
-  - Fast_Horse
-  - Shadow_Horse
-  - Farm_Horse
+  tournamentId: montelirio_12_01
+  displayName: Justa de Montelirio
+  cityId: city_montelirio
+  day: 12
+  month: 1

@@ -8,6 +8,7 @@ public class TravelManager : MonoBehaviour
 
     [Header("Refs")]
     public ProgressManager progress;
+    public CalendarPanelController calendarPanelController;
 
     public string CurrentCityId
     {
@@ -21,7 +22,10 @@ public class TravelManager : MonoBehaviour
     void Awake()
     {
         if (progress == null)
-            progress = FindObjectOfType<ProgressManager>();
+            progress = FindFirstObjectByType<ProgressManager>();
+
+        if (calendarPanelController == null)
+            calendarPanelController = FindFirstObjectByType<CalendarPanelController>();
     }
 
     public List<TravelRouteDefinition> GetAvailableRoutes()
@@ -65,6 +69,9 @@ public class TravelManager : MonoBehaviour
             {
                 progress.SetCurrentCity(destinationCityId);
                 progress.AdvanceDays(route.travelDays);
+
+                if (calendarPanelController != null)
+                    calendarPanelController.RefreshCalendar();
 
                 Debug.Log($"Viaje realizado a {destinationCityId} en {route.travelDays} días.");
                 return true;

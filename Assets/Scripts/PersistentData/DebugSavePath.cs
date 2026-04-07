@@ -15,17 +15,25 @@ public class DebugSavePath : MonoBehaviour
         Debug.Log("Folder exists? " + Directory.Exists(folder));
         Debug.Log("File exists? " + File.Exists(file));
 
-        // Miramos que existe la carpeta
         Directory.CreateDirectory(folder);
-        Debug.Log("After CreateDirectory - Folder exists? " + Directory.Exists(folder));
 
-        // Forzamos write
         try
         {
             if (!File.Exists(file))
             {
-                File.WriteAllText(file, "{\n  \"money\": 0\n}");
-                Debug.Log("Wrote test progress.json successfully.");
+                string json = "{\n" +
+                              "  \"money\": 0,\n" +
+                              "  \"equippedHorseId\": \"Farm_Horse\",\n" +
+                              "  \"equippedLanceId\": \"Training_Lance\",\n" +
+                              "  \"equippedShieldId\": \"Training_Shield\",\n" +
+                              "  \"equippedArmorId\": \"Training_Armor\",\n" +
+                              "  \"currentCityId\": \"city_valdoren\",\n" +
+                              "  \"currentDay\": 1,\n" +
+                              "  \"currentMonth\": 1\n" +
+                              "}";
+
+                File.WriteAllText(file, json);
+                Debug.Log("Wrote default progress.json successfully.");
             }
             else
             {
