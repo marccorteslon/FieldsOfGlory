@@ -20,7 +20,6 @@ public class DefensePart_Joust : MonoBehaviour
 
     [Header("Attack Settings")]
     public float circleRadius = 120f;
-    public float angleTolerance = 30f;
     public Color indicatorColor = Color.red;
 
     [Header("Input Settings")]
@@ -36,6 +35,15 @@ public class DefensePart_Joust : MonoBehaviour
     private bool defenseStarted = false;
 
     private Vector2 targetDirection;
+    private DefenseDirection targetDefenseDirection;
+
+    private enum DefenseDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
 
     void Awake()
     {
@@ -58,7 +66,6 @@ public class DefensePart_Joust : MonoBehaviour
             return;
         }
 
-        // Bloquear defensa mientras el tutorial esté abierto
         if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
             return;
 
@@ -74,9 +81,7 @@ public class DefensePart_Joust : MonoBehaviour
             return;
 
         if (CheckDefenseInput())
-        {
             EndDefense(true);
-        }
     }
 
     int GetBB()
@@ -87,15 +92,30 @@ public class DefensePart_Joust : MonoBehaviour
 
     void StartNewAttack()
     {
-        float randomAngle = Random.Range(0f, 360f);
-        float radians = randomAngle * Mathf.Deg2Rad;
-
-        targetDirection = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)).normalized;
+        targetDefenseDirection = (DefenseDirection)Random.Range(0, 4);
+        targetDirection = GetVectorFromDirection(targetDefenseDirection);
 
         UpdateAttackIndicatorVisual();
         ShowDefenseUI(true);
 
         awaitingDefense = true;
+    }
+
+    Vector2 GetVectorFromDirection(DefenseDirection direction)
+    {
+        switch (direction)
+        {
+            case DefenseDirection.Up:
+                return Vector2.up;
+            case DefenseDirection.Down:
+                return Vector2.down;
+            case DefenseDirection.Left:
+                return Vector2.left;
+            case DefenseDirection.Right:
+                return Vector2.right;
+            default:
+                return Vector2.zero;
+        }
     }
 
     void UpdateAttackIndicatorVisual()
@@ -111,21 +131,35 @@ public class DefensePart_Joust : MonoBehaviour
 
     bool CheckDefenseInput()
     {
-        float horizontal = Input.GetAxis(leftStickHorizontalAxis);
-        float vertical = Input.GetAxis(leftStickVerticalAxis);
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+            return targetDefenseDirection == DefenseDirection.Up;
 
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+            return targetDefenseDirection == DefenseDirection.Down;
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            return targetDefenseDirection == DefenseDirection.Left;
+
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+            return targetDefenseDirection == DefenseDirection.Right;
+
+        float horizontal = Input.GetAxisRaw(leftStickHorizontalAxis);
+        float vertical = Input.GetAxisRaw(leftStickVerticalAxis);
         Vector2 stickInput = new Vector2(horizontal, vertical);
 
         if (stickInput.magnitude < minimumStickMagnitude)
             return false;
 
-        Vector2 stickDirection = stickInput.normalized;
+        DefenseDirection inputDirection = GetDirectionFromInput(stickInput);
+        return inputDirection == targetDefenseDirection;
+    }
 
-        float angleDifference = Vector2.Angle(stickDirection, targetDirection);
+    DefenseDirection GetDirectionFromInput(Vector2 input)
+    {
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+            return input.x > 0f ? DefenseDirection.Right : DefenseDirection.Left;
 
-        Debug.Log($"Stick: {stickDirection} | Target: {targetDirection} | Angle: {angleDifference}");
-
-        return angleDifference <= angleTolerance;
+        return input.y > 0f ? DefenseDirection.Up : DefenseDirection.Down;
     }
 
     void ShowDefenseUI(bool show)
@@ -149,15 +183,18 @@ public class DefensePart_Joust : MonoBehaviour
     {
         if (joystickVisual == null) return;
 
-        float horizontal = Input.GetAxis(leftStickHorizontalAxis);
-        float vertical = Input.GetAxis(leftStickVerticalAxis);
-
+        float horizontal = Input.GetAxisRaw(leftStickHorizontalAxis);
+        float vertical = Input.GetAxisRaw(leftStickVerticalAxis);
         Vector2 stickInput = new Vector2(horizontal, vertical);
 
-        if (stickInput.magnitude > 1f)
-            stickInput.Normalize();
+        if (stickInput.magnitude < minimumStickMagnitude)
+        {
+            joystickVisual.anchoredPosition = Vector2.zero;
+            return;
+        }
 
-        joystickVisual.anchoredPosition = stickInput * joystickVisualRadius;
+        Vector2 snappedDirection = GetVectorFromDirection(GetDirectionFromInput(stickInput));
+        joystickVisual.anchoredPosition = snappedDirection * joystickVisualRadius;
     }
 
     void EndDefense(bool blockedCorrectly)

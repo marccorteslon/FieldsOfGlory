@@ -11,8 +11,8 @@ public class HorsePart_Joust : MonoBehaviour
     public ScoreManager scoreManager;
 
     [Header("UI Feedback")]
-    public TextMeshProUGUI resultText;   // Texto que muestra Rojo/Amarillo/Verde
-    public TextMeshProUGUI counterText;  
+    public TextMeshProUGUI resultText;
+    public TextMeshProUGUI counterText;
 
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;
@@ -24,6 +24,8 @@ public class HorsePart_Joust : MonoBehaviour
 
     [Header("Movement")]
     public float moveSpeed = 300f;
+    public float speedIncreasePerPress = 75f;
+    public float maxMoveSpeed = 900f;
 
     [Header("Colors")]
     public Color redColor = Color.red;
@@ -38,10 +40,10 @@ public class HorsePart_Joust : MonoBehaviour
     private RectTransform movingIndicator;
     private float sliderHeight;
     private float direction = 1f;
-    private int clickCount = 0;
+    private int pressCount = 0;
     private bool isActive = true;
-
-    private const int maxClicks = 3;
+    private bool hasResolved = false;
+    private float currentMoveSpeed;
 
     void Awake()
     {
@@ -52,6 +54,7 @@ public class HorsePart_Joust : MonoBehaviour
     void Start()
     {
         sliderHeight = sliderArea.rect.height;
+        currentMoveSpeed = moveSpeed;
 
         float total = 2 * redProportion + 2 * yellowProportion + greenProportion;
         if (total != 1f)
@@ -69,13 +72,14 @@ public class HorsePart_Joust : MonoBehaviour
 
     void Update()
     {
+        if (joustManager == null) return;
+
         if (!joustManager.horsePartIsOn)
         {
             HideUI();
             return;
         }
 
-        // Bloquear totalmente el input y la lógica mientras haya tutorial abierto
         if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
             return;
 
@@ -87,15 +91,38 @@ public class HorsePart_Joust : MonoBehaviour
 
     void InitializeUI()
     {
+        ShowHorseBarUI();
+
         if (resultText != null)
             resultText.gameObject.SetActive(false);
 
         if (counterText != null)
-            counterText.text = "0/" + maxClicks;
+        {
+            counterText.gameObject.SetActive(true);
+            counterText.text = "0";
+        }
+    }
+
+    void ShowHorseBarUI()
+    {
+        if (sliderArea != null)
+            sliderArea.gameObject.SetActive(true);
+
+        if (movingIndicator != null)
+            movingIndicator.gameObject.SetActive(true);
+
+        if (counterText != null)
+            counterText.gameObject.SetActive(true);
     }
 
     void HideUI()
     {
+        if (sliderArea != null)
+            sliderArea.gameObject.SetActive(false);
+
+        if (movingIndicator != null)
+            movingIndicator.gameObject.SetActive(false);
+
         if (resultText != null)
             resultText.gameObject.SetActive(false);
 
@@ -113,6 +140,7 @@ public class HorsePart_Joust : MonoBehaviour
         {
             GameObject zone = new GameObject("Zone_" + i, typeof(Image));
             zone.transform.SetParent(sliderArea, false);
+
             Image img = zone.GetComponent<Image>();
             img.color = colors[i];
 
@@ -136,11 +164,14 @@ public class HorsePart_Joust : MonoBehaviour
     void MoveIndicator()
     {
         Vector2 pos = movingIndicator.anchoredPosition;
-        pos.y += direction * moveSpeed * Time.deltaTime;
+        pos.y += direction * currentMoveSpeed * Time.deltaTime;
 
         float limit = sliderHeight / 2f;
         if (pos.y > limit || pos.y < -limit)
+        {
             direction *= -1f;
+            pos.y = Mathf.Clamp(pos.y, -limit, limit);
+        }
 
         movingIndicator.anchoredPosition = pos;
     }
@@ -148,12 +179,10 @@ public class HorsePart_Joust : MonoBehaviour
     void HandleInput()
     {
         bool mouseClick = Input.GetMouseButtonDown(0);
-
-        // Botón X mando Xbox
         bool xboxX = Input.GetKeyDown(KeyCode.JoystickButton2);
 
         if (mouseClick || xboxX)
-            EvaluateZone();
+            IncreaseBarSpeed();
     }
 
     int GetMV()
@@ -168,8 +197,19 @@ public class HorsePart_Joust : MonoBehaviour
         return Mathf.RoundToInt(loadout.stats.Get(StatType.V));
     }
 
+    void IncreaseBarSpeed()
+    {
+        pressCount++;
+        currentMoveSpeed = Mathf.Min(currentMoveSpeed + speedIncreasePerPress, maxMoveSpeed);
+
+        if (counterText != null)
+            counterText.text = pressCount.ToString();
+    }
+
     void EvaluateZone()
     {
+        if (hasResolved) return;
+
         float y = movingIndicator.anchoredPosition.y;
         float normalized = (y + sliderHeight / 2f) / sliderHeight;
         string zone;
@@ -185,13 +225,8 @@ public class HorsePart_Joust : MonoBehaviour
 
         ShowResult(zone);
 
-        clickCount++;
-
-        if (counterText != null)
-            counterText.text = clickCount + "/" + maxClicks;
-
-        if (clickCount >= maxClicks)
-            isActive = false;
+        hasResolved = true;
+        isActive = false;
     }
 
     void ShowResult(string zone)
@@ -219,18 +254,29 @@ public class HorsePart_Joust : MonoBehaviour
         }
     }
 
+    public void ForceEndHorsePhase()
+    {
+        EvaluateZone();
+        HideUI();
+    }
+
     public void ResetHorsePhase()
     {
         isActive = true;
-        clickCount = 0;
+        hasResolved = false;
+        pressCount = 0;
         direction = 1f;
+        currentMoveSpeed = moveSpeed;
 
-        movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
+        ShowHorseBarUI();
+
+        if (movingIndicator != null)
+            movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
 
         if (counterText != null)
         {
             counterText.gameObject.SetActive(true);
-            counterText.text = "0/" + maxClicks;
+            counterText.text = "0";
         }
 
         if (resultText != null)

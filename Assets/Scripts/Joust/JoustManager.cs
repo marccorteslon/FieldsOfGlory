@@ -40,6 +40,11 @@ public class JoustManager : MonoBehaviour
     private float horseTimer = 0f;
     private bool horseTimerRunning = false;
 
+    [Header("Transition")]
+    public float delayBetweenHorseAndAttack = 0.5f;
+    private float transitionTimer = 0f;
+    private bool waitingToStartCombat = false;
+
     [Header("Attack Timer")]
     public float attackDuration = 3f;
     private float attackTimer = 0f;
@@ -49,6 +54,9 @@ public class JoustManager : MonoBehaviour
     public float defenseDuration = 2f;
     private float defenseTimer = 0f;
     private bool defenseTimerRunning = false;
+
+    private bool attackResolved = false;
+    private bool defenseResolved = false;
 
     [Header("Controls UI")]
     public TextMeshProUGUI controlsText;
@@ -97,6 +105,7 @@ public class JoustManager : MonoBehaviour
     {
         MoveJousters();
         HandleHorseTimer();
+        HandleTransitionTimer();
         HandleAttackTimer();
         HandleDefenseTimer();
     }
@@ -137,6 +146,19 @@ public class JoustManager : MonoBehaviour
         {
             horseTimerRunning = false;
             EndHorsePhase();
+        }
+    }
+
+    void HandleTransitionTimer()
+    {
+        if (!waitingToStartCombat) return;
+
+        transitionTimer += Time.deltaTime;
+
+        if (transitionTimer >= delayBetweenHorseAndAttack)
+        {
+            waitingToStartCombat = false;
+            StartCombatPhase();
         }
     }
 
@@ -196,6 +218,12 @@ public class JoustManager : MonoBehaviour
         {
             controlsText.text = "X (Mando) -> Cargar caballo";
         }
+        else if (attackPartIsOn && defensePartIsOn)
+        {
+            controlsText.text =
+                "ATAQUE: Ratón + Mantener/Soltar Click Izq / Stick Der + R2\n" +
+                "DEFENSA: Stick Izq -> Bloquear dirección";
+        }
         else if (attackPartIsOn)
         {
             controlsText.text =
@@ -215,14 +243,34 @@ public class JoustManager : MonoBehaviour
 
     public void EndHorsePhase()
     {
+        if (horsePart != null)
+            horsePart.ForceEndHorsePhase();
+
         horsePartIsOn = false;
+        attackPartIsOn = false;
+        defensePartIsOn = false;
+
+        waitingToStartCombat = true;
+        transitionTimer = 0f;
+
+        UpdatePhases();
+    }
+
+    void StartCombatPhase()
+    {
         attackPartIsOn = true;
+        defensePartIsOn = true;
+        attackResolved = false;
+        defenseResolved = false;
 
         currentSpeed = combatPhaseSpeed;
         currentCameraPoint = attackCameraPoint;
 
         attackTimer = 0f;
         attackTimerRunning = true;
+
+        defenseTimer = 0f;
+        defenseTimerRunning = true;
 
         UpdatePhases();
 
@@ -232,30 +280,32 @@ public class JoustManager : MonoBehaviour
 
     public void EndAttackPhase()
     {
+        if (attackResolved) return;
+
+        attackResolved = true;
         attackTimerRunning = false;
-
         attackPartIsOn = false;
-        defensePartIsOn = true;
-
-        currentCameraPoint = defenseCameraPoint;
-
-        defenseTimer = 0f;
-        defenseTimerRunning = true;
 
         UpdatePhases();
-
-        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
-        {
-            tutorialManager.ShowDefenseTutorial();
-        }
+        TryEndCombatPhase();
     }
 
     public void EndDefensePhase()
     {
-        defensePartIsOn = false;
+        if (defenseResolved) return;
+
+        defenseResolved = true;
         defenseTimerRunning = false;
+        defensePartIsOn = false;
 
         UpdatePhases();
+        TryEndCombatPhase();
+    }
+
+    void TryEndCombatPhase()
+    {
+        if (!attackResolved || !defenseResolved)
+            return;
 
         Debug.Log("La justa ha terminado.");
 
@@ -286,8 +336,29 @@ public class JoustManager : MonoBehaviour
             currentCameraPoint = horseCameraPoint;
         }
 
+        horsePartIsOn = true;
+        attackPartIsOn = false;
+        defensePartIsOn = false;
+
+        attackResolved = false;
+        defenseResolved = false;
+
+        waitingToStartCombat = false;
+        transitionTimer = 0f;
+
         currentSpeed = horsePhaseSpeed;
         horseTimer = 0f;
         horseTimerRunning = true;
+
+        attackTimer = 0f;
+        attackTimerRunning = false;
+
+        defenseTimer = 0f;
+        defenseTimerRunning = false;
+
+        UpdatePhases();
+
+        if (horsePart != null)
+            horsePart.ResetHorsePhase();
     }
 }
