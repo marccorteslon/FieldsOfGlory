@@ -47,6 +47,8 @@ public class HorsePart_Joust : MonoBehaviour
     private RectTransform movingIndicator;
     private float sliderHeight;
     private int pressCount = 0;
+    private bool pointsAwardedThisPhase = false;
+    private string lastScoredZone = "Rojo";
     private bool isActive = true;
     private bool hasResolved = false;
     private float currentMoveSpeed;
@@ -60,6 +62,12 @@ public class HorsePart_Joust : MonoBehaviour
     {
         if (loadout == null)
             loadout = FindObjectOfType<LoadoutStatsComponent>();
+
+        if (joustManager == null)
+            joustManager = FindObjectOfType<JoustManager>();
+
+        if (scoreManager == null)
+            scoreManager = FindObjectOfType<ScoreManager>();
     }
 
     void Start()
@@ -249,6 +257,18 @@ public class HorsePart_Joust : MonoBehaviour
         if (zone != "Rojo")
         {
             pressCount++;
+            pointsAwardedThisPhase = true;
+            lastScoredZone = zone;
+
+            if (scoreManager != null)
+            {
+                scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
+            }
+            else
+            {
+                Debug.LogWarning("[Caballo] No hay ScoreManager asignado; no se pueden sumar puntos.");
+            }
+
             currentMoveSpeed = Mathf.Min(currentMoveSpeed + speedIncreasePerHit, maxMoveSpeed);
 
             if (counterText != null)
@@ -297,9 +317,15 @@ public class HorsePart_Joust : MonoBehaviour
 
         string zone = GetCurrentZone();
 
-        scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
+        // Los puntos de caballo se suman cuando el jugador acierta el click,
+        // no al terminar la fase. Antes podía acabar el indicador en rojo y
+        // dejar la fase en 0 aunque el jugador hubiera acertado antes.
+        if (!pointsAwardedThisPhase)
+        {
+            Debug.Log("[Caballo] La fase terminó sin aciertos válidos. +0 puntos.");
+        }
 
-        ShowResult(zone);
+        ShowResult(pointsAwardedThisPhase ? lastScoredZone : zone);
 
         hasResolved = true;
         isActive = false;
@@ -341,6 +367,8 @@ public class HorsePart_Joust : MonoBehaviour
         isActive = true;
         hasResolved = false;
         pressCount = 0;
+        pointsAwardedThisPhase = false;
+        lastScoredZone = "Rojo";
         currentMoveSpeed = moveSpeed;
 
         ShowHorseBarUI();
