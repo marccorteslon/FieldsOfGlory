@@ -32,6 +32,13 @@ public class AttackPart_Joust : MonoBehaviour
     public int fallbackBF = 4;
     public int fallbackBL = 2;
 
+    [Header("Enemy Ragdoll")]
+    public EnemyRagdollController enemyRagdoll;
+
+    private bool hasLastHit;
+    private Vector3 lastHitPoint;
+    private Vector3 lastHitDirection;
+
     private bool previousAttackState = false;
     private bool isCharging = false;
     private float chargeTimer = 0f;
@@ -54,7 +61,6 @@ public class AttackPart_Joust : MonoBehaviour
 
     void Start()
     {
-        // La carga del ataque
         if (powerSlider != null)
         {
             powerSlider.gameObject.SetActive(false);
@@ -97,7 +103,6 @@ public class AttackPart_Joust : MonoBehaviour
 
         if (!attackStarted) return;
 
-        // Bloquear totalmente mientras el tutorial esté abierto
         if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
             return;
 
@@ -119,35 +124,28 @@ public class AttackPart_Joust : MonoBehaviour
 
     void HandleChargeInput()
     {
-        // PC: Click izquierdo
         bool mouseDown = Input.GetMouseButtonDown(0);
         bool mouseHeld = Input.GetMouseButton(0);
         bool mouseUp = Input.GetMouseButtonUp(0);
 
-        // Mando: eje Attack / R2
         float r2Axis = Input.GetAxis("Attack");
         bool controllerHeld = r2Axis > 0.2f;
         bool controllerDown = controllerHeld && !isCharging;
         bool controllerUp = !controllerHeld && isCharging && currentInputMode == InputMode.Controller;
 
-        // Si el jugador empieza con ratón, carga con ratón
         if (!isCharging)
         {
             if (mouseDown)
-            {
                 StartCharge(InputMode.Mouse);
-            }
             else if (controllerDown)
-            {
                 StartCharge(InputMode.Controller);
-            }
         }
 
         if (!isCharging)
             return;
 
-        bool keepCharging = false;
-        bool releaseAttack = false;
+        bool keepCharging;
+        bool releaseAttack;
 
         if (currentInputMode == InputMode.Mouse)
         {
@@ -183,7 +181,7 @@ public class AttackPart_Joust : MonoBehaviour
         }
     }
 
-    void StartCharge(InputMode mode) // Empezar a hacer la carga
+    void StartCharge(InputMode mode)
     {
         currentInputMode = mode;
         isCharging = true;
@@ -197,7 +195,7 @@ public class AttackPart_Joust : MonoBehaviour
         }
     }
 
-    void ResetCharge() // Al inicio de cada ronda, reiniciar
+    void ResetCharge()
     {
         isCharging = false;
         chargeTimer = 0f;
@@ -210,7 +208,7 @@ public class AttackPart_Joust : MonoBehaviour
         }
     }
 
-    void UpdateCrosshair() // Movimiento del crosshair
+    void UpdateCrosshair()
     {
         if (crosshair == null || canvas == null) return;
 
@@ -219,17 +217,13 @@ public class AttackPart_Joust : MonoBehaviour
         Vector2 stickInput = new Vector2(horizontal, vertical);
 
         if (stickInput.magnitude > stickDeadzone)
-        {
             currentInputMode = InputMode.Controller;
-        }
 
         float mouseX = Input.GetAxisRaw("Mouse X");
         float mouseY = Input.GetAxisRaw("Mouse Y");
 
         if (Mathf.Abs(mouseX) > 0.01f || Mathf.Abs(mouseY) > 0.01f)
-        {
             currentInputMode = InputMode.Mouse;
-        }
 
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
 
@@ -277,7 +271,7 @@ public class AttackPart_Joust : MonoBehaviour
         crosshair.anchoredPosition = finalPosition;
     }
 
-    void PerformAttack() // Atacar al soltar
+    void PerformAttack()
     {
         if (cam == null || crosshair == null || scoreManager == null || joustManager == null)
             return;
@@ -287,18 +281,50 @@ public class AttackPart_Joust : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
         {
             float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime) * 100f;
+
             scoreManager.AddAttackScore(hit.collider.tag, GetBF(), GetBL(), chargePercent, 0, 0);
+
+            hasLastHit = true;
+            lastHitPoint = hit.point;
+            lastHitDirection = (hit.point - cam.transform.position).normalized;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayLanceHit();
         }
 
         joustManager.EndAttackPhase();
     }
 
-    public void ForceAttack() // Atacar si te quedas sin tiempo
+    public void ApplyEnemyImpact(int roundScore, bool fightWon)
+    {
+        if (enemyRagdoll == null)
+            return;
+
+        if (!hasLastHit)
+            return;
+
+        enemyRagdoll.PlayImpact(
+            lastHitPoint,
+            lastHitDirection,
+            roundScore,
+            fightWon
+        );
+
+        hasLastHit = false;
+    }
+
+    public void ResetEnemyRagdoll()
+    {
+        if (enemyRagdoll != null)
+            enemyRagdoll.ResetRagdoll();
+
+        hasLastHit = false;
+    }
+
+    public void ForceAttack()
     {
         if (isCharging)
-        {
             isCharging = false;
-        }
 
         if (powerSlider != null)
             powerSlider.gameObject.SetActive(false);
