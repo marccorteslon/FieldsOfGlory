@@ -17,14 +17,21 @@ public class HorsePart_Joust : MonoBehaviour
     [Header("Loadout (Ghost Player)")]
     public LoadoutStatsComponent loadout;
 
-    [Header("Zone Proportions (0-1)")]
-    [Range(0f, 0.5f)] public float redProportion = 0.15f;
+    [Header("Drop Animation")]
+    public float dropSpeed = 1800f;
+
+    private bool isDropping = false;
+
+    [Header("Zone Proportions")]
     [Range(0f, 0.5f)] public float yellowProportion = 0.15f;
-    [Range(0f, 1f)] public float greenProportion = 0.4f;
+    [Range(0f, 1f)] public float greenProportion = 0.25f;
+
+    [Header("Zone Position")]
+    [Range(0f, 1f)] public float goodZoneCenter = 0.75f;
 
     [Header("Movement")]
     public float moveSpeed = 300f;
-    public float speedIncreasePerPress = 75f;
+    public float speedIncreasePerHit = 75f;
     public float maxMoveSpeed = 900f;
 
     [Header("Colors")]
@@ -33,17 +40,21 @@ public class HorsePart_Joust : MonoBehaviour
     public Color greenColor = Color.green;
     public Color indicatorColor = Color.white;
 
-    [Header("Fallback Horse Values (si no hay loadout)")]
+    [Header("Fallback Horse Values")]
     public int fallbackMV = 3;
     public int fallbackV = 1;
 
     private RectTransform movingIndicator;
     private float sliderHeight;
-    private float direction = 1f;
     private int pressCount = 0;
     private bool isActive = true;
     private bool hasResolved = false;
     private float currentMoveSpeed;
+
+    private float yellowBottomMin;
+    private float greenMin;
+    private float greenMax;
+    private float yellowTopMax;
 
     void Awake()
     {
@@ -56,15 +67,7 @@ public class HorsePart_Joust : MonoBehaviour
         sliderHeight = sliderArea.rect.height;
         currentMoveSpeed = moveSpeed;
 
-        float total = 2 * redProportion + 2 * yellowProportion + greenProportion;
-        if (total != 1f)
-        {
-            float factor = 1f / total;
-            redProportion *= factor;
-            yellowProportion *= factor;
-            greenProportion *= factor;
-        }
-
+        CalculateZones();
         DrawZones();
         CreateIndicator();
         InitializeUI();
@@ -85,8 +88,41 @@ public class HorsePart_Joust : MonoBehaviour
 
         if (!isActive) return;
 
-        MoveIndicator();
+        if (isDropping)
+            DropIndicator();
+        else
+            MoveIndicator();
+
         HandleInput();
+    }
+
+    void CalculateZones()
+    {
+        float totalGoodZoneSize = greenProportion + yellowProportion * 2f;
+        float halfSize = totalGoodZoneSize / 2f;
+
+        float start = goodZoneCenter - halfSize;
+        float end = goodZoneCenter + halfSize;
+
+        if (start < 0f)
+        {
+            end -= start;
+            start = 0f;
+        }
+
+        if (end > 1f)
+        {
+            start -= end - 1f;
+            end = 1f;
+        }
+
+        start = Mathf.Clamp01(start);
+        end = Mathf.Clamp01(end);
+
+        yellowBottomMin = start;
+        greenMin = yellowBottomMin + yellowProportion;
+        greenMax = greenMin + greenProportion;
+        yellowTopMax = end;
     }
 
     void InitializeUI()
@@ -132,45 +168,64 @@ public class HorsePart_Joust : MonoBehaviour
 
     void DrawZones()
     {
-        float currentYMin = 0f;
-        float[] proportions = { redProportion, yellowProportion, greenProportion, yellowProportion, redProportion };
-        Color[] colors = { redColor, yellowColor, greenColor, yellowColor, redColor };
+        CreateZone("Red_Bottom", 0f, yellowBottomMin, redColor);
+        CreateZone("Yellow_Bottom", yellowBottomMin, greenMin, yellowColor);
+        CreateZone("Green", greenMin, greenMax, greenColor);
+        CreateZone("Yellow_Top", greenMax, yellowTopMax, yellowColor);
+        CreateZone("Red_Top", yellowTopMax, 1f, redColor);
+    }
 
-        for (int i = 0; i < proportions.Length; i++)
-        {
-            GameObject zone = new GameObject("Zone_" + i, typeof(Image));
-            zone.transform.SetParent(sliderArea, false);
+    void CreateZone(string zoneName, float min, float max, Color color)
+    {
+        if (max <= min) return;
 
-            Image img = zone.GetComponent<Image>();
-            img.color = colors[i];
+        GameObject zone = new GameObject(zoneName, typeof(Image));
+        zone.transform.SetParent(sliderArea, false);
 
-            RectTransform rt = zone.GetComponent<RectTransform>();
-            rt.anchorMin = new Vector2(0f, currentYMin);
-            rt.anchorMax = new Vector2(1f, currentYMin + proportions[i]);
-            rt.offsetMin = Vector2.zero;
-            rt.offsetMax = Vector2.zero;
+        Image img = zone.GetComponent<Image>();
+        img.color = color;
 
-            currentYMin += proportions[i];
-        }
+        RectTransform rt = zone.GetComponent<RectTransform>();
+        rt.anchorMin = new Vector2(0f, min);
+        rt.anchorMax = new Vector2(1f, max);
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
     }
 
     void CreateIndicator()
     {
         movingIndicator = Instantiate(movingIndicatorPrefab, sliderArea);
         movingIndicator.GetComponent<Image>().color = indicatorColor;
-        movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
+        ResetIndicatorToBottom();
     }
 
     void MoveIndicator()
     {
         Vector2 pos = movingIndicator.anchoredPosition;
-        pos.y += direction * currentMoveSpeed * Time.deltaTime;
+        float topLimit = sliderHeight / 2f;
 
-        float limit = sliderHeight / 2f;
-        if (pos.y > limit || pos.y < -limit)
+        pos.y += currentMoveSpeed * Time.deltaTime;
+
+        if (pos.y >= topLimit)
         {
-            direction *= -1f;
-            pos.y = Mathf.Clamp(pos.y, -limit, limit);
+            pos.y = topLimit;
+            isDropping = true;
+        }
+
+        movingIndicator.anchoredPosition = pos;
+    }
+
+    void DropIndicator()
+    {
+        Vector2 pos = movingIndicator.anchoredPosition;
+        float bottomLimit = -sliderHeight / 2f;
+
+        pos.y -= dropSpeed * Time.deltaTime;
+
+        if (pos.y <= bottomLimit)
+        {
+            pos.y = bottomLimit;
+            isDropping = false;
         }
 
         movingIndicator.anchoredPosition = pos;
@@ -182,7 +237,46 @@ public class HorsePart_Joust : MonoBehaviour
         bool xboxX = Input.GetKeyDown(KeyCode.JoystickButton2);
 
         if (mouseClick || xboxX)
-            IncreaseBarSpeed();
+            TryHorseHit();
+    }
+
+    void TryHorseHit()
+    {
+        if (isDropping) return;
+
+        string zone = GetCurrentZone();
+
+        if (zone != "Rojo")
+        {
+            pressCount++;
+            currentMoveSpeed = Mathf.Min(currentMoveSpeed + speedIncreasePerHit, maxMoveSpeed);
+
+            if (counterText != null)
+                counterText.text = pressCount.ToString();
+        }
+
+        isDropping = true;
+    }
+
+    void ResetIndicatorToBottom()
+    {
+        if (movingIndicator != null)
+            movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
+    }
+
+    string GetCurrentZone()
+    {
+        float y = movingIndicator.anchoredPosition.y;
+        float normalized = (y + sliderHeight / 2f) / sliderHeight;
+
+        if (normalized >= greenMin && normalized <= greenMax)
+            return "Verde";
+
+        if ((normalized >= yellowBottomMin && normalized < greenMin) ||
+            (normalized > greenMax && normalized <= yellowTopMax))
+            return "Amarillo";
+
+        return "Rojo";
     }
 
     int GetMV()
@@ -197,29 +291,11 @@ public class HorsePart_Joust : MonoBehaviour
         return Mathf.RoundToInt(loadout.stats.Get(StatType.V));
     }
 
-    void IncreaseBarSpeed()
-    {
-        pressCount++;
-        currentMoveSpeed = Mathf.Min(currentMoveSpeed + speedIncreasePerPress, maxMoveSpeed);
-
-        if (counterText != null)
-            counterText.text = pressCount.ToString();
-    }
-
     void EvaluateZone()
     {
         if (hasResolved) return;
 
-        float y = movingIndicator.anchoredPosition.y;
-        float normalized = (y + sliderHeight / 2f) / sliderHeight;
-        string zone;
-
-        if (normalized <= redProportion || normalized >= 1f - redProportion)
-            zone = "Rojo";
-        else if (normalized <= redProportion + yellowProportion || normalized >= 1f - (redProportion + yellowProportion))
-            zone = "Amarillo";
-        else
-            zone = "Verde";
+        string zone = GetCurrentZone();
 
         scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
 
@@ -265,13 +341,10 @@ public class HorsePart_Joust : MonoBehaviour
         isActive = true;
         hasResolved = false;
         pressCount = 0;
-        direction = 1f;
         currentMoveSpeed = moveSpeed;
 
         ShowHorseBarUI();
-
-        if (movingIndicator != null)
-            movingIndicator.anchoredPosition = new Vector2(0f, -sliderHeight / 2f);
+        ResetIndicatorToBottom();
 
         if (counterText != null)
         {
