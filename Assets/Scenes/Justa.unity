@@ -2050,6 +2050,7 @@ MonoBehaviour:
   stickDeadzone: 0.2
   fallbackBF: 1
   fallbackBL: 1
+  enemyRagdoll: {fileID: 0}
 --- !u!1 &442811294
 GameObject:
   m_ObjectHideFlags: 0
@@ -5169,6 +5170,7 @@ MonoBehaviour:
   minPointsFraction: 0.33333334
   scoreManager: {fileID: 1318912933}
   joustManager: {fileID: 1318912931}
+  attackPart: {fileID: 0}
   roundNumber: 1
   roundWinPanel: {fileID: 1693442500}
   roundLosePanel: {fileID: 1984878981}
@@ -5353,6 +5355,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1009934454}
     - targetCorrespondingSourceObject: {fileID: 1082271958561512970, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 499540}
@@ -5450,6 +5455,21 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 232221401}
   m_SourcePrefab: {fileID: 100100000, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
+--- !u!4 &815184421 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3480699329000672020, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
+  m_PrefabInstance: {fileID: 815184420}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &815184422 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
+  m_PrefabInstance: {fileID: 815184420}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &815184423 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
+  m_PrefabInstance: {fileID: 815184420}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &819907627
 GameObject:
   m_ObjectHideFlags: 0
@@ -7654,6 +7674,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f2333cc803935bd4db0a5de875ad822a, type: 3}
   m_PrefabInstance: {fileID: 815184420}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1009934454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815184422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4060e0af4a01c284cba22b0fb8d04553, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 815184423}
+  allBodies:
+  - {fileID: 990701883}
+  - {fileID: 499539}
+  - {fileID: 1700780058}
+  - {fileID: 487929325}
+  - {fileID: 1126234812}
+  - {fileID: 1173856309}
+  - {fileID: 835420870}
+  - {fileID: 232221402}
+  - {fileID: 128445465}
+  - {fileID: 1792745947}
+  - {fileID: 1113811773}
+  upperBodyRoots:
+  - {fileID: 815184421}
+  baseForce: 250
+  forcePerPoint: 25
+  maxForce: 2500
+  upwardForce: 250
+  resetDelay: 1.5
 --- !u!1001 &1010710616
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10171,7 +10223,7 @@ MonoBehaviour:
   winManager: {fileID: 792966344}
   player: {fileID: 13782963}
   enemy: {fileID: 39939907}
-  horsePhaseSpeed: 11.5
+  horsePhaseSpeed: 12
   combatPhaseSpeed: 4
   horsePhaseDuration: 5
   delayBetweenHorseAndAttack: 0.5
@@ -10819,16 +10871,15 @@ MonoBehaviour:
   resultText: {fileID: 1225462068}
   counterText: {fileID: 1721324105}
   loadout: {fileID: 13782961}
-  dropSpeed: 950
-  yellowProportion: 0.08
-  greenProportion: 0.05
-  goodZoneCenter: 0.75
-  moveSpeed: 450
-  speedIncreasePerHit: 100
+  redProportion: 0.25
+  yellowProportion: 0.3
+  greenProportion: 0.15
+  moveSpeed: 750
+  speedIncreasePerPress: 75
   maxMoveSpeed: 900
-  redColor: {r: 0.8018868, g: 0.11725702, b: 0.11725702, a: 1}
-  yellowColor: {r: 0.8679245, g: 0.68496025, b: 0.11053756, a: 1}
-  greenColor: {r: 0.025845231, g: 0.754717, b: 0.024919916, a: 1}
+  redColor: {r: 1, g: 0, b: 0, a: 1}
+  yellowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  greenColor: {r: 0, g: 1, b: 0, a: 1}
   indicatorColor: {r: 1, g: 1, b: 1, a: 1}
   fallbackMV: 3
   fallbackV: 1
@@ -13720,8 +13771,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000019550323, y: -0.000020742}
-  m_SizeDelta: {x: 65.0555, y: 10.736}
+  m_AnchoredPosition: {x: 0.000019550323, y: 0.00001651}
+  m_SizeDelta: {x: 65.0555, y: 21.4727}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2041526718
 MonoBehaviour:

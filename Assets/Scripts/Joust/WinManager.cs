@@ -13,6 +13,9 @@ public class WinManager : MonoBehaviour
     public ScoreManager scoreManager;
     public JoustManager joustManager;
 
+    [Header("Ragdoll")]
+    public AttackPart_Joust attackPart;
+
     public int roundNumber = 1;
 
     [Header("UI Panels")]
@@ -46,9 +49,7 @@ public class WinManager : MonoBehaviour
         currentWinPoints += roundScore;
 
         if (scoreUIManager != null)
-        {
             scoreUIManager.ConsolidateRound();
-        }
 
         DisableTutorialAfterThisJoust();
 
@@ -58,17 +59,21 @@ public class WinManager : MonoBehaviour
 
         if (roundScore >= minPointsThisRound)
         {
-            if (currentWinPoints >= winPoints)
-            {
+            bool fightWon = currentWinPoints >= winPoints;
+
+            if (attackPart != null)
+                attackPart.ApplyEnemyImpact(roundScore, fightWon);
+
+            if (fightWon)
                 StartCoroutine(ShowGameWinPanel());
-            }
             else
-            {
                 StartCoroutine(ShowRoundWinPanel());
-            }
         }
         else
         {
+            if (attackPart != null)
+                attackPart.ApplyEnemyImpact(roundScore, true);
+
             StartCoroutine(ShowRoundLosePanel());
         }
     }
@@ -93,7 +98,6 @@ public class WinManager : MonoBehaviour
         }
     }
 
-    // Mostrar los distintos paneles
     IEnumerator ShowRoundWinPanel()
     {
         if (roundWinPanel != null)
@@ -118,13 +122,9 @@ public class WinManager : MonoBehaviour
         yield return new WaitForSeconds(5f);
 
         if (!string.IsNullOrEmpty(nextSceneName))
-        {
             SceneManager.LoadScene(nextSceneName);
-        }
         else
-        {
             Debug.LogWarning("WinManager: nextSceneName no asignado.");
-        }
     }
 
     IEnumerator ShowGameWinPanel()
@@ -140,25 +140,22 @@ public class WinManager : MonoBehaviour
         yield return new WaitForSeconds(3f);
 
         if (!string.IsNullOrEmpty(nextSceneName))
-        {
             SceneManager.LoadScene(nextSceneName);
-        }
         else
-        {
             Debug.LogWarning("WinManager: nextSceneName no asignado.");
-        }
     }
 
     void StartNextRound()
     {
         Debug.Log("Empezando la siguiente ronda...");
 
+        if (attackPart != null)
+            attackPart.ResetEnemyRagdoll();
+
         scoreManager.totalScore = 0;
 
         if (scoreUIManager != null)
-        {
             scoreUIManager.PrepareNextRound();
-        }
 
         joustManager.horsePartIsOn = true;
         joustManager.attackPartIsOn = false;
@@ -166,9 +163,7 @@ public class WinManager : MonoBehaviour
         joustManager.UpdatePhases();
 
         if (joustManager.horsePart != null)
-        {
             joustManager.horsePart.ResetHorsePhase();
-        }
 
         joustManager.ResetPositions();
     }
