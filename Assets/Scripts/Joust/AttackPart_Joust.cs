@@ -34,6 +34,9 @@ public class AttackPart_Joust : MonoBehaviour
 
     [Header("Enemy Ragdoll")]
     public EnemyRagdollController enemyRagdoll;
+    [Header("Cinematics")]
+    public JoustCinematicManager cinematicManager;
+
 
     private bool hasLastHit;
     private Vector3 lastHitPoint;
@@ -95,6 +98,9 @@ public class AttackPart_Joust : MonoBehaviour
             {
                 ResetCharge();
                 shakeTime = Random.Range(0f, 100f);
+
+                if (cinematicManager != null)
+                    cinematicManager.StartAttackPhaseCamera();
 
                 if (crosshair != null)
                     crosshairPos = crosshair.anchoredPosition;
@@ -176,6 +182,9 @@ public class AttackPart_Joust : MonoBehaviour
 
             if (powerSlider != null)
                 powerSlider.gameObject.SetActive(false);
+
+            if (cinematicManager != null)
+                cinematicManager.OnAttackInputReleased();
 
             PerformAttack();
         }
@@ -328,6 +337,9 @@ public class AttackPart_Joust : MonoBehaviour
 
         if (powerSlider != null)
             powerSlider.gameObject.SetActive(false);
+
+        if (cinematicManager != null)
+            cinematicManager.OnAttackInputReleased();
 
         PerformAttack();
     }

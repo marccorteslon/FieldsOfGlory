@@ -16,6 +16,9 @@ public class WinManager : MonoBehaviour
     [Header("Ragdoll")]
     public AttackPart_Joust attackPart;
 
+    [Header("Cinematics")]
+    public JoustCinematicManager cinematicManager;
+
     public int roundNumber = 1;
 
     [Header("UI Panels")]
@@ -56,25 +59,33 @@ public class WinManager : MonoBehaviour
         Debug.Log($"[Ronda {roundNumber} Finalizada] Puntos de esta ronda: {roundScore} | Puntos totales: {currentWinPoints}/{winPoints}");
 
         int minPointsThisRound = Mathf.CeilToInt(winPoints * minPointsFraction);
+        bool survivedRound = roundScore >= minPointsThisRound;
+        bool fightWon = currentWinPoints >= winPoints;
 
-        if (roundScore >= minPointsThisRound)
+        StartCoroutine(ProcessRoundEndSequence(roundScore, survivedRound, fightWon));
+    }
+
+    IEnumerator ProcessRoundEndSequence(int roundScore, bool survivedRound, bool fightWon)
+    {
+        if (attackPart != null)
+            attackPart.ApplyEnemyImpact(roundScore, fightWon || !survivedRound);
+
+        if (cinematicManager != null)
+            yield return StartCoroutine(cinematicManager.PlayEnemyImpactSequence(fightWon));
+
+        if (!survivedRound)
         {
-            bool fightWon = currentWinPoints >= winPoints;
+            StartCoroutine(ShowRoundLosePanel());
+            yield break;
+        }
 
-            if (attackPart != null)
-                attackPart.ApplyEnemyImpact(roundScore, fightWon);
-
-            if (fightWon)
-                StartCoroutine(ShowGameWinPanel());
-            else
-                StartCoroutine(ShowRoundWinPanel());
+        if (fightWon)
+        {
+            StartCoroutine(ShowGameWinPanel());
         }
         else
         {
-            if (attackPart != null)
-                attackPart.ApplyEnemyImpact(roundScore, true);
-
-            StartCoroutine(ShowRoundLosePanel());
+            StartCoroutine(ShowRoundWinPanel());
         }
     }
 
@@ -166,6 +177,9 @@ public class WinManager : MonoBehaviour
             joustManager.horsePart.ResetHorsePhase();
 
         joustManager.ResetPositions();
+
+        if (cinematicManager != null)
+            cinematicManager.StartHorsePhaseCamera();
     }
 
     void WinGame()
