@@ -5,15 +5,12 @@ using UnityEngine;
 public class JoustCinematicManager : MonoBehaviour
 {
     [Header("Cinemachine Cameras")]
-    public CinemachineCamera introRideCam;
     public CinemachineCamera firstPersonCam;
     public CinemachineCamera attackSlowCam;
     public CinemachineCamera enemyImpactCam;
     public CinemachineCamera playerCelebrateCam;
 
     [Header("Timing")]
-    public float introDuration = 3f;
-    public float countdownDuration = 3f;
     public float enemyImpactDuration = 3f;
     public float celebrateDuration = 3f;
 
@@ -27,12 +24,11 @@ public class JoustCinematicManager : MonoBehaviour
     {
         defaultFixedDeltaTime = Time.fixedDeltaTime;
         ResetTimeScale();
-        SetCamera(introRideCam);
+        SetCamera(firstPersonCam);
     }
 
     public void SetCamera(CinemachineCamera activeCam)
     {
-        SetPriority(introRideCam, activeCam);
         SetPriority(firstPersonCam, activeCam);
         SetPriority(attackSlowCam, activeCam);
         SetPriority(enemyImpactCam, activeCam);
@@ -57,17 +53,6 @@ public class JoustCinematicManager : MonoBehaviour
         Time.fixedDeltaTime = defaultFixedDeltaTime;
     }
 
-    public IEnumerator PlayIntroSequence()
-    {
-        ResetTimeScale();
-        SetCamera(introRideCam);
-
-        yield return new WaitForSecondsRealtime(introDuration);
-        yield return new WaitForSecondsRealtime(countdownDuration);
-
-        StartHorsePhaseCamera();
-    }
-
     public void StartHorsePhaseCamera()
     {
         ResetTimeScale();
@@ -87,7 +72,14 @@ public class JoustCinematicManager : MonoBehaviour
 
     public IEnumerator PlayEnemyImpactSequence(bool playCelebrateAfter)
     {
+        // cambio a cámara impacto con tiempo normal
+        ResetTimeScale();
         SetCamera(enemyImpactCam);
+
+        // pequeña pausa real para que el cambio de cámara respire
+        yield return new WaitForSecondsRealtime(0.1f);
+
+        // cámara lenta del enemigo volando
         SetTimeScale(enemyImpactTimeScale);
 
         yield return new WaitForSecondsRealtime(enemyImpactDuration);
@@ -98,6 +90,10 @@ public class JoustCinematicManager : MonoBehaviour
         {
             SetCamera(playerCelebrateCam);
             yield return new WaitForSecondsRealtime(celebrateDuration);
+        }
+        else
+        {
+            SetCamera(firstPersonCam);
         }
     }
 

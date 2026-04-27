@@ -22,6 +22,9 @@ public class AttackPart_Joust : MonoBehaviour
     [Header("Loadout")]
     public LoadoutStatsComponent loadout;
 
+    [Header("Cinematics")]
+    public JoustCinematicManager cinematicManager;
+
     [Header("Controller Aim")]
     public float joystickSpeed = 800f;
     public float stickDeadzone = 0.2f;
@@ -34,13 +37,23 @@ public class AttackPart_Joust : MonoBehaviour
 
     [Header("Enemy Ragdoll")]
     public EnemyRagdollController enemyRagdoll;
-    [Header("Cinematics")]
-    public JoustCinematicManager cinematicManager;
-
 
     private bool hasLastHit;
     private Vector3 lastHitPoint;
     private Vector3 lastHitDirection;
+
+    [Header("Timing Bonus")]
+    public bool enableTimingBonus = true;
+    public float timingCountdown = 1.2f;
+    public float timingWindowDuration = 0.25f;
+    public int timingBonusPoints = 5;
+    public ParticleSystem timingWindowParticles;
+    public ParticleSystem timingSuccessParticles;
+
+    private float timingTimer;
+    private float timingWindowTimer;
+    private bool timingWindowOpen;
+    private bool timingWindowConsumed;
 
     private bool previousAttackState = false;
     private bool isCharging = false;
@@ -78,6 +91,9 @@ public class AttackPart_Joust : MonoBehaviour
             crosshairPos = crosshair.anchoredPosition;
         }
 
+        SetParticlesActive(timingWindowParticles, false);
+        SetParticlesActive(timingSuccessParticles, false);
+
         currentShakeAmount = baseShakeAmount;
     }
 
@@ -97,6 +113,8 @@ public class AttackPart_Joust : MonoBehaviour
             if (attackStarted)
             {
                 ResetCharge();
+                StartTimingBonusTimer();
+
                 shakeTime = Random.Range(0f, 100f);
 
                 if (cinematicManager != null)
@@ -105,6 +123,10 @@ public class AttackPart_Joust : MonoBehaviour
                 if (crosshair != null)
                     crosshairPos = crosshair.anchoredPosition;
             }
+            else
+            {
+                CloseTimingWindow();
+            }
         }
 
         if (!attackStarted) return;
@@ -112,6 +134,7 @@ public class AttackPart_Joust : MonoBehaviour
         if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
             return;
 
+        UpdateTimingBonusTimer();
         UpdateCrosshair();
         HandleChargeInput();
     }
@@ -186,7 +209,9 @@ public class AttackPart_Joust : MonoBehaviour
             if (cinematicManager != null)
                 cinematicManager.OnAttackInputReleased();
 
-            PerformAttack();
+            bool timingBonusSuccess = ConsumeTimingBonus();
+
+            PerformAttack(timingBonusSuccess);
         }
     }
 
@@ -215,6 +240,94 @@ public class AttackPart_Joust : MonoBehaviour
             powerSlider.value = 0f;
             powerSlider.gameObject.SetActive(false);
         }
+    }
+
+    void StartTimingBonusTimer()
+    {
+        timingTimer = timingCountdown;
+        timingWindowTimer = timingWindowDuration;
+        timingWindowOpen = false;
+        timingWindowConsumed = false;
+
+        SetParticlesActive(timingWindowParticles, false);
+        SetParticlesActive(timingSuccessParticles, false);
+    }
+
+    void UpdateTimingBonusTimer()
+    {
+        if (!enableTimingBonus || timingWindowConsumed)
+            return;
+
+        if (!timingWindowOpen)
+        {
+            timingTimer -= Time.deltaTime;
+
+            if (timingTimer <= 0f)
+                OpenTimingWindow();
+        }
+        else
+        {
+            timingWindowTimer -= Time.deltaTime;
+
+            if (timingWindowTimer <= 0f)
+                CloseTimingWindow();
+        }
+    }
+
+    void OpenTimingWindow()
+    {
+        timingWindowOpen = true;
+        timingWindowTimer = timingWindowDuration;
+
+        PlayParticles(timingWindowParticles);
+
+        Debug.Log("[Attack Timing] Ventana de bonus abierta.");
+    }
+
+    void CloseTimingWindow()
+    {
+        timingWindowOpen = false;
+        SetParticlesActive(timingWindowParticles, false);
+    }
+
+    bool ConsumeTimingBonus()
+    {
+        if (!enableTimingBonus || timingWindowConsumed)
+            return false;
+
+        bool success = timingWindowOpen;
+
+        timingWindowConsumed = true;
+        timingWindowOpen = false;
+
+        SetParticlesActive(timingWindowParticles, false);
+
+        if (success)
+        {
+            PlayParticles(timingSuccessParticles);
+            Debug.Log($"[Attack Timing] Bonus conseguido: +{timingBonusPoints}");
+        }
+
+        return success;
+    }
+
+    void PlayParticles(ParticleSystem particles)
+    {
+        if (particles == null) return;
+
+        particles.gameObject.SetActive(true);
+        particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        particles.Play();
+    }
+
+    void SetParticlesActive(ParticleSystem particles, bool active)
+    {
+        if (particles == null) return;
+
+        if (!active)
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        particles.gameObject.SetActive(active);
     }
 
     void UpdateCrosshair()
@@ -280,7 +393,7 @@ public class AttackPart_Joust : MonoBehaviour
         crosshair.anchoredPosition = finalPosition;
     }
 
-    void PerformAttack()
+    void PerformAttack(bool timingBonusSuccess = false)
     {
         if (cam == null || crosshair == null || scoreManager == null || joustManager == null)
             return;
@@ -292,6 +405,12 @@ public class AttackPart_Joust : MonoBehaviour
             float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime) * 100f;
 
             scoreManager.AddAttackScore(hit.collider.tag, GetBF(), GetBL(), chargePercent, 0, 0);
+
+            if (timingBonusSuccess)
+            {
+                scoreManager.totalScore += timingBonusPoints;
+                Debug.Log($"[Attack Timing] Bonus aplicado: +{timingBonusPoints}");
+            }
 
             hasLastHit = true;
             lastHitPoint = hit.point;
@@ -341,6 +460,6 @@ public class AttackPart_Joust : MonoBehaviour
         if (cinematicManager != null)
             cinematicManager.OnAttackInputReleased();
 
-        PerformAttack();
+        PerformAttack(false);
     }
 }
