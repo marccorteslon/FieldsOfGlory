@@ -17,6 +17,7 @@ public class JoustManager : MonoBehaviour
 
     [Header("Camera References")]
     public Camera mainCamera;
+    public JoustCinematicManager cinematicManager;
     public Transform horseCameraPoint;
     public Transform attackCameraPoint;
     public Transform defenseCameraPoint;
@@ -39,8 +40,16 @@ public class JoustManager : MonoBehaviour
     [Header("Pre Joust Intro")]
     public bool usePreJoustIntro = true;
 
-    public float preJoustInitialDelay = 4f;
+    [Tooltip("Duracion de la Overview Cam antes de que empiece a caminar el jugador.")]
+    public float overviewCamDuration = 4f;
 
+    [Tooltip("Punto inicial desde el que se movera la Overview Cam durante la intro.")]
+    public Transform overviewCamStartPoint;
+
+    [Tooltip("Punto final hasta el que se movera la Overview Cam durante la intro.")]
+    public Transform overviewCamEndPoint;
+
+    [Tooltip("Duracion del movimiento del jugador mientras se muestra la WalkingPlayerCam.")]
     public float preJoustMoveDuration = 4f;
 
     public float preJoustFinalPause = 1f;
@@ -132,6 +141,8 @@ public class JoustManager : MonoBehaviour
 
     void LateUpdate()
     {
+        if (preJoustIntroRunning && cinematicManager != null) return;
+
         if (mainCamera == null || currentCameraPoint == null) return;
 
         mainCamera.transform.position = Vector3.Lerp(
@@ -174,8 +185,10 @@ public class JoustManager : MonoBehaviour
             player.rotation = playerPreJoustWaypoints[0].rotation;
         }
 
-        if (preJoustInitialDelay > 0f)
-            yield return new WaitForSeconds(preJoustInitialDelay);
+        yield return StartCoroutine(PlayOverviewCamIntro());
+
+        if (cinematicManager != null)
+            cinematicManager.StartWalkingPlayerCamera();
 
         yield return StartCoroutine(MovePlayerThroughPreJoustWaypoints());
 
@@ -184,6 +197,42 @@ public class JoustManager : MonoBehaviour
 
         preJoustIntroRunning = false;
         StartJoustNormally();
+    }
+
+    IEnumerator PlayOverviewCamIntro()
+    {
+        if (cinematicManager != null)
+            cinematicManager.StartOverviewCamera();
+
+        if (cinematicManager == null || cinematicManager.OverviewCam == null || overviewCamDuration <= 0f)
+            yield break;
+
+        Transform overviewCamTransform = cinematicManager.OverviewCam.transform;
+
+        Vector3 startPosition = overviewCamStartPoint != null ? overviewCamStartPoint.position : overviewCamTransform.position;
+        Quaternion startRotation = overviewCamStartPoint != null ? overviewCamStartPoint.rotation : overviewCamTransform.rotation;
+
+        Vector3 endPosition = overviewCamEndPoint != null ? overviewCamEndPoint.position : startPosition;
+        Quaternion endRotation = overviewCamEndPoint != null ? overviewCamEndPoint.rotation : startRotation;
+
+        overviewCamTransform.position = startPosition;
+        overviewCamTransform.rotation = startRotation;
+
+        float elapsed = 0f;
+        while (elapsed < overviewCamDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / overviewCamDuration);
+            float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+            overviewCamTransform.position = Vector3.Lerp(startPosition, endPosition, smoothT);
+            overviewCamTransform.rotation = Quaternion.Slerp(startRotation, endRotation, smoothT);
+
+            yield return null;
+        }
+
+        overviewCamTransform.position = endPosition;
+        overviewCamTransform.rotation = endRotation;
     }
 
     IEnumerator MovePlayerThroughPreJoustWaypoints()
@@ -306,6 +355,9 @@ public class JoustManager : MonoBehaviour
         defenseTimerRunning = false;
 
         currentCameraPoint = horseCameraPoint;
+
+        if (cinematicManager != null)
+            cinematicManager.StartHorsePhaseCamera();
 
         UpdatePhases();
 

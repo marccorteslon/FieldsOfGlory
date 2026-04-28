@@ -15,6 +15,10 @@ public class AttackPart_Joust : MonoBehaviour
     public float shakeSpeed = 25f;
     public bool enableShake = true;
 
+    [Header("Crosshair Scale")]
+    public float crosshairStartScale = 1f;
+    public float crosshairCriticalScale = 0.35f;
+
     [Header("Manager")]
     public JoustManager joustManager;
     public ScoreManager scoreManager;
@@ -89,6 +93,7 @@ public class AttackPart_Joust : MonoBehaviour
         {
             crosshair.gameObject.SetActive(false);
             crosshairPos = crosshair.anchoredPosition;
+            crosshair.localScale = Vector3.one * crosshairStartScale;
         }
 
         SetParticlesActive(timingWindowParticles, false);
@@ -115,6 +120,9 @@ public class AttackPart_Joust : MonoBehaviour
                 ResetCharge();
                 StartTimingBonusTimer();
 
+                if (crosshair != null)
+                    crosshair.localScale = Vector3.one * crosshairStartScale;
+
                 shakeTime = Random.Range(0f, 100f);
 
                 if (cinematicManager != null)
@@ -135,8 +143,34 @@ public class AttackPart_Joust : MonoBehaviour
             return;
 
         UpdateTimingBonusTimer();
+        UpdateCrosshairScale();
         UpdateCrosshair();
         HandleChargeInput();
+    }
+
+    void UpdateCrosshairScale()
+    {
+        if (crosshair == null) return;
+
+        if (!enableTimingBonus)
+        {
+            crosshair.localScale = Vector3.one * crosshairStartScale;
+            return;
+        }
+
+        if (timingWindowOpen)
+        {
+            crosshair.localScale = Vector3.one * crosshairCriticalScale;
+            return;
+        }
+
+        if (timingWindowConsumed)
+            return;
+
+        float t = 1f - Mathf.Clamp01(timingTimer / timingCountdown);
+        float scale = Mathf.Lerp(crosshairStartScale, crosshairCriticalScale, t);
+
+        crosshair.localScale = Vector3.one * scale;
     }
 
     int GetBF()
@@ -278,6 +312,9 @@ public class AttackPart_Joust : MonoBehaviour
     {
         timingWindowOpen = true;
         timingWindowTimer = timingWindowDuration;
+
+        if (crosshair != null)
+            crosshair.localScale = Vector3.one * crosshairCriticalScale;
 
         PlayParticles(timingWindowParticles);
 

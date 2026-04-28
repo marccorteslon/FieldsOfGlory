@@ -38,6 +38,8 @@ public class JoustCinematicManager : MonoBehaviour
         SetPriority(attackSlowCam, activeCam);
         SetPriority(enemyImpactCam, activeCam);
         SetPriority(playerCelebrateCam, activeCam);
+        SetPriority(OverviewCam, activeCam);
+        SetPriority(walkingPlayerCam, activeCam);
     }
 
     void SetPriority(CinemachineCamera cam, CinemachineCamera activeCam)
@@ -56,6 +58,18 @@ public class JoustCinematicManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         Time.fixedDeltaTime = defaultFixedDeltaTime;
+    }
+
+    public void StartOverviewCamera()
+    {
+        ResetTimeScale();
+        SetCamera(OverviewCam);
+    }
+
+    public void StartWalkingPlayerCamera()
+    {
+        ResetTimeScale();
+        SetCamera(walkingPlayerCam);
     }
 
     public void StartHorsePhaseCamera()
