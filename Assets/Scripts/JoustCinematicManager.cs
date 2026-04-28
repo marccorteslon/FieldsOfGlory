@@ -10,6 +10,11 @@ public class JoustCinematicManager : MonoBehaviour
     public CinemachineCamera enemyImpactCam;
     public CinemachineCamera playerCelebrateCam;
 
+    //Cinematica inicial
+
+    public CinemachineCamera OverviewCam;
+    public CinemachineCamera walkingPlayerCam;
+
     [Header("Timing")]
     public float enemyImpactDuration = 3f;
     public float celebrateDuration = 3f;

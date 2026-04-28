@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -34,6 +35,23 @@ public class JoustManager : MonoBehaviour
     public float horsePhaseSpeed = 10f;
     public float combatPhaseSpeed = 4f;
     private float currentSpeed;
+
+    [Header("Pre Joust Intro")]
+    public bool usePreJoustIntro = true;
+
+    public float preJoustInitialDelay = 4f;
+
+    public float preJoustMoveDuration = 4f;
+
+    public float preJoustFinalPause = 1f;
+
+    public Transform[] playerPreJoustWaypoints;
+
+    public bool snapPlayerToFirstWaypoint = true;
+
+    private bool preJoustIntroRunning = false;
+    private bool joustStarted = false;
+    private Coroutine preJoustIntroCoroutine;
 
     [Header("Horse Phase Timer")]
     public float horsePhaseDuration = 5f;
@@ -91,18 +109,20 @@ public class JoustManager : MonoBehaviour
 
         currentCameraPoint = horseCameraPoint;
         currentSpeed = horsePhaseSpeed;
-        horseTimerRunning = true;
 
-        UpdatePhases();
+        PrepareBeforeJoustStarts();
 
-        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
-        {
-            tutorialManager.ShowHorseTutorial();
-        }
+        if (usePreJoustIntro)
+            preJoustIntroCoroutine = StartCoroutine(PreJoustIntroSequence());
+        else
+            StartJoustNormally();
     }
 
     void Update()
     {
+        if (!joustStarted || preJoustIntroRunning)
+            return;
+
         MoveJousters();
         HandleHorseTimer();
         HandleTransitionTimer();
@@ -125,6 +145,175 @@ public class JoustManager : MonoBehaviour
             currentCameraPoint.rotation,
             Time.deltaTime * followSpeed
         );
+    }
+
+    void PrepareBeforeJoustStarts()
+    {
+        joustStarted = false;
+        preJoustIntroRunning = false;
+
+        horsePartIsOn = false;
+        attackPartIsOn = false;
+        defensePartIsOn = false;
+
+        horseTimerRunning = false;
+        attackTimerRunning = false;
+        defenseTimerRunning = false;
+        waitingToStartCombat = false;
+
+        UpdatePhases();
+    }
+
+    IEnumerator PreJoustIntroSequence()
+    {
+        preJoustIntroRunning = true;
+
+        if (player != null && snapPlayerToFirstWaypoint && playerPreJoustWaypoints != null && playerPreJoustWaypoints.Length > 0 && playerPreJoustWaypoints[0] != null)
+        {
+            player.position = playerPreJoustWaypoints[0].position;
+            player.rotation = playerPreJoustWaypoints[0].rotation;
+        }
+
+        if (preJoustInitialDelay > 0f)
+            yield return new WaitForSeconds(preJoustInitialDelay);
+
+        yield return StartCoroutine(MovePlayerThroughPreJoustWaypoints());
+
+        if (preJoustFinalPause > 0f)
+            yield return new WaitForSeconds(preJoustFinalPause);
+
+        preJoustIntroRunning = false;
+        StartJoustNormally();
+    }
+
+    IEnumerator MovePlayerThroughPreJoustWaypoints()
+    {
+        if (player == null || playerPreJoustWaypoints == null || playerPreJoustWaypoints.Length == 0 || preJoustMoveDuration <= 0f)
+            yield break;
+
+        Transform[] validWaypoints = GetValidPreJoustWaypoints();
+        if (validWaypoints.Length == 0)
+            yield break;
+
+        if (validWaypoints.Length == 1)
+        {
+            player.position = validWaypoints[0].position;
+            player.rotation = validWaypoints[0].rotation;
+            yield break;
+        }
+
+        float totalDistance = GetTotalWaypointDistance(validWaypoints);
+        float fallbackSegmentDuration = preJoustMoveDuration / (validWaypoints.Length - 1);
+
+        for (int i = 0; i < validWaypoints.Length - 1; i++)
+        {
+            Transform startPoint = validWaypoints[i];
+            Transform endPoint = validWaypoints[i + 1];
+
+            Vector3 startPosition = player.position;
+            Quaternion startRotation = player.rotation;
+
+            Vector3 endPosition = endPoint.position;
+            Quaternion endRotation = endPoint.rotation;
+
+            float segmentDistance = Vector3.Distance(startPoint.position, endPoint.position);
+            float segmentDuration = totalDistance > 0f
+                ? preJoustMoveDuration * (segmentDistance / totalDistance)
+                : fallbackSegmentDuration;
+
+            if (segmentDuration <= 0f)
+            {
+                player.position = endPosition;
+                player.rotation = endRotation;
+                continue;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < segmentDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.Clamp01(elapsed / segmentDuration);
+                float smoothT = Mathf.SmoothStep(0f, 1f, t);
+
+                player.position = Vector3.Lerp(startPosition, endPosition, smoothT);
+                player.rotation = Quaternion.Slerp(startRotation, endRotation, smoothT);
+
+                yield return null;
+            }
+
+            player.position = endPosition;
+            player.rotation = endRotation;
+        }
+    }
+
+    Transform[] GetValidPreJoustWaypoints()
+    {
+        int count = 0;
+
+        for (int i = 0; i < playerPreJoustWaypoints.Length; i++)
+        {
+            if (playerPreJoustWaypoints[i] != null)
+                count++;
+        }
+
+        Transform[] validWaypoints = new Transform[count];
+        int index = 0;
+
+        for (int i = 0; i < playerPreJoustWaypoints.Length; i++)
+        {
+            if (playerPreJoustWaypoints[i] != null)
+            {
+                validWaypoints[index] = playerPreJoustWaypoints[i];
+                index++;
+            }
+        }
+
+        return validWaypoints;
+    }
+
+    float GetTotalWaypointDistance(Transform[] waypoints)
+    {
+        float totalDistance = 0f;
+
+        for (int i = 0; i < waypoints.Length - 1; i++)
+            totalDistance += Vector3.Distance(waypoints[i].position, waypoints[i + 1].position);
+
+        return totalDistance;
+    }
+
+    void StartJoustNormally()
+    {
+        joustStarted = true;
+
+        horsePartIsOn = true;
+        attackPartIsOn = false;
+        defensePartIsOn = false;
+
+        attackResolved = false;
+        defenseResolved = false;
+
+        waitingToStartCombat = false;
+        transitionTimer = 0f;
+
+        currentSpeed = horsePhaseSpeed;
+        horseTimer = 0f;
+        horseTimerRunning = true;
+
+        attackTimer = 0f;
+        attackTimerRunning = false;
+
+        defenseTimer = 0f;
+        defenseTimerRunning = false;
+
+        currentCameraPoint = horseCameraPoint;
+
+        UpdatePhases();
+
+        if (horsePart != null)
+            horsePart.ResetHorsePhase();
+
+        if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
+            tutorialManager.ShowHorseTutorial();
     }
 
     void MoveJousters()
@@ -214,7 +403,11 @@ public class JoustManager : MonoBehaviour
     {
         if (controlsText == null) return;
 
-        if (horsePartIsOn)
+        if (preJoustIntroRunning)
+        {
+            controlsText.text = "";
+        }
+        else if (horsePartIsOn)
         {
             controlsText.text = "X (Mando) -> Cargar caballo";
         }
@@ -278,6 +471,7 @@ public class JoustManager : MonoBehaviour
             tutorialManager.ShowAttackTutorial();
     }
 
+
     public void EndAttackPhase()
     {
         if (attackResolved) return;
@@ -317,6 +511,12 @@ public class JoustManager : MonoBehaviour
 
     public void ResetPositions()
     {
+        if (preJoustIntroCoroutine != null)
+        {
+            StopCoroutine(preJoustIntroCoroutine);
+            preJoustIntroCoroutine = null;
+        }
+
         if (player != null)
         {
             player.position = initialPlayerPos;
@@ -336,29 +536,14 @@ public class JoustManager : MonoBehaviour
             currentCameraPoint = horseCameraPoint;
         }
 
-        horsePartIsOn = true;
-        attackPartIsOn = false;
-        defensePartIsOn = false;
-
-        attackResolved = false;
-        defenseResolved = false;
-
-        waitingToStartCombat = false;
-        transitionTimer = 0f;
-
-        currentSpeed = horsePhaseSpeed;
-        horseTimer = 0f;
-        horseTimerRunning = true;
-
-        attackTimer = 0f;
-        attackTimerRunning = false;
-
-        defenseTimer = 0f;
-        defenseTimerRunning = false;
-
-        UpdatePhases();
+        PrepareBeforeJoustStarts();
 
         if (horsePart != null)
             horsePart.ResetHorsePhase();
+
+        if (usePreJoustIntro)
+            preJoustIntroCoroutine = StartCoroutine(PreJoustIntroSequence());
+        else
+            StartJoustNormally();
     }
 }
