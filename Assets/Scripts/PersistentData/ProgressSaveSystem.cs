@@ -16,8 +16,33 @@ public static class ProgressSaveSystem
         return Path.Combine(Application.persistentDataPath, SavesFolderName);
     }
 
+    private static ProgressSaveData CreateDefaultData()
+    {
+        return new ProgressSaveData
+        {
+            money = 0,
+
+            equippedHorseId = "Farm_Horse",
+            equippedLanceId = "Training_Lance",
+            equippedShieldId = "Training_Shield",
+            equippedArmorId = "Training_Armor",
+
+            currentCityId = "city_valdoren",
+            currentNodeId = "node_valdoren",
+
+            currentDay = 1,
+            currentMonth = 1
+        };
+    }
+
     public static void Save(ProgressSaveData data)
     {
+        if (data == null)
+        {
+            Debug.LogError("[Save] Se intentó guardar data null.");
+            return;
+        }
+
         string path = GetPath();
         string json = JsonUtility.ToJson(data, true);
 
@@ -37,11 +62,30 @@ public static class ProgressSaveSystem
         if (!File.Exists(path))
         {
             Debug.Log("[Save] No existe progress.json, creando nuevo.");
-            return new ProgressSaveData();
+            ProgressSaveData defaultData = CreateDefaultData();
+            Save(defaultData);
+            return defaultData;
         }
 
         string json = File.ReadAllText(path);
-        var data = JsonUtility.FromJson<ProgressSaveData>(json);
+
+        if (string.IsNullOrWhiteSpace(json) || json.Contains("nullnull"))
+        {
+            Debug.LogWarning("[Save] JSON vacío o corrupto. Recreando save.");
+            ProgressSaveData defaultData = CreateDefaultData();
+            Save(defaultData);
+            return defaultData;
+        }
+
+        ProgressSaveData data = JsonUtility.FromJson<ProgressSaveData>(json);
+
+        if (data == null)
+        {
+            Debug.LogWarning("[Save] JSON inválido. Recreando save.");
+            ProgressSaveData defaultData = CreateDefaultData();
+            Save(defaultData);
+            return defaultData;
+        }
 
         Debug.Log($"[Save] Cargado desde: {path}\n{json}");
         return data;
