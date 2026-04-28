@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Script: {fileID: 11500000, guid: d2f5d2615f478744d883e886933fa435, type: 3}
   m_Name: MainRandomEncounterDatabase
   m_EditorClassIdentifier: 
-  encounterId: 
-  title: 
-  description: 
-  options: []
+  encounters:
+  - {fileID: 11400000, guid: f911e7e747c9f5b49871cbf5d4c4aa3d, type: 2}

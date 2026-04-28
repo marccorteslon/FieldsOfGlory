@@ -16,8 +16,13 @@ MonoBehaviour:
   title: Bandidos en el bosque
   description: Unos bandidos te bloquean el camino y exigen su pago en oro. O sangre.
   options:
-  - optionText: 
+  - optionText: Intimidarlos
+    statToCheck: 1
+    difficulty: 12
+    successText: "Los bandidos retroceden al ver tu determinaci\xF3n."
+    failureText: No pareces lo bastane amenazante y te roban unas monedas.
+  - optionText: Huir a caballo
     statToCheck: 0
-    difficulty: 0
-    successText: 
-    failureText: 
+    difficulty: 10
+    successText: Escapas antes de que puedan reaccionar.
+    failureText: Tropiezas durante la huida y pierdes tiempo.
