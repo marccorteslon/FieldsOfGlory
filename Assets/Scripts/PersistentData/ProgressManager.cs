@@ -20,11 +20,7 @@ public class ProgressManager : MonoBehaviour
         if (itemDatabase != null)
             itemDatabase.BuildLookup();
 
-        if (data.currentDay <= 0)
-            data.currentDay = 1;
-
-        if (data.currentMonth <= 0)
-            data.currentMonth = 1;
+        FixMissingSaveValues();
 
         LoadEquipped();
 
@@ -38,8 +34,65 @@ public class ProgressManager : MonoBehaviour
             equipment.OnEquipmentChanged -= SaveEquipped;
     }
 
+    void FixMissingSaveValues()
+    {
+        bool changed = false;
+
+        if (data.currentDay <= 0)
+        {
+            data.currentDay = 1;
+            changed = true;
+        }
+
+        if (data.currentMonth <= 0)
+        {
+            data.currentMonth = 1;
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(data.currentCityId))
+        {
+            data.currentCityId = "city_valdoren";
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(data.currentNodeId))
+        {
+            data.currentNodeId = "node_valdoren";
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(data.equippedHorseId))
+        {
+            data.equippedHorseId = "Farm_Horse";
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(data.equippedLanceId))
+        {
+            data.equippedLanceId = "Training_Lance";
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(data.equippedShieldId))
+        {
+            data.equippedShieldId = "Training_Shield";
+            changed = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(data.equippedArmorId))
+        {
+            data.equippedArmorId = "Training_Armor";
+            changed = true;
+        }
+
+        if (changed)
+            SaveProgress();
+    }
+
     public int Money => data.money;
     public string CurrentCityId => data.currentCityId;
+    public string CurrentNodeId => data.currentNodeId;
     public int CurrentDay => data.currentDay;
     public int CurrentMonth => data.currentMonth;
 
@@ -122,6 +175,16 @@ public class ProgressManager : MonoBehaviour
         data.currentCityId = cityId;
         SaveProgress();
         Debug.Log($"[Progress] Ciudad actual guardada: {cityId}");
+    }
+
+    public void SetCurrentNode(string nodeId)
+    {
+        if (string.IsNullOrWhiteSpace(nodeId))
+            return;
+
+        data.currentNodeId = nodeId;
+        SaveProgress();
+        Debug.Log($"[Progress] Nodo actual guardado: {nodeId}");
     }
 
     public void AdvanceDays(int days)

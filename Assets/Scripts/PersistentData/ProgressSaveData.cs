@@ -11,6 +11,7 @@ public class ProgressSaveData
     public string equippedArmorId;
 
     public string currentCityId;
+    public string currentNodeId;
 
     public int currentDay = 1;
     public int currentMonth = 1;
