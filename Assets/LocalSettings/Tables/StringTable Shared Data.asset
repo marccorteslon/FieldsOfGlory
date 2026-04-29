@@ -20,39 +20,71 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 4614447169536
-    m_Key: settings_Title
+    m_Key: settings_title
     m_Metadata:
       m_Items: []
   - m_Id: 4817006886912
-    m_Key: settings_GameButton
+    m_Key: settings_gameButton
     m_Metadata:
       m_Items: []
   - m_Id: 4935202373632
-    m_Key: settings_VideoButton
+    m_Key: settings_videoButton
     m_Metadata:
       m_Items: []
   - m_Id: 4982702866432
-    m_Key: settings_SoundButton
+    m_Key: settings_soundButton
     m_Metadata:
       m_Items: []
   - m_Id: 5340422471680
-    m_Key: settings_Sensivity
+    m_Key: settings_sensivity
     m_Metadata:
       m_Items: []
   - m_Id: 5482470965248
-    m_Key: settings_Language
+    m_Key: settings_language
     m_Metadata:
       m_Items: []
   - m_Id: 84390219624448
-    m_Key: tutorial_Horse
+    m_Key: tutorial_horse
     m_Metadata:
       m_Items: []
   - m_Id: 84724694396928
-    m_Key: tutorial_Attack
+    m_Key: tutorial_attack
     m_Metadata:
       m_Items: []
   - m_Id: 84947961393152
-    m_Key: tutorial_Defense
+    m_Key: tutorial_defense
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132570578419712
+    m_Key: menu_saveLoadButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132797943250944
+    m_Key: save_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132901525782528
+    m_Key: save_saveFileName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133601852915712
+    m_Key: save_saveButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133811433897984
+    m_Key: save_placeholder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134458124271616
+    m_Key: global_closeButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138017087684608
+    m_Key: joust_Progress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139713549434880
+    m_Key: joust_HitStrength
     m_Metadata:
       m_Items: []
   m_Metadata:

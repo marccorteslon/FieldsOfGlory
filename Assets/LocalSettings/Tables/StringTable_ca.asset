@@ -67,6 +67,38 @@ MonoBehaviour:
       en la mateixa direcci\xF3\n"
     m_Metadata:
       m_Items: []
+  - m_Id: 132570578419712
+    m_Localized: Guerdar Partida
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132797943250944
+    m_Localized: GUARDAR PARTIDA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132901525782528
+    m_Localized: 'Nombra l''arxiu de guardat:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133601852915712
+    m_Localized: GUARDAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133811433897984
+    m_Localized: Introdueix un nom...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134458124271616
+    m_Localized: Tancar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138017087684608
+    m_Localized: "Progr\xE9s:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139713549434880
+    m_Localized: "For\xE7a de cop:"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

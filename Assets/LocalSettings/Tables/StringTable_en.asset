@@ -78,6 +78,38 @@ MonoBehaviour:
 '
     m_Metadata:
       m_Items: []
+  - m_Id: 132570578419712
+    m_Localized: Save Game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132797943250944
+    m_Localized: SAVE GAME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132901525782528
+    m_Localized: 'Save file name:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133601852915712
+    m_Localized: SAVE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133811433897984
+    m_Localized: Enter a name...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134458124271616
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138017087684608
+    m_Localized: 'Progress:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139713549434880
+    m_Localized: 'Hit Strength:'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

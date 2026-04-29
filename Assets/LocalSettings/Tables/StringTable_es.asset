@@ -67,6 +67,38 @@ MonoBehaviour:
       en la misma direcci\xF3n\n"
     m_Metadata:
       m_Items: []
+  - m_Id: 132570578419712
+    m_Localized: Guardar Partida
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132797943250944
+    m_Localized: GUARDAR PARTIDA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 132901525782528
+    m_Localized: 'Nombra tu archivo de guardado:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133601852915712
+    m_Localized: GUARDAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 133811433897984
+    m_Localized: Introduce un nombre...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 134458124271616
+    m_Localized: Cerrar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 138017087684608
+    m_Localized: 'Progreso:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139713549434880
+    m_Localized: 'Fuerza de golpe:'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
