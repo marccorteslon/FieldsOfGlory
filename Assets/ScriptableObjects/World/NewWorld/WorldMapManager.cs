@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldMapManager : MonoBehaviour
@@ -10,6 +9,7 @@ public class WorldMapManager : MonoBehaviour
     [Header("Refs")]
     public ProgressManager progressManager;
     public CalendarPanelController calendarPanelController;
+    public RandomEncounterManager randomEncounterManager;
 
     [Header("Player")]
     public Transform mapPlayerIcon;
@@ -33,10 +33,13 @@ public class WorldMapManager : MonoBehaviour
     void Awake()
     {
         if (progressManager == null)
-            progressManager = FindObjectOfType<ProgressManager>();
+            progressManager = FindFirstObjectByType<ProgressManager>();
 
-        nodeViews = FindObjectsOfType<MapNodeView>();
-        connectionViews = FindObjectsOfType<MapConnectionView>();
+        if (randomEncounterManager == null)
+            randomEncounterManager = FindFirstObjectByType<RandomEncounterManager>();
+
+        nodeViews = FindObjectsByType<MapNodeView>(FindObjectsSortMode.None);
+        connectionViews = FindObjectsByType<MapConnectionView>(FindObjectsSortMode.None);
     }
 
     void Start()
@@ -58,7 +61,6 @@ public class WorldMapManager : MonoBehaviour
     {
         MapDirection? direction = null;
 
-        // Teclado WASD
         if (Input.GetKeyDown(KeyCode.W))
             direction = MapDirection.Up;
         else if (Input.GetKeyDown(KeyCode.S))
@@ -68,7 +70,6 @@ public class WorldMapManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.D))
             direction = MapDirection.Right;
 
-        // Joystick / flechas / input axis
         if (direction == null)
         {
             float h = Input.GetAxisRaw(horizontalAxis);
@@ -88,15 +89,14 @@ public class WorldMapManager : MonoBehaviour
         if (direction != null)
             SelectConnectionByDirection(direction.Value);
     }
+
     void HandleConfirmInput()
     {
         if (selectedConnection == null)
             return;
 
         if (Input.GetKeyDown(confirmKey) || Input.GetKeyDown(keyboardConfirmKey))
-        {
             StartCoroutine(TravelSelectedRoute());
-        }
     }
 
     void SelectConnectionByDirection(MapDirection direction)
@@ -163,9 +163,7 @@ public class WorldMapManager : MonoBehaviour
         Transform[] path = selectedConnectionView.waypoints;
 
         for (int i = 0; i < path.Length; i++)
-        {
             yield return MoveToPoint(path[i].position);
-        }
 
         MapNodeView destinationView = GetNodeView(destinationNodeId);
 
@@ -186,6 +184,9 @@ public class WorldMapManager : MonoBehaviour
 
         if (calendarPanelController != null)
             calendarPanelController.RefreshCalendar();
+
+        if (randomEncounterManager != null)
+            randomEncounterManager.TryTriggerEncounter(destinationNode);
 
         selectedConnection = null;
 
