@@ -6,9 +6,13 @@ public class WinManager : MonoBehaviour
 {
     public ScoreUIManager scoreUIManager;
     public ProgressManager progressManager;
+
     public int winPoints = 30;
     public int currentWinPoints = 0;
-    [Range(0f, 1f)] public float minPointsFraction = 1f / 3f;
+
+    // Se mantiene porque ScoreUIManager lo usa para pintar el indicador mínimo.
+    // En una sola pasada, el mínimo para ganar es el total.
+    [Range(0f, 1f)] public float minPointsFraction = 1f;
 
     public ScoreManager scoreManager;
     public JoustManager joustManager;
@@ -19,6 +23,7 @@ public class WinManager : MonoBehaviour
     [Header("Cinematics")]
     public JoustCinematicManager cinematicManager;
 
+    // Se mantiene por compatibilidad con ProgressManager/recompensas.
     public int roundNumber = 1;
 
     [Header("UI Panels")]
@@ -49,44 +54,34 @@ public class WinManager : MonoBehaviour
         if (gameEnded) return;
 
         int roundScore = scoreManager.GetScore();
-        currentWinPoints += roundScore;
+
+        // Ahora la justa solo tiene una pasada.
+        currentWinPoints = roundScore;
 
         if (scoreUIManager != null)
             scoreUIManager.ConsolidateRound();
 
         DisableTutorialAfterThisJoust();
 
-        Debug.Log($"[Ronda {roundNumber} Finalizada] Puntos de esta ronda: {roundScore} | Puntos totales: {currentWinPoints}/{winPoints}");
+        bool fightWon = roundScore >= winPoints;
 
-        int minPointsThisRound = Mathf.CeilToInt(winPoints * minPointsFraction);
-        bool survivedRound = roundScore >= minPointsThisRound;
-        bool fightWon = currentWinPoints >= winPoints;
+        Debug.Log($"[Justa finalizada] Puntos: {roundScore}/{winPoints} | Resultado: {(fightWon ? "Victoria" : "Derrota")}");
 
-        StartCoroutine(ProcessRoundEndSequence(roundScore, survivedRound, fightWon));
+        StartCoroutine(ProcessJoustEndSequence(roundScore, fightWon));
     }
 
-    IEnumerator ProcessRoundEndSequence(int roundScore, bool survivedRound, bool fightWon)
+    IEnumerator ProcessJoustEndSequence(int roundScore, bool fightWon)
     {
         if (attackPart != null)
-            attackPart.ApplyEnemyImpact(roundScore, fightWon || !survivedRound);
+            attackPart.ApplyEnemyImpact(roundScore, fightWon);
 
         if (cinematicManager != null)
             yield return StartCoroutine(cinematicManager.PlayEnemyImpactSequence(fightWon));
 
-        if (!survivedRound)
-        {
-            StartCoroutine(ShowRoundLosePanel());
-            yield break;
-        }
-
         if (fightWon)
-        {
             StartCoroutine(ShowGameWinPanel());
-        }
         else
-        {
-            StartCoroutine(ShowRoundWinPanel());
-        }
+            StartCoroutine(ShowRoundLosePanel());
     }
 
     void DisableTutorialAfterThisJoust()
@@ -109,22 +104,10 @@ public class WinManager : MonoBehaviour
         }
     }
 
-    IEnumerator ShowRoundWinPanel()
-    {
-        if (roundWinPanel != null)
-            roundWinPanel.SetActive(true);
-
-        yield return new WaitForSeconds(panelDisplayTime);
-
-        if (roundWinPanel != null)
-            roundWinPanel.SetActive(false);
-
-        roundNumber++;
-        StartNextRound();
-    }
-
     IEnumerator ShowRoundLosePanel()
     {
+        gameEnded = true;
+
         if (roundLosePanel != null)
             roundLosePanel.SetActive(true);
 
@@ -145,7 +128,7 @@ public class WinManager : MonoBehaviour
         if (gameWinPanel != null)
             gameWinPanel.SetActive(true);
 
-        Debug.Log("¡Has ganado la partida completa!");
+        Debug.Log("¡Has ganado la justa!");
         WinGame();
 
         yield return new WaitForSeconds(3f);
@@ -154,32 +137,6 @@ public class WinManager : MonoBehaviour
             SceneManager.LoadScene(nextSceneName);
         else
             Debug.LogWarning("WinManager: nextSceneName no asignado.");
-    }
-
-    void StartNextRound()
-    {
-        Debug.Log("Empezando la siguiente ronda...");
-
-        if (attackPart != null)
-            attackPart.ResetEnemyRagdoll();
-
-        scoreManager.totalScore = 0;
-
-        if (scoreUIManager != null)
-            scoreUIManager.PrepareNextRound();
-
-        joustManager.horsePartIsOn = true;
-        joustManager.attackPartIsOn = false;
-        joustManager.defensePartIsOn = false;
-        joustManager.UpdatePhases();
-
-        if (joustManager.horsePart != null)
-            joustManager.horsePart.ResetHorsePhase();
-
-        joustManager.ResetPositions();
-
-        if (cinematicManager != null)
-            cinematicManager.StartHorsePhaseCamera();
     }
 
     void WinGame()
@@ -204,6 +161,6 @@ public class WinManager : MonoBehaviour
 
     void LoseGame()
     {
-        Debug.Log("No alcanzaste los puntos mínimos de esta ronda. Has perdido.");
+        Debug.Log("No alcanzaste los puntos necesarios. Has perdido.");
     }
 }

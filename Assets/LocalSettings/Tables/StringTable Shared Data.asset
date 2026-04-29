@@ -43,6 +43,18 @@ MonoBehaviour:
     m_Key: settings_Language
     m_Metadata:
       m_Items: []
+  - m_Id: 84390219624448
+    m_Key: tutorial_Horse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84724694396928
+    m_Key: tutorial_Attack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84947961393152
+    m_Key: tutorial_Defense
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

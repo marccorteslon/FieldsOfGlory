@@ -46,6 +46,27 @@ MonoBehaviour:
     m_Localized: 'IDIOMA:'
     m_Metadata:
       m_Items: []
+  - m_Id: 84390219624448
+    m_Localized: 'Carrega amb "X"
+
+
+      Pots carregar fins a 3 vegades
+
+
+      Has
+      d''acertar a la part verda'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84724694396928
+    m_Localized: "Apunta amb Joystick Dret\n\nMant\xE9n R2 per carregar\n\nDeixa
+      anar R2 para atacar"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84947961393152
+    m_Localized: "El punt vermell es el teu objectiu\n\nApunta amb el Joystick Dret
+      en la mateixa direcci\xF3\n"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

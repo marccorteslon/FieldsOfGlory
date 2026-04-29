@@ -46,6 +46,27 @@ MonoBehaviour:
     m_Localized: 'IDIOMA:'
     m_Metadata:
       m_Items: []
+  - m_Id: 84390219624448
+    m_Localized: 'Cargar con "X"
+
+
+      Puedes cargar hasta 3 veces
+
+
+      Debes
+      darle a la parte verde'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84724694396928
+    m_Localized: "Apunta con Joystick Derecho\n\nMant\xE9n R2 para cargar\n\nSuelta
+      R2 para atacar"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84947961393152
+    m_Localized: "El punto rojo es tu objetivo\n\nDebes apuntar con left joystick
+      en la misma direcci\xF3n\n"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

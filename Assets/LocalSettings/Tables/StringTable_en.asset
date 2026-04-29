@@ -46,6 +46,38 @@ MonoBehaviour:
     m_Localized: 'LANGUAGE:'
     m_Metadata:
       m_Items: []
+  - m_Id: 84390219624448
+    m_Localized: 'Charge with "X"
+
+
+      You can charge up to 3 times
+
+
+      You
+      must hit the green part'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84724694396928
+    m_Localized: 'Aim with Right Joystick
+
+
+      Hold R2 to charge
+
+
+      Release
+      R2 to attack'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 84947961393152
+    m_Localized: 'The red dot is your objective
+
+
+      You must aim with left joystick
+      on the same direction
+
+'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
