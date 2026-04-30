@@ -99,6 +99,46 @@ MonoBehaviour:
     m_Localized: "For\xE7a de cop:"
     m_Metadata:
       m_Items: []
+  - m_Id: 351435904253952
+    m_Localized: VICTORIA!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351657355116544
+    m_Localized: DERROTA!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352838869581824
+    m_Localized: MENU PRINCIPAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354855298007040
+    m_Localized: "Mapa del M\xF3n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355240158953472
+    m_Localized: Calendari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359915792891904
+    m_Localized: Botiga del poble
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360117073346560
+    m_Localized: Sortir del poble
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360258241036288
+    m_Localized: Viatjar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360387907944448
+    m_Localized: Anar a la justa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360609912455168
+    m_Localized: Esperar
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
