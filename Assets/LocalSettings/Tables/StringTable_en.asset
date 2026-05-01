@@ -150,6 +150,36 @@ MonoBehaviour:
     m_Localized: Wait
     m_Metadata:
       m_Items: []
+  - m_Id: 803455545630720
+    m_Localized: 'CLICK (pc) X (controller)
+
+
+      CLICK & hold LMB (pc)
+
+      LFET
+      STICK (controller)
+
+
+      ARROWS (pc)
+
+      LEFT STICK (controller)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803398415015936
+    m_Localized: 'HORSE:
+
+
+      ATTACK:
+
+
+
+      DEFENSE:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804615253909504
+    m_Localized: CONTROLS
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

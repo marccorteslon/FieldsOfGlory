@@ -139,6 +139,36 @@ MonoBehaviour:
     m_Localized: Esperar
     m_Metadata:
       m_Items: []
+  - m_Id: 803455545630720
+    m_Localized: 'CLICK (pc) X (mando)
+
+
+      CLICK & mantener LMB (pc)
+
+      STICK
+      DERECHO (mando)
+
+
+      FLECHAS (pc)
+
+      STICK IZQUIERDO (mando)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803398415015936
+    m_Localized: 'CABALLO:
+
+
+      ATAQUE:
+
+
+
+      DEFENSA:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804615253909504
+    m_Localized: CONTROLES
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

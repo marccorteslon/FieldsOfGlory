@@ -127,6 +127,18 @@ MonoBehaviour:
     m_Key: town_wait
     m_Metadata:
       m_Items: []
+  - m_Id: 803398415015936
+    m_Key: controls_text1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803455545630720
+    m_Key: controls_text2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804615253909504
+    m_Key: controls_title
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
