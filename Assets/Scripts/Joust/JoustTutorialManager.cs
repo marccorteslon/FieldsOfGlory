@@ -8,12 +8,17 @@ public class JoustTutorialManager : MonoBehaviour
     public GameObject defenseTutorialPanel;
 
     private GameObject currentPanel;
+    private float timeScaleBeforeTutorial = 1f;
+    private bool tutorialPausedTime = false;
 
     private const string TutorialEnabledKey = "JoustTutorialEnabled";
 
     void Awake()
     {
         HideAllTutorialPanelsImmediate();
+
+        // Solo normalizamos el tiempo al cargar la escena si no venimos de otro pause.
+        // El tutorial se encarga de guardar/restaurar el timeScale real de la fase.
         Time.timeScale = 1f;
     }
 
@@ -66,6 +71,12 @@ public class JoustTutorialManager : MonoBehaviour
         currentPanel = panel;
         currentPanel.SetActive(true);
 
+        if (!tutorialPausedTime)
+        {
+            timeScaleBeforeTutorial = Time.timeScale;
+            tutorialPausedTime = true;
+        }
+
         Time.timeScale = 0f;
     }
 
@@ -75,7 +86,12 @@ public class JoustTutorialManager : MonoBehaviour
             currentPanel.SetActive(false);
 
         currentPanel = null;
-        Time.timeScale = 1f;
+
+        if (tutorialPausedTime)
+        {
+            Time.timeScale = timeScaleBeforeTutorial;
+            tutorialPausedTime = false;
+        }
     }
 
     void HideAllTutorialPanelsImmediate()
