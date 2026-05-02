@@ -21,6 +21,12 @@ public class ShopStatsDisplay : MonoBehaviour
     [Header("UI Grid Setup")]
     public List<StatUIDisplay> statDisplays;
 
+    [Header("Equipped Items UI")]
+    public TMP_Text equippedLanceText;
+    public TMP_Text equippedArmorText;
+    public TMP_Text equippedHorseText;
+    public TMP_Text equippedShieldText;
+
     void Awake()
     {
         if (equipmentManager != null)
@@ -78,6 +84,30 @@ public class ShopStatsDisplay : MonoBehaviour
                 display.valueText.text = val.ToString("0"); 
             }
         }
+
+        if (equipmentManager != null)
+        {
+            UpdateEquippedText(equippedLanceText, EquipmentSlot.Lance);
+            UpdateEquippedText(equippedArmorText, EquipmentSlot.Armor);
+            UpdateEquippedText(equippedHorseText, EquipmentSlot.Horse);
+            UpdateEquippedText(equippedShieldText, EquipmentSlot.Shield);
+        }
+    }
+
+    private void UpdateEquippedText(TMP_Text textElement, EquipmentSlot slot)
+    {
+        if (textElement == null) return;
+
+        var item = equipmentManager.GetEquipped(slot);
+        if (item != null)
+        {
+            textElement.text = item.displayName;
+        }
+        else
+        {
+            textElement.text = "None"; 
+        }
     }
 }
+
 
