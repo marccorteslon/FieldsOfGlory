@@ -7,7 +7,7 @@ public class AttackPart_Joust : MonoBehaviour
     public RectTransform crosshair;
     public Camera cam;
     public Canvas canvas;
-    public Slider powerSlider;
+    public Image powerRadial;
 
     [Header("Settings")]
     public float maxChargeTime = 2f;
@@ -60,6 +60,7 @@ public class AttackPart_Joust : MonoBehaviour
     private bool timingWindowConsumed;
 
     private bool previousAttackState = false;
+    private bool attackCameraStartedForThisPhase = false;
     private bool isCharging = false;
     private float chargeTimer = 0f;
     private float currentShakeAmount;
@@ -81,12 +82,10 @@ public class AttackPart_Joust : MonoBehaviour
 
     void Start()
     {
-        if (powerSlider != null)
+        if (powerRadial != null)
         {
-            powerSlider.gameObject.SetActive(false);
-            powerSlider.minValue = 0;
-            powerSlider.maxValue = 100;
-            powerSlider.value = 0;
+            powerRadial.gameObject.SetActive(false);
+            powerRadial.fillAmount = 0f;
         }
 
         if (crosshair != null)
@@ -125,14 +124,15 @@ public class AttackPart_Joust : MonoBehaviour
 
                 shakeTime = Random.Range(0f, 100f);
 
-                if (cinematicManager != null)
-                    cinematicManager.StartAttackPhaseCamera();
+                attackCameraStartedForThisPhase = false;
+                TryStartAttackCamera();
 
                 if (crosshair != null)
                     crosshairPos = crosshair.anchoredPosition;
             }
             else
             {
+                attackCameraStartedForThisPhase = false;
                 CloseTimingWindow();
             }
         }
@@ -142,10 +142,26 @@ public class AttackPart_Joust : MonoBehaviour
         if (joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
             return;
 
+        TryStartAttackCamera();
+
         UpdateTimingBonusTimer();
         UpdateCrosshairScale();
         UpdateCrosshair();
         HandleChargeInput();
+    }
+
+
+    void TryStartAttackCamera()
+    {
+        if (attackCameraStartedForThisPhase) return;
+
+        if (joustManager != null && joustManager.tutorialManager != null && joustManager.tutorialManager.IsTutorialOpen())
+            return;
+
+        attackCameraStartedForThisPhase = true;
+
+        if (cinematicManager != null)
+            cinematicManager.StartAttackPhaseCamera();
     }
 
     void UpdateCrosshairScale()
@@ -227,8 +243,8 @@ public class AttackPart_Joust : MonoBehaviour
 
             float percent = Mathf.Clamp01(chargeTimer / maxChargeTime);
 
-            if (powerSlider != null)
-                powerSlider.value = percent * 100f;
+            if (powerRadial != null)
+                powerRadial.fillAmount = percent * 0.5f;
 
             currentShakeAmount = baseShakeAmount + (baseShakeAmount * percent);
         }
@@ -237,8 +253,8 @@ public class AttackPart_Joust : MonoBehaviour
         {
             isCharging = false;
 
-            if (powerSlider != null)
-                powerSlider.gameObject.SetActive(false);
+            if (powerRadial != null)
+                powerRadial.gameObject.SetActive(false);
 
             if (cinematicManager != null)
                 cinematicManager.OnAttackInputReleased();
@@ -256,10 +272,10 @@ public class AttackPart_Joust : MonoBehaviour
         chargeTimer = 0f;
         currentShakeAmount = baseShakeAmount;
 
-        if (powerSlider != null)
+        if (powerRadial != null)
         {
-            powerSlider.gameObject.SetActive(true);
-            powerSlider.value = 0f;
+            powerRadial.gameObject.SetActive(true);
+            powerRadial.fillAmount = 0f;
         }
     }
 
@@ -269,10 +285,10 @@ public class AttackPart_Joust : MonoBehaviour
         chargeTimer = 0f;
         currentShakeAmount = baseShakeAmount;
 
-        if (powerSlider != null)
+        if (powerRadial != null)
         {
-            powerSlider.value = 0f;
-            powerSlider.gameObject.SetActive(false);
+            powerRadial.fillAmount = 0f;
+            powerRadial.gameObject.SetActive(false);
         }
     }
 
@@ -491,8 +507,8 @@ public class AttackPart_Joust : MonoBehaviour
         if (isCharging)
             isCharging = false;
 
-        if (powerSlider != null)
-            powerSlider.gameObject.SetActive(false);
+        if (powerRadial != null)
+            powerRadial.gameObject.SetActive(false);
 
         if (cinematicManager != null)
             cinematicManager.OnAttackInputReleased();

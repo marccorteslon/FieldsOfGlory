@@ -15,7 +15,9 @@ MonoBehaviour:
   nodeId: node_forest_road
   displayName: Camino del Bosque
   travelDaysCost: 0
-  dangerIndex: 0
+  dangerIndex: 100
   isTown: 0
   cityId: 
-  possibleEventIds: []
+  possibleEncounters:
+  - encounterId: bandits_road
+    weight: 100

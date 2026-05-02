@@ -110,6 +110,76 @@ MonoBehaviour:
     m_Localized: 'Hit Strength:'
     m_Metadata:
       m_Items: []
+  - m_Id: 351435904253952
+    m_Localized: VICTORY!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351657355116544
+    m_Localized: DEFEAT!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352838869581824
+    m_Localized: MAIN MENU
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354855298007040
+    m_Localized: World Map
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355240158953472
+    m_Localized: Calendar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359915792891904
+    m_Localized: Town shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360117073346560
+    m_Localized: Exit town
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360258241036288
+    m_Localized: Travel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360387907944448
+    m_Localized: Go to joust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360609912455168
+    m_Localized: Wait
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803455545630720
+    m_Localized: 'CLICK (pc) X (controller)
+
+
+      CLICK & hold LMB (pc)
+
+      LFET
+      STICK (controller)
+
+
+      ARROWS (pc)
+
+      LEFT STICK (controller)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803398415015936
+    m_Localized: 'HORSE:
+
+
+      ATTACK:
+
+
+
+      DEFENSE:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804615253909504
+    m_Localized: CONTROLS
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

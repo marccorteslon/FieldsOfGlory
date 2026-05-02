@@ -80,11 +80,63 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 138017087684608
-    m_Key: joust_Progress
+    m_Key: joust_progress
     m_Metadata:
       m_Items: []
   - m_Id: 139713549434880
-    m_Key: joust_HitStrength
+    m_Key: joust_hitStrength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351435904253952
+    m_Key: joust_winText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351657355116544
+    m_Key: joust_loseText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352838869581824
+    m_Key: global_menuButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354855298007040
+    m_Key: map_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355240158953472
+    m_Key: map_calendar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359915792891904
+    m_Key: town_shop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360117073346560
+    m_Key: town_exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360258241036288
+    m_Key: town_travel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360387907944448
+    m_Key: town_joust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360609912455168
+    m_Key: town_wait
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803398415015936
+    m_Key: controls_text1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803455545630720
+    m_Key: controls_text2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804615253909504
+    m_Key: controls_title
     m_Metadata:
       m_Items: []
   m_Metadata:

@@ -99,6 +99,76 @@ MonoBehaviour:
     m_Localized: 'Fuerza de golpe:'
     m_Metadata:
       m_Items: []
+  - m_Id: 351435904253952
+    m_Localized: VICTORIA!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 351657355116544
+    m_Localized: VICTORIA!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 352838869581824
+    m_Localized: MENU PRINCIPAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 354855298007040
+    m_Localized: Mapa del Mundo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 355240158953472
+    m_Localized: Calendario
+    m_Metadata:
+      m_Items: []
+  - m_Id: 359915792891904
+    m_Localized: Tienda del pueblo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360117073346560
+    m_Localized: Salir del pueblo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360258241036288
+    m_Localized: Viajar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360387907944448
+    m_Localized: Ir a la justa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 360609912455168
+    m_Localized: Esperar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803455545630720
+    m_Localized: 'CLICK (pc) X (mando)
+
+
+      CLICK & mantener LMB (pc)
+
+      STICK
+      DERECHO (mando)
+
+
+      FLECHAS (pc)
+
+      STICK IZQUIERDO (mando)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 803398415015936
+    m_Localized: 'CABALLO:
+
+
+      ATAQUE:
+
+
+
+      DEFENSA:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 804615253909504
+    m_Localized: CONTROLES
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

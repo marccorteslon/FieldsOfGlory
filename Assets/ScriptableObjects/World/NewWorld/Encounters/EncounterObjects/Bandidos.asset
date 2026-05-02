@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
   m_Name: Bandidos
   m_EditorClassIdentifier: 
-  encounterId: bandits_forest
+  encounterId: bandits_road
   title: Bandidos en el bosque
   description: Unos bandidos te bloquean el camino y exigen su pago en oro. O sangre.
   options:
