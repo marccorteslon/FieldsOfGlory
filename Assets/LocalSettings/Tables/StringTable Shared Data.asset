@@ -139,6 +139,26 @@ MonoBehaviour:
     m_Key: controls_title
     m_Metadata:
       m_Items: []
+  - m_Id: 1272623344640000
+    m_Key: menu_play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1272756052418560
+    m_Key: menu_settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1272882217082880
+    m_Key: menu_controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1273033644040192
+    m_Key: menu_credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1273399026638848
+    m_Key: menu_exit
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -169,6 +169,26 @@ MonoBehaviour:
     m_Localized: CONTROLS
     m_Metadata:
       m_Items: []
+  - m_Id: 1272623344640000
+    m_Localized: Jugar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1272756052418560
+    m_Localized: Configuracio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1272882217082880
+    m_Localized: Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1273033644040192
+    m_Localized: Credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1273399026638848
+    m_Localized: Sortir
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

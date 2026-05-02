@@ -44,6 +44,9 @@ public class HorsePart_Joust : MonoBehaviour
     public int fallbackMV = 3;
     public int fallbackV = 1;
 
+    [Header("Extra")]
+    public GameObject objectToDisableOnEnd;
+
     private RectTransform movingIndicator;
     private float sliderHeight;
     private int pressCount = 0;
@@ -254,6 +257,8 @@ public class HorsePart_Joust : MonoBehaviour
 
         string zone = GetCurrentZone();
 
+        ShowResult(zone);
+
         if (zone != "Rojo")
         {
             pressCount++;
@@ -317,12 +322,9 @@ public class HorsePart_Joust : MonoBehaviour
 
         string zone = GetCurrentZone();
 
-        // Los puntos de caballo se suman cuando el jugador acierta el click,
-        // no al terminar la fase. Antes podía acabar el indicador en rojo y
-        // dejar la fase en 0 aunque el jugador hubiera acertado antes.
         if (!pointsAwardedThisPhase)
         {
-            Debug.Log("[Caballo] La fase terminó sin aciertos válidos. +0 puntos.");
+            Debug.Log("[Caballo] La fase terminÃ³ sin aciertos vÃ¡lidos. +0 puntos.");
         }
 
         ShowResult(pointsAwardedThisPhase ? lastScoredZone : zone);
@@ -340,27 +342,30 @@ public class HorsePart_Joust : MonoBehaviour
         switch (zone)
         {
             case "Rojo":
-                resultText.text = "VERY BAD!";
+                resultText.text = "Bad";
                 resultText.color = redColor;
                 break;
 
             case "Amarillo":
-                resultText.text = "GOOD!";
+                resultText.text = "Good";
                 resultText.color = yellowColor;
                 break;
 
             case "Verde":
-                resultText.text = "PERFECT!";
+                resultText.text = "Perfect";
                 resultText.color = greenColor;
                 break;
         }
     }
 
     public void ForceEndHorsePhase()
-    {
-        EvaluateZone();
-        HideUI();
-    }
+{
+    EvaluateZone();
+    HideUI();
+
+    if (objectToDisableOnEnd != null)
+        objectToDisableOnEnd.SetActive(false);
+}
 
     public void ResetHorsePhase()
     {
