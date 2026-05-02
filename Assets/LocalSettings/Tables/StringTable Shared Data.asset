@@ -139,6 +139,18 @@ MonoBehaviour:
     m_Key: controls_title
     m_Metadata:
       m_Items: []
+  - m_Id: 1148138222247936
+    m_Key: tutorial_horseTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148355181010944
+    m_Key: tutorial_attackTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148548060274688
+    m_Key: tutorial_defenseTitle
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

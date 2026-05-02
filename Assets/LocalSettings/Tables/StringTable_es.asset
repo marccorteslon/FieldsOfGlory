@@ -47,14 +47,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 84390219624448
-    m_Localized: 'Cargar con "X"
+    m_Localized: 'Cargar con "X" or "LMB"
 
 
-      Puedes cargar hasta 3 veces
-
-
-      Debes
-      darle a la parte verde'
+      Debes darle a la parte verde tantas
+      veces como puedas'
     m_Metadata:
       m_Items: []
   - m_Id: 84724694396928
@@ -167,6 +164,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 804615253909504
     m_Localized: CONTROLES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148138222247936
+    m_Localized: CABALLO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148355181010944
+    m_Localized: ATAQUE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148548060274688
+    m_Localized: DEFENSA
     m_Metadata:
       m_Items: []
   references:

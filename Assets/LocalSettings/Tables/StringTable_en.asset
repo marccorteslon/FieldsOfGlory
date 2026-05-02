@@ -47,14 +47,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 84390219624448
-    m_Localized: 'Charge with "X"
+    m_Localized: 'Charge with "X" or "LMB"
 
 
-      You can charge up to 3 times
-
-
-      You
-      must hit the green part'
+      You must hit the green part as
+      many times as you can'
     m_Metadata:
       m_Items: []
   - m_Id: 84724694396928
@@ -178,6 +175,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 804615253909504
     m_Localized: CONTROLS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148138222247936
+    m_Localized: HORSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148355181010944
+    m_Localized: ATTACK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148548060274688
+    m_Localized: DEFENSE
     m_Metadata:
       m_Items: []
   references:

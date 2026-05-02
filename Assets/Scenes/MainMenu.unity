@@ -990,6 +990,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 968221120}
   - {fileID: 1471374384}
   - {fileID: 1028417959}
   - {fileID: 509414481}
@@ -998,7 +999,6 @@ RectTransform:
   - {fileID: 1943576649}
   - {fileID: 871153666}
   - {fileID: 1501861199}
-  - {fileID: 968221120}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -7020,7 +7020,7 @@ GameObject:
   - component: {fileID: 968221122}
   - component: {fileID: 968221121}
   m_Layer: 5
-  m_Name: Image
+  m_Name: TITLE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7956,7 +7956,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.18, y: 0.79566675}
   m_AnchorMax: {x: 0.8175001, y: 0.957}
-  m_AnchoredPosition: {x: 0.99990845, y: 0.8514404}
+  m_AnchoredPosition: {x: 0.9998779, y: 0.8514404}
   m_SizeDelta: {x: 454.45422, y: 37}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1091579678
@@ -11130,6 +11130,7 @@ GameObject:
   - component: {fileID: 1629726863}
   - component: {fileID: 1629726862}
   - component: {fileID: 1629726865}
+  - component: {fileID: 1629726866}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -11199,7 +11200,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1629726863}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1629726866}
+        m_TargetAssemblyTypeName: ExitGame, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1629726863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11254,6 +11267,18 @@ MonoBehaviour:
   clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
   useHoverSound: 1
   useClickSound: 1
+--- !u!114 &1629726866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629726860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e2b28a66272d194480a90cf67b8859a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1642421945
 GameObject:
   m_ObjectHideFlags: 0
@@ -11812,7 +11837,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1711121327
 RectTransform:
   m_ObjectHideFlags: 0
@@ -13081,7 +13106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.79441744, b: 0.48867923, a: 0.392}
+  m_Color: {r: 1, g: 0.79441744, b: 0.48867923, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

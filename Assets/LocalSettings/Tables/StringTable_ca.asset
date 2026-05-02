@@ -47,14 +47,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 84390219624448
-    m_Localized: 'Carrega amb "X"
+    m_Localized: 'Carrega amb "X" o "LMB"
 
 
-      Pots carregar fins a 3 vegades
-
-
-      Has
-      d''acertar a la part verda'
+      Has d''acertar a la part verda
+      tants cops com puguis'
     m_Metadata:
       m_Items: []
   - m_Id: 84724694396928
@@ -167,6 +164,18 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 804615253909504
     m_Localized: CONTROLS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148138222247936
+    m_Localized: CABALL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148355181010944
+    m_Localized: ATAC
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1148548060274688
+    m_Localized: DEFENSA
     m_Metadata:
       m_Items: []
   references:
