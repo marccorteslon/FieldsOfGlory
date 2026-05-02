@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
@@ -7,9 +8,15 @@ public class ShopUIManager : MonoBehaviour
     [Header("Link to Existing Logic")]
     public ShopPanelController shopPanelController; // <--- Links to your original system
 
+    [Header("Shop Title")]
+    public TMP_Text shopTitleText;
+
     [Header("UI Panels")]
     public GameObject cardsGridPanel; 
     public GameObject detailedViewPanel; 
+    
+    [Header("Controller Support")]
+    public GameObject firstSelectedInDetailedView; // Assign your Buy or Back button here
     
     [Header("Detailed View Elements")]
     public Image detailedCardBackgroundImage; // The large background frame
@@ -54,15 +61,33 @@ public class ShopUIManager : MonoBehaviour
             
         if (detailedDescriptionText != null && clickedCard.modifiersText != null) 
             detailedDescriptionText.text = clickedCard.modifiersText.text;
+            
+        // Controller Support: Focus the Buy/Back button
+        if (firstSelectedInDetailedView != null)
+        {
+            EventSystem.current.SetSelectedGameObject(firstSelectedInDetailedView);
+        }
+    }
+
+    public void SetShopName(string townName)
+    {
+        if (shopTitleText != null)
+        {
+            shopTitleText.text = townName + "'s Shop";
+        }
     }
 
     public void CloseDetailedView()
     {
+        
         if (detailedViewPanel != null) detailedViewPanel.SetActive(false);
         if (cardsGridPanel != null) cardsGridPanel.SetActive(true);
         
         if (currentlySelectedCard != null)
         {
+            // Controller Support: Refocus the card when going back to the grid
+            EventSystem.current.SetSelectedGameObject(currentlySelectedCard.gameObject);
+            
             currentlySelectedCard.ResetCard();
             currentlySelectedCard = null;
         }
@@ -80,3 +105,5 @@ public class ShopUIManager : MonoBehaviour
         }
     }
 }
+
+

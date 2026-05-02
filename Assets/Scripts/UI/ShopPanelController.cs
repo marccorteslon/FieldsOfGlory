@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +15,9 @@ public class ShopPanelController : MonoBehaviour
 
     [Header("Money UI")]
     public TMP_Text moneyText;
+
+    [Header("Shop Header UI")]
+    public TMP_Text shopTitleText;
 
     [Header("Shop Items (4) - IDs")]
     public string[] itemIds = new string[4];
@@ -189,8 +192,27 @@ public class ShopPanelController : MonoBehaviour
             string val = mod.value.ToString("0.##");
             string type = mod.type == StatModType.Percent ? "%" : "";
             sb.AppendLine($"{sign}{val}{type} {mod.stat}");
-        }
+        }        return sb.ToString();
+    }
 
-        return sb.ToString();
+    public void SelectFirstAvailableCard()
+    {
+        StartCoroutine(SelectFirstCardRoutine());
+    }
+
+    private System.Collections.IEnumerator SelectFirstCardRoutine()
+    {
+        yield return null;
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].purchaseButton != null && slots[i].purchaseButton.interactable)
+            {
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(slots[i].purchaseButton.gameObject);
+                break;
+            }
+        }
     }
 }
+
+

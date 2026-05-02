@@ -1,38 +1,39 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
-public class InteractiveShopCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class InteractiveShopCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, ISelectHandler, IDeselectHandler, ISubmitHandler
 {
     [Header("Floating Settings")]
     public float floatSpeed = 2f;
     public float floatAmount = 5f;
     
-    [Header("Hover Settings")]
-    public float maxRotationAngle = 15f;
-    public float moveAmount = 15f; // How far it moves towards the mouse
+    [Header("Selection & Bump Settings")]
     public float scaleAmount = 1.05f;
     public float transitionSpeed = 10f;
+    public float bumpStrength = 30f;
+    public float bumpRecoverySpeed = 5f;
     
     [Header("References")]
     public ShopUIManager shopManager;
-    public int slotIndex; // Important! Set to 0, 1, 2, or 3 depending on which card this is
+    public int slotIndex;
     
     [Header("UI Elements from this Card")]
     public TMP_Text nameText;
     public TMP_Text priceText;
-    public TMP_Text modifiersText; // This holds the description/stats from ShopPanelController
+    public TMP_Text modifiersText;
     public Image iconImage;
-    [HideInInspector] public Image cardBackgroundImage; // Automatically grabbed
+    [HideInInspector] public Image cardBackgroundImage;
     
     private RectTransform rectTransform;
     private Vector3 originalLocalPosition;
     private Vector3 originalScale;
     private Quaternion originalRotation;
     
-    private bool isHovered = false;
+    private bool isSelected = false;
     private float floatTimer;
+    private Vector3 bumpOffset = Vector3.zero;
 
     void Awake()
     {
@@ -47,53 +48,83 @@ public class InteractiveShopCard : MonoBehaviour, IPointerEnterHandler, IPointer
 
     void Update()
     {
-        if (isHovered)
+        if (isSelected)
         {
-            HandleHoverMovement();
+            rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, originalScale * scaleAmount, Time.deltaTime * transitionSpeed);
+            rectTransform.localPosition = Vector3.Lerp(rectTransform.localPosition, originalLocalPosition, Time.deltaTime * transitionSpeed);
+            rectTransform.localRotation = Quaternion.Lerp(rectTransform.localRotation, originalRotation, Time.deltaTime * transitionSpeed);
+            bumpOffset = Vector3.zero;
         }
         else
         {
-            HandleFloating();
+            floatTimer += Time.deltaTime;
+            float newY = originalLocalPosition.y + Mathf.Sin(floatTimer * floatSpeed) * floatAmount;
+            Vector3 targetPosition = new Vector3(originalLocalPosition.x, newY, originalLocalPosition.z) + bumpOffset;
+            
+            rectTransform.localPosition = Vector3.Lerp(rectTransform.localPosition, targetPosition, Time.deltaTime * transitionSpeed);
+            rectTransform.localRotation = Quaternion.Lerp(rectTransform.localRotation, originalRotation, Time.deltaTime * transitionSpeed);
+            rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, originalScale, Time.deltaTime * transitionSpeed);
+            
+            bumpOffset = Vector3.Lerp(bumpOffset, Vector3.zero, Time.deltaTime * bumpRecoverySpeed);
         }
     }
 
-    private void HandleFloating()
-    {
-        floatTimer += Time.deltaTime;
-        float newY = originalLocalPosition.y + Mathf.Sin(floatTimer * floatSpeed) * floatAmount;
-        Vector3 targetPosition = new Vector3(originalLocalPosition.x, newY, originalLocalPosition.z);
-        
-        rectTransform.localPosition = Vector3.Lerp(rectTransform.localPosition, targetPosition, Time.deltaTime * transitionSpeed);
-        rectTransform.localRotation = Quaternion.Lerp(rectTransform.localRotation, originalRotation, Time.deltaTime * transitionSpeed);
-        rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, originalScale, Time.deltaTime * transitionSpeed);
+    public void OnPointerEnter(PointerEventData eventData) 
+    { 
+        EventSystem.current.SetSelectedGameObject(gameObject);
+    }
+    
+    public void OnPointerExit(PointerEventData eventData) 
+    { 
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == gameObject)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
-    private void HandleHoverMovement()
+    public void OnSelect(BaseEventData eventData)
     {
-        Vector2 localMousePos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, Input.mousePosition, null, out localMousePos);
-
-        Vector2 normalizedPos = new Vector2(
-            Mathf.Clamp(localMousePos.x / (rectTransform.rect.width * 0.5f), -1f, 1f),
-            Mathf.Clamp(localMousePos.y / (rectTransform.rect.height * 0.5f), -1f, 1f)
-        );
-
-        Quaternion targetRotation = Quaternion.Euler(-normalizedPos.y * maxRotationAngle, normalizedPos.x * maxRotationAngle, 0);
-        Vector3 targetPosition = originalLocalPosition + new Vector3(normalizedPos.x * moveAmount, normalizedPos.y * moveAmount, 0);
-        
-        rectTransform.localRotation = Quaternion.Lerp(rectTransform.localRotation, targetRotation, Time.deltaTime * transitionSpeed);
-        rectTransform.localScale = Vector3.Lerp(rectTransform.localScale, originalScale * scaleAmount, Time.deltaTime * transitionSpeed);
-        rectTransform.localPosition = Vector3.Lerp(rectTransform.localPosition, targetPosition, Time.deltaTime * transitionSpeed);
+        isSelected = true;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) { isHovered = true; }
-    public void OnPointerExit(PointerEventData eventData) { isHovered = false; }
+    public void OnDeselect(BaseEventData eventData)
+    {
+        isSelected = false;
+        StartCoroutine(CalculateBumpNextFrame());
+    }
+
+    private System.Collections.IEnumerator CalculateBumpNextFrame()
+    {
+        yield return null;
+
+        GameObject nextSelected = EventSystem.current.currentSelectedGameObject;
+        if (nextSelected != null && nextSelected != gameObject)
+        {
+            Vector3 worldDiff = nextSelected.transform.position - transform.position;
+            Vector3 localDiff = transform.InverseTransformDirection(worldDiff);
+            localDiff.z = 0;
+            bumpOffset = localDiff.normalized * bumpStrength;
+        }
+        else
+        {
+            bumpOffset = Vector3.zero;
+        }
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        isHovered = false;
+        OpenDetailed();
+    }
+
+    public void OnSubmit(BaseEventData eventData)
+    {
+        OpenDetailed();
+    }
+
+    private void OpenDetailed()
+    {
+        isSelected = false;
         
-        // Don't open if this slot is empty (ShopPanelController disables the image or sprite)
         if (iconImage != null && (!iconImage.enabled || iconImage.sprite == null)) return;
         
         if (shopManager != null)
@@ -104,9 +135,13 @@ public class InteractiveShopCard : MonoBehaviour, IPointerEnterHandler, IPointer
     
     public void ResetCard()
     {
-        isHovered = false;
+        isSelected = false;
+        bumpOffset = Vector3.zero;
         rectTransform.localPosition = originalLocalPosition;
         rectTransform.localRotation = originalRotation;
         rectTransform.localScale = originalScale;
     }
 }
+
+
+

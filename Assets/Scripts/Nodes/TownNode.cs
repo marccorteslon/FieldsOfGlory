@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public class TownNode : MonoBehaviour
@@ -26,11 +26,11 @@ public class TownNode : MonoBehaviour
 
         if (progressManager == null)
         {
-            Debug.LogError("TownNode: no se encontr� ProgressManager.");
+            Debug.LogError("TownNode: no se encontrÃ¯Â¿Â½ ProgressManager.");
             return;
         }
 
-        // SOLO puedes abrir el pueblo en el que est�s
+        // SOLO puedes abrir el pueblo en el que estÃ¯Â¿Â½s
         if (progressManager.CurrentCityId != cityId)
         {
             Debug.Log($"Primero debes viajar a {cityId}.");
@@ -63,8 +63,14 @@ public class TownNode : MonoBehaviour
 
         shopPanel.SetOriginTownPanel(townPanelObject);
 
+        if (shopPanel.shopTitleText != null && currentCity != null)
+        {
+            shopPanel.shopTitleText.text = $"{currentCity.displayName}'s Shop";
+        }
+
         if (townPanelObject != null)
             townPanelObject.SetActive(false);
+
 
         if (shopPanelObject != null)
             shopPanelObject.SetActive(true);
@@ -164,3 +170,5 @@ public class TownNode : MonoBehaviour
         Debug.LogError(ex.Message);
     }
 }
+
+
