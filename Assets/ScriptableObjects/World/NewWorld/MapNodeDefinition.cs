@@ -12,6 +12,10 @@ public class MapNodeDefinition : ScriptableObject
     public int travelDaysCost = 1;
     [Range(0, 100)] public int dangerIndex = 0;
 
+    [Header("Crossroad")]
+    [Tooltip("If true, this node acts as a branching point and will not consume days or trigger encounters.")]
+    public bool isCrossroad;
+
     [Header("Town")]
     public bool isTown;
     public string cityId;

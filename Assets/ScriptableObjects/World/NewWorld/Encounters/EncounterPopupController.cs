@@ -16,6 +16,10 @@ public class EncounterPopupController : MonoBehaviour
     [Header("Stats")]
     public LoadoutStatsComponent loadout;
 
+    [Header("Managers")]
+    public ProgressManager progressManager;
+    public WorldMapManager worldMapManager;
+
     private RandomEncounterDefinition currentEncounter;
     private bool resultShown = false;
 
@@ -23,6 +27,12 @@ public class EncounterPopupController : MonoBehaviour
     {
         if (loadout == null)
             loadout = FindFirstObjectByType<LoadoutStatsComponent>();
+
+        if (progressManager == null)
+            progressManager = FindFirstObjectByType<ProgressManager>();
+
+        if (worldMapManager == null)
+            worldMapManager = FindFirstObjectByType<WorldMapManager>();
 
         Close();
     }
@@ -32,10 +42,14 @@ public class EncounterPopupController : MonoBehaviour
         currentEncounter = encounter;
         resultShown = false;
 
-        panelObject.SetActive(true);
+        if (panelObject != null)
+            panelObject.SetActive(true);
 
-        titleText.text = encounter.title;
-        descriptionText.text = encounter.description;
+        if (titleText != null)
+            titleText.text = encounter.title;
+
+        if (descriptionText != null)
+            descriptionText.text = encounter.description;
 
         RefreshOptions();
     }
@@ -51,9 +65,10 @@ public class EncounterPopupController : MonoBehaviour
             if (!hasOption) continue;
 
             int index = i;
-            var option = currentEncounter.options[i];
+            EncounterOptionDefinition option = currentEncounter.options[i];
 
-            optionButtonTexts[i].text = option.optionText;
+            if (optionButtonTexts != null && i < optionButtonTexts.Length)
+                optionButtonTexts[i].text = option.optionText;
 
             optionButtons[i].onClick.RemoveAllListeners();
             optionButtons[i].onClick.AddListener(() => ChooseOption(index));
@@ -63,23 +78,75 @@ public class EncounterPopupController : MonoBehaviour
     void ChooseOption(int index)
     {
         if (resultShown) return;
+        if (currentEncounter == null) return;
+        if (index < 0 || index >= currentEncounter.options.Count) return;
 
-        var option = currentEncounter.options[index];
+        EncounterOptionDefinition option = currentEncounter.options[index];
 
-        int stat = GetStat(option.statToCheck);
+        int statValue = GetStat(option.statToCheck);
         int roll = Random.Range(1, 21);
-        int total = roll + stat;
+        int total = roll + statValue;
 
         bool success = total >= option.difficulty;
 
-        descriptionText.text = success
-            ? option.successText
-            : option.failureText;
+        if (descriptionText != null)
+        {
+            descriptionText.text = success
+                ? option.successText
+                : option.failureText;
+        }
 
-        Debug.Log($"[Encounter] {option.statToCheck}: {roll}+{stat} vs {option.difficulty}");
+        ApplyEffects(success ? option.successEffects : option.failureEffects);
+
+        Debug.Log($"[Encounter] {option.statToCheck}: {roll}+{statValue} = {total} vs {option.difficulty} ? {(success ? "SUCCESS" : "FAIL")}");
 
         ShowContinueOnly();
         resultShown = true;
+    }
+
+    void ApplyEffects(EncounterEffect[] effects)
+    {
+        if (effects == null) return;
+
+        if (progressManager == null)
+            progressManager = FindFirstObjectByType<ProgressManager>();
+
+        if (worldMapManager == null)
+            worldMapManager = FindFirstObjectByType<WorldMapManager>();
+
+        foreach (var effect in effects)
+        {
+            if (effect == null) continue;
+
+            switch (effect.type)
+            {
+                case EncounterEffectType.AddMoney:
+                    if (progressManager != null)
+                        progressManager.AddMoney(effect.value);
+                    break;
+
+                case EncounterEffectType.LoseMoney:
+                    if (progressManager != null)
+                        progressManager.TrySpendMoney(effect.value);
+                    break;
+
+                case EncounterEffectType.AddDays:
+                    if (progressManager != null)
+                        progressManager.AdvanceDays(effect.value);
+                    break;
+
+                case EncounterEffectType.MoveToNode:
+                    if (!string.IsNullOrWhiteSpace(effect.targetNodeId))
+                    {
+                        if (progressManager != null)
+                            progressManager.SetCurrentNode(effect.targetNodeId);
+
+                        if (worldMapManager != null)
+                            worldMapManager.ForceMoveToNode(effect.targetNodeId);
+                    }
+                    break;
+            }
+        }
     }
 
     void ShowContinueOnly()
@@ -93,7 +160,9 @@ public class EncounterPopupController : MonoBehaviour
 
             if (!isContinue) continue;
 
-            optionButtonTexts[i].text = "Continue";
+            if (optionButtonTexts != null && i < optionButtonTexts.Length)
+                optionButtonTexts[i].text = "Continue";
+
             optionButtons[i].onClick.AddListener(Close);
         }
     }
@@ -109,6 +178,7 @@ public class EncounterPopupController : MonoBehaviour
         resultShown = false;
         currentEncounter = null;
 
-        panelObject.SetActive(false);
+        if (panelObject != null)
+            panelObject.SetActive(false);
     }
 }

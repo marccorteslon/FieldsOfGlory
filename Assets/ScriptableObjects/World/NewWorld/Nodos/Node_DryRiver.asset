@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d945ffa79b41d1418ca38e6a4b21c29, type: 3}
+  m_Name: Node_DryRiver
+  m_EditorClassIdentifier: 
+  nodeId: node_dry_river
+  displayName: "Cruce del R\xEDo Seco"
+  travelDaysCost: 1
+  dangerIndex: 30
+  isCrossroad: 0
+  isTown: 0
+  cityId: 
+  possibleEncounters:
+  - encounterId: enc_mercader_atascado
+    weight: 80

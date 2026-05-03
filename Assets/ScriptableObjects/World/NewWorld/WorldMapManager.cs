@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 
 public class WorldMapManager : MonoBehaviour
@@ -57,6 +57,8 @@ public class WorldMapManager : MonoBehaviour
         HandleConfirmInput();
     }
 
+    private bool dpadInUse = false;
+
     void HandleDirectionInput()
     {
         MapDirection? direction = null;
@@ -72,18 +74,27 @@ public class WorldMapManager : MonoBehaviour
 
         if (direction == null)
         {
-            float h = Input.GetAxisRaw(horizontalAxis);
-            float v = Input.GetAxisRaw(verticalAxis);
-
-            Vector2 input = new Vector2(h, v);
-
-            if (input.magnitude < inputDeadzone)
-                return;
-
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                direction = input.x > 0 ? MapDirection.Right : MapDirection.Left;
-            else
-                direction = input.y > 0 ? MapDirection.Up : MapDirection.Down;
+#if ENABLE_INPUT_SYSTEM
+            if (UnityEngine.InputSystem.Gamepad.current != null)
+            {
+                Vector2 dpadVal = UnityEngine.InputSystem.Gamepad.current.dpad.ReadValue();
+                if (dpadVal.sqrMagnitude > 0.1f)
+                {
+                    if (!dpadInUse)
+                    {
+                        dpadInUse = true;
+                        if (Mathf.Abs(dpadVal.x) > Mathf.Abs(dpadVal.y))
+                            direction = dpadVal.x > 0 ? MapDirection.Right : MapDirection.Left;
+                        else
+                            direction = dpadVal.y > 0 ? MapDirection.Up : MapDirection.Down;
+                    }
+                }
+                else
+                {
+                    dpadInUse = false;
+                }
+            }
+#endif
         }
 
         if (direction != null)
@@ -137,7 +148,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (destinationNode != null)
         {
-            Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | D�as: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
+            Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | Días: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
         }
     }
 
@@ -177,7 +188,8 @@ public class WorldMapManager : MonoBehaviour
         }
 
         progressManager.SetCurrentNode(destinationNode.nodeId);
-        progressManager.AdvanceDays(destinationNode.travelDaysCost);
+        if (!destinationNode.isCrossroad)
+            progressManager.AdvanceDays(destinationNode.travelDaysCost);
 
         if (destinationNode.isTown)
             progressManager.SetCurrentCity(destinationNode.cityId);
@@ -185,7 +197,7 @@ public class WorldMapManager : MonoBehaviour
         if (calendarPanelController != null)
             calendarPanelController.RefreshCalendar();
 
-        if (randomEncounterManager != null)
+        if (randomEncounterManager != null && !destinationNode.isCrossroad)
             randomEncounterManager.TryTriggerEncounter(destinationNode);
 
         selectedConnection = null;
@@ -223,7 +235,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (nodeView == null)
         {
-            Debug.LogWarning("No se encontr� MapNodeView para " + progressManager.CurrentNodeId);
+            Debug.LogWarning("No se encontró MapNodeView para " + progressManager.CurrentNodeId);
             return;
         }
 
@@ -264,4 +276,35 @@ public class WorldMapManager : MonoBehaviour
 
         return null;
     }
+    public void ForceMoveToNode(string nodeId)
+    {
+        MapNodeView nodeView = GetNodeView(nodeId);
+
+        if (nodeView == null)
+        {
+            Debug.LogWarning("No se encontró nodo para mover: " + nodeId);
+            return;
+        }
+
+        Transform stopPoint = nodeView.playerStopPoint != null
+            ? nodeView.playerStopPoint
+            : nodeView.transform;
+
+        if (mapPlayerIcon != null)
+            mapPlayerIcon.position = stopPoint.position;
+
+        MapNodeDefinition node = mapDatabase.GetNodeById(nodeId);
+
+        if (node != null && node.isTown && progressManager != null)
+            progressManager.SetCurrentCity(node.cityId);
+
+        if (calendarPanelController != null)
+            calendarPanelController.RefreshCalendar();
+
+        RefreshAvailableRoutes();
+
+        Debug.Log($"[Map] Movido forzosamente a nodo: {nodeId}");
+    }
 }
+
+

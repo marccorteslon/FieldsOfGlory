@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d945ffa79b41d1418ca38e6a4b21c29, type: 3}
-  m_Name: Node_Montelirio
+  m_Script: {fileID: 11500000, guid: f0d25b45304d48542b8ca63bf331ad61, type: 3}
+  m_Name: Connection_AridCanyon_Teberis
   m_EditorClassIdentifier: 
-  nodeId: node_montelirio
-  displayName: Montelirio
-  travelDaysCost: 0
-  dangerIndex: 0
-  isTown: 1
-  cityId: city_montelirio
-  possibleEventIds: []
+  nodeAId: node_arid_canyon
+  nodeBId: node_teberis
+  directionFromA: 3
+  directionFromB: 2

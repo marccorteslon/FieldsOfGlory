@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0d25b45304d48542b8ca63bf331ad61, type: 3}
-  m_Name: Connection_Forest_Montelirio
+  m_Script: {fileID: 11500000, guid: 6a0f04cf6011ce240bd23bcaa551d881, type: 3}
+  m_Name: City_PuertoAlondra
   m_EditorClassIdentifier: 
-  nodeAId: node_forest_road
-  nodeBId: node_montelirio
-  directionFromA: 3
-  directionFromB: 2
+  cityId: city_puertoalondra
+  displayName: Puerto Alondra
+  shopId: shop_puertoalondra
+  tavernId: tavern_puertoalondra
