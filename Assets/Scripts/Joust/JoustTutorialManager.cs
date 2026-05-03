@@ -82,10 +82,20 @@ public class JoustTutorialManager : MonoBehaviour
 
     public void CloseTutorial()
     {
+        bool closingAttackTutorial = currentPanel == attackTutorialPanel;
+
         if (currentPanel != null)
             currentPanel.SetActive(false);
 
         currentPanel = null;
+
+        if (closingAttackTutorial && ShouldShowTutorial() && defenseTutorialPanel != null)
+        {
+            currentPanel = defenseTutorialPanel;
+            currentPanel.SetActive(true);
+            Time.timeScale = 0f;
+            return;
+        }
 
         if (tutorialPausedTime)
         {
