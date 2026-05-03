@@ -47,21 +47,18 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 84390219624448
-    m_Localized: 'Charge with "X"
+    m_Localized: 'Charge with "X" or "LMB" (pc)
 
 
-      You can charge up to 3 times
-
-
-      You
-      must hit the green part'
+      You must hit the green part
+      as many times as you can'
     m_Metadata:
       m_Items: []
   - m_Id: 84724694396928
-    m_Localized: 'Aim with Right Joystick
+    m_Localized: 'Aim with Right Joystick or Mouse
 
 
-      Hold R2 to charge
+      Hold R2 or "LMB" to charge
 
 
       Release
@@ -73,7 +70,7 @@ MonoBehaviour:
 
 
       You must aim with left joystick
-      on the same direction
+      or "WASD" on the same direction
 
 '
     m_Metadata:

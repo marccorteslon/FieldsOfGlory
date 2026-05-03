@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class WinManager : MonoBehaviour
 {
@@ -10,8 +11,6 @@ public class WinManager : MonoBehaviour
     public int winPoints = 30;
     public int currentWinPoints = 0;
 
-    // Se mantiene porque ScoreUIManager lo usa para pintar el indicador mínimo.
-    // En una sola pasada, el mínimo para ganar es el total.
     [Range(0f, 1f)] public float minPointsFraction = 1f;
 
     public ScoreManager scoreManager;
@@ -23,13 +22,16 @@ public class WinManager : MonoBehaviour
     [Header("Cinematics")]
     public JoustCinematicManager cinematicManager;
 
-    // Se mantiene por compatibilidad con ProgressManager/recompensas.
     public int roundNumber = 1;
 
     [Header("UI Panels")]
     public GameObject roundWinPanel;
     public GameObject roundLosePanel;
     public GameObject gameWinPanel;
+
+    [Header("Victory UI Texts")]
+    public TextMeshProUGUI victoryMoneyText;
+    public TextMeshProUGUI victoryScoreText;
 
     [Header("UI Timing")]
     public float panelDisplayTime = 3f;
@@ -55,7 +57,6 @@ public class WinManager : MonoBehaviour
 
         int roundScore = scoreManager.GetScore();
 
-        // Ahora la justa solo tiene una pasada.
         currentWinPoints = roundScore;
 
         if (scoreUIManager != null)
@@ -129,7 +130,9 @@ public class WinManager : MonoBehaviour
             gameWinPanel.SetActive(true);
 
         Debug.Log("¡Has ganado la justa!");
-        WinGame();
+
+        int moneyEarned = WinGame();
+        UpdateVictoryTexts(currentWinPoints, moneyEarned);
 
         yield return new WaitForSeconds(3f);
 
@@ -139,16 +142,18 @@ public class WinManager : MonoBehaviour
             Debug.LogWarning("WinManager: nextSceneName no asignado.");
     }
 
-    void WinGame()
+    int WinGame()
     {
         Debug.Log("¡Has alcanzado los puntos necesarios! ¡Has ganado la partida!");
 
         if (progressManager == null)
             progressManager = FindObjectOfType<ProgressManager>();
 
+        int reward = 0;
+
         if (progressManager != null)
         {
-            int reward = progressManager.CalculateReward(winPoints, roundNumber);
+            reward = progressManager.CalculateReward(winPoints, roundNumber);
             progressManager.AddMoney(reward);
 
             Debug.Log($"[REWARD] HP enemigo: {winPoints} | Ronda: {roundNumber} | Dinero ganado: {reward}");
@@ -157,6 +162,17 @@ public class WinManager : MonoBehaviour
         {
             Debug.LogError("No se encontró ProgressManager en la escena.");
         }
+
+        return reward;
+    }
+
+    void UpdateVictoryTexts(int roundScore, int moneyEarned)
+    {
+        if (victoryMoneyText != null)
+            victoryMoneyText.text = $"Money earned: {moneyEarned}";
+
+        if (victoryScoreText != null)
+            victoryScoreText.text = $"Points: {roundScore}";
     }
 
     void LoseGame()
