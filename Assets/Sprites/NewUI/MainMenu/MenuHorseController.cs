@@ -80,7 +80,7 @@ public class MenuHorseController : MonoBehaviour
     {
         stateTimer -= Time.deltaTime;
 
-        // Smoothly blend the animator speed parameter for silky smooth Blend Tree transitions
+       
         if (animator != null)
         {
             currentSpeedParam = Mathf.Lerp(currentSpeedParam, targetSpeedParam, animationBlendSpeed * Time.deltaTime);
