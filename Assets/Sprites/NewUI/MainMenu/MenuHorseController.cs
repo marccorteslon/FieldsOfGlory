@@ -40,12 +40,18 @@ public class MenuHorseController : MonoBehaviour
     [Tooltip("How strongly the horse pushes away from others.")]
     public float avoidanceStrength = 2f;
     
+    [Header("Animation Settings")]
+    [Tooltip("How fast the horse blends between Idle, Trot, and Gallop animations.")]
+    public float animationBlendSpeed = 3f;
+    
     public static List<MenuHorseController> allHorses = new List<MenuHorseController>();
 
     private HorseState currentState = HorseState.Idle;
     private float stateTimer;
     private Vector3 targetPosition;
     private bool isGalloping = false;
+    private float targetSpeedParam = 0f;
+    private float currentSpeedParam = 0f;
 
     private static readonly int SpeedParam = Animator.StringToHash("Speed");
     private static readonly int IdleBreakTrigger = Animator.StringToHash("IdleBreak");
@@ -73,6 +79,13 @@ public class MenuHorseController : MonoBehaviour
     private void Update()
     {
         stateTimer -= Time.deltaTime;
+
+        // Smoothly blend the animator speed parameter for silky smooth Blend Tree transitions
+        if (animator != null)
+        {
+            currentSpeedParam = Mathf.Lerp(currentSpeedParam, targetSpeedParam, animationBlendSpeed * Time.deltaTime);
+            animator.SetFloat(SpeedParam, currentSpeedParam);
+        }
 
         switch (currentState)
         {
@@ -125,7 +138,7 @@ public class MenuHorseController : MonoBehaviour
         stateTimer = Random.Range(minIdleTime, maxIdleTime);
         isGalloping = false;
         
-        if (animator != null) animator.SetFloat(SpeedParam, 0f);
+        targetSpeedParam = 0f;
         if (gallopSmoke != null) gallopSmoke.Stop();
     }
 
@@ -135,7 +148,7 @@ public class MenuHorseController : MonoBehaviour
         
         if (animator != null)
         {
-            animator.SetFloat(SpeedParam, 0f); 
+            targetSpeedParam = 0f; 
             int breakType = Random.Range(0, 2);
             animator.SetInteger(IdleBreakTypeParam, breakType);
             animator.SetTrigger(IdleBreakTrigger);
@@ -180,10 +193,7 @@ public class MenuHorseController : MonoBehaviour
 
         isGalloping = Random.value > 0.5f;
         
-        if (animator != null)
-        {
-            animator.SetFloat(SpeedParam, isGalloping ? 2f : 1f);
-        }
+        targetSpeedParam = isGalloping ? 2f : 1f;
         
         if (isGalloping && gallopSmoke != null) gallopSmoke.Play();
         else if (gallopSmoke != null) gallopSmoke.Stop();
