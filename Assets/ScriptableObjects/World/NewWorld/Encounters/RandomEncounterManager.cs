@@ -41,18 +41,21 @@ public class RandomEncounterManager : MonoBehaviour
     {
         int totalWeight = 0;
 
-        foreach (var e in node.possibleEncounters)
-            totalWeight += Mathf.Max(0, e.weight);
+        foreach (var entry in node.possibleEncounters)
+            totalWeight += Mathf.Max(0, entry.weight);
+
+        if (totalWeight <= 0)
+            return node.possibleEncounters[0].encounterId;
 
         int roll = Random.Range(0, totalWeight);
         int current = 0;
 
-        foreach (var e in node.possibleEncounters)
+        foreach (var entry in node.possibleEncounters)
         {
-            current += Mathf.Max(0, e.weight);
+            current += Mathf.Max(0, entry.weight);
 
             if (roll < current)
-                return e.encounterId;
+                return entry.encounterId;
         }
 
         return node.possibleEncounters[0].encounterId;

@@ -264,4 +264,33 @@ public class WorldMapManager : MonoBehaviour
 
         return null;
     }
+    public void ForceMoveToNode(string nodeId)
+    {
+        MapNodeView nodeView = GetNodeView(nodeId);
+
+        if (nodeView == null)
+        {
+            Debug.LogWarning("No se encontró nodo para mover: " + nodeId);
+            return;
+        }
+
+        Transform stopPoint = nodeView.playerStopPoint != null
+            ? nodeView.playerStopPoint
+            : nodeView.transform;
+
+        if (mapPlayerIcon != null)
+            mapPlayerIcon.position = stopPoint.position;
+
+        MapNodeDefinition node = mapDatabase.GetNodeById(nodeId);
+
+        if (node != null && node.isTown && progressManager != null)
+            progressManager.SetCurrentCity(node.cityId);
+
+        if (calendarPanelController != null)
+            calendarPanelController.RefreshCalendar();
+
+        RefreshAvailableRoutes();
+
+        Debug.Log($"[Map] Movido forzosamente a nodo: {nodeId}");
+    }
 }

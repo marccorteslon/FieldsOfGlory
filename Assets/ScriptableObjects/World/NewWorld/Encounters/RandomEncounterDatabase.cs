@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "FieldsOfGlory/World/NewWorld/Encounters/Random Encounter Database")]
+[CreateAssetMenu(menuName = "FieldsOfGlory/World/Random Encounter Database")]
 public class RandomEncounterDatabase : ScriptableObject
 {
     public List<RandomEncounterDefinition> encounters = new();

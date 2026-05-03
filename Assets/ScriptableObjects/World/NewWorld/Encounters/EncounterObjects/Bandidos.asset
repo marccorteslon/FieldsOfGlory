@@ -21,8 +21,18 @@ MonoBehaviour:
     difficulty: 12
     successText: "Los bandidos retroceden al ver tu determinaci\xF3n."
     failureText: No pareces lo bastane amenazante y te roban unas monedas.
+    successEffects: []
+    failureEffects:
+    - type: 1
+      value: 10
+      targetNodeId: 
   - optionText: Huir a caballo
     statToCheck: 0
     difficulty: 10
     successText: Escapas antes de que puedan reaccionar.
     failureText: Tropiezas durante la huida y pierdes tiempo.
+    successEffects: []
+    failureEffects:
+    - type: 2
+      value: 1
+      targetNodeId: 
