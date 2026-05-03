@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 
 public class WorldMapManager : MonoBehaviour
@@ -72,18 +72,16 @@ public class WorldMapManager : MonoBehaviour
 
         if (direction == null)
         {
-            float h = Input.GetAxisRaw(horizontalAxis);
-            float v = Input.GetAxisRaw(verticalAxis);
-
-            Vector2 input = new Vector2(h, v);
-
-            if (input.magnitude < inputDeadzone)
-                return;
-
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                direction = input.x > 0 ? MapDirection.Right : MapDirection.Left;
-            else
-                direction = input.y > 0 ? MapDirection.Up : MapDirection.Down;
+#if ENABLE_INPUT_SYSTEM
+            if (UnityEngine.InputSystem.Gamepad.current != null)
+            {
+                var dpad = UnityEngine.InputSystem.Gamepad.current.dpad;
+                if (dpad.up.wasPressedThisFrame) direction = MapDirection.Up;
+                else if (dpad.down.wasPressedThisFrame) direction = MapDirection.Down;
+                else if (dpad.left.wasPressedThisFrame) direction = MapDirection.Left;
+                else if (dpad.right.wasPressedThisFrame) direction = MapDirection.Right;
+            }
+#endif
         }
 
         if (direction != null)
@@ -137,7 +135,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (destinationNode != null)
         {
-            Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | Días: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
+            Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | DÃ­as: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
         }
     }
 
@@ -177,7 +175,8 @@ public class WorldMapManager : MonoBehaviour
         }
 
         progressManager.SetCurrentNode(destinationNode.nodeId);
-        progressManager.AdvanceDays(destinationNode.travelDaysCost);
+        if (!destinationNode.isCrossroad)
+            progressManager.AdvanceDays(destinationNode.travelDaysCost);
 
         if (destinationNode.isTown)
             progressManager.SetCurrentCity(destinationNode.cityId);
@@ -185,7 +184,7 @@ public class WorldMapManager : MonoBehaviour
         if (calendarPanelController != null)
             calendarPanelController.RefreshCalendar();
 
-        if (randomEncounterManager != null)
+        if (randomEncounterManager != null && !destinationNode.isCrossroad)
             randomEncounterManager.TryTriggerEncounter(destinationNode);
 
         selectedConnection = null;
@@ -223,7 +222,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (nodeView == null)
         {
-            Debug.LogWarning("No se encontró MapNodeView para " + progressManager.CurrentNodeId);
+            Debug.LogWarning("No se encontrÃ³ MapNodeView para " + progressManager.CurrentNodeId);
             return;
         }
 
@@ -270,7 +269,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (nodeView == null)
         {
-            Debug.LogWarning("No se encontró nodo para mover: " + nodeId);
+            Debug.LogWarning("No se encontrÃ³ nodo para mover: " + nodeId);
             return;
         }
 
@@ -294,3 +293,4 @@ public class WorldMapManager : MonoBehaviour
         Debug.Log($"[Map] Movido forzosamente a nodo: {nodeId}");
     }
 }
+

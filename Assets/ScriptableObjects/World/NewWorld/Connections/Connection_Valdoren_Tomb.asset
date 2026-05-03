@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeAId: node_valdoren
   nodeBId: node_old_tomb
-  directionFromA: 0
-  directionFromB: 1
+  directionFromA: 1
+  directionFromB: 0
