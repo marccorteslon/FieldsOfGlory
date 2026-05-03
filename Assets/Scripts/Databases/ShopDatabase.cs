@@ -10,20 +10,22 @@ public class ShopDatabase : ScriptableObject
 
     public void BuildLookup()
     {
-        lookup = new Dictionary<string, ShopDefinition>();
+        lookup = new Dictionary<string, ShopDefinition>(System.StringComparer.OrdinalIgnoreCase);
 
         foreach (var shop in shops)
         {
             if (shop == null || string.IsNullOrWhiteSpace(shop.shopId)) continue;
-
-            if (!lookup.ContainsKey(shop.shopId))
-                lookup.Add(shop.shopId, shop);
+            
+            string id = shop.shopId.Trim();
+            if (!lookup.ContainsKey(id))
+                lookup.Add(id, shop);
         }
     }
 
     public ShopDefinition GetById(string id)
     {
         if (lookup == null) BuildLookup();
-        return lookup.TryGetValue(id, out var shop) ? shop : null;
+        if (string.IsNullOrWhiteSpace(id)) return null;
+        return lookup.TryGetValue(id.Trim(), out var shop) ? shop : null;
     }
 }

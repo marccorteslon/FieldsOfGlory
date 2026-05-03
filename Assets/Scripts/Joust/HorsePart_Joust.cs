@@ -20,6 +20,20 @@ public class HorsePart_Joust : MonoBehaviour
     [Header("Drop Animation")]
     public float dropSpeed = 1800f;
 
+    [Header("Horse Animation")]
+    public Animator horseAnimator;
+    public ParticleSystem gallopSmoke;
+    [Header("Opponent Horse Animation")]
+    public Animator opponentHorseAnimator;
+    public ParticleSystem opponentGallopSmoke;
+
+    [Header("Animation Settings")]
+    public float gallopSpeedThreshold = 500f;
+    public float animationBlendSpeed = 5f;
+
+    private float currentAnimSpeed = 0f;
+    private static readonly int SpeedParam = Animator.StringToHash("Speed");
+
     private bool isDropping = false;
 
     [Header("Zone Proportions")]
@@ -88,6 +102,8 @@ public class HorsePart_Joust : MonoBehaviour
     {
         if (joustManager == null) return;
 
+        UpdateHorseAnimation();
+
         if (!joustManager.horsePartIsOn)
         {
             HideUI();
@@ -105,6 +121,41 @@ public class HorsePart_Joust : MonoBehaviour
             MoveIndicator();
 
         HandleInput();
+    }
+
+    void UpdateHorseAnimation()
+    {
+        float targetAnimSpeed = 0f;
+
+        if (joustManager != null && joustManager.horsePartIsOn && isActive)
+        {
+            // 1f = Trote, 2f = Galope
+            targetAnimSpeed = currentMoveSpeed >= gallopSpeedThreshold ? 2f : 1f;
+        }
+
+        currentAnimSpeed = Mathf.Lerp(currentAnimSpeed, targetAnimSpeed, animationBlendSpeed * Time.deltaTime);
+        
+        if (horseAnimator != null)
+            horseAnimator.SetFloat(SpeedParam, currentAnimSpeed);
+            
+        if (opponentHorseAnimator != null)
+            opponentHorseAnimator.SetFloat(SpeedParam, currentAnimSpeed);
+
+        if (gallopSmoke != null)
+        {
+            if (targetAnimSpeed >= 2f && !gallopSmoke.isPlaying)
+                gallopSmoke.Play();
+            else if (targetAnimSpeed < 2f && gallopSmoke.isPlaying)
+                gallopSmoke.Stop();
+        }
+        
+        if (opponentGallopSmoke != null)
+        {
+            if (targetAnimSpeed >= 2f && !opponentGallopSmoke.isPlaying)
+                opponentGallopSmoke.Play();
+            else if (targetAnimSpeed < 2f && opponentGallopSmoke.isPlaying)
+                opponentGallopSmoke.Stop();
+        }
     }
 
     void CalculateZones()

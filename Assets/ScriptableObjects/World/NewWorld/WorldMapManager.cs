@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -80,7 +80,7 @@ public class WorldMapManager : MonoBehaviour
     {
         UpdatePlayerAnimation();
 
-        if (isMoving)
+        if (isMoving || PauseMenuController.IsPaused)
             return;
 
         HandleCityInteractionInput();

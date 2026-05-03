@@ -1,4 +1,4 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -96,8 +96,12 @@ public class JoustManager : MonoBehaviour
     [HideInInspector] public Vector3 initialEnemyPos;
     [HideInInspector] public Quaternion initialEnemyRot;
 
+        [Header("Difficulty Settings")]
+    public JoustDifficulty difficulty = JoustDifficulty.Normal;
+
     void Start()
     {
+        ApplyDifficulty();
         if (player != null)
         {
             initialPlayerPos = player.position;
@@ -125,6 +129,48 @@ public class JoustManager : MonoBehaviour
             preJoustIntroCoroutine = StartCoroutine(PreJoustIntroSequence());
         else
             StartJoustNormally();
+    }
+
+    
+        void ApplyDifficulty()
+    {
+        int basePoints = 30;
+
+        switch (difficulty)
+        {
+            case JoustDifficulty.Easy:
+                horsePhaseDuration = 6f;
+                attackDuration = 4f;
+                defenseDuration = 2.5f;
+                horsePhaseSpeed = 8f;
+                combatPhaseSpeed = 3f;
+                if (winManager != null) winManager.winPoints = basePoints;
+                break;
+            case JoustDifficulty.Normal:
+                horsePhaseDuration = 5f;
+                attackDuration = 3f;
+                defenseDuration = 2f;
+                horsePhaseSpeed = 10f;
+                combatPhaseSpeed = 4f;
+                if (winManager != null) winManager.winPoints = basePoints + 20; // 50
+                break;
+            case JoustDifficulty.Hard:
+                horsePhaseDuration = 4f;
+                attackDuration = 2f;
+                defenseDuration = 1.5f;
+                horsePhaseSpeed = 12f;
+                combatPhaseSpeed = 5f;
+                if (winManager != null) winManager.winPoints = basePoints + 50; // 80
+                break;
+            case JoustDifficulty.Epic:
+                horsePhaseDuration = 3.5f;
+                attackDuration = 1.5f;
+                defenseDuration = 1f;
+                horsePhaseSpeed = 14f;
+                combatPhaseSpeed = 6f;
+                if (winManager != null) winManager.winPoints = basePoints + 90; // 120
+                break;
+        }
     }
 
     void Update()
@@ -466,13 +512,13 @@ public class JoustManager : MonoBehaviour
         else if (attackPartIsOn && defensePartIsOn)
         {
             controlsText.text =
-                "ATAQUE: RatÛn + Mantener/Soltar Click Izq / Stick Der + R2\n" +
-                "DEFENSA: Stick Izq -> Bloquear direcciÛn";
+                "ATAQUE: Rat√≥n + Mantener/Soltar Click Izq / Stick Der + R2\n" +
+                "DEFENSA: Stick Izq -> Bloquear direcci√≥n";
         }
         else if (attackPartIsOn)
         {
             controlsText.text =
-                "PC: RatÛn + Mantener/Soltar Click Izq\n" +
+                "PC: Rat√≥n + Mantener/Soltar Click Izq\n" +
                 "Mando: Stick Der + R2\n";
         }
         else if (defensePartIsOn)
@@ -599,3 +645,4 @@ public class JoustManager : MonoBehaviour
             StartJoustNormally();
     }
 }
+
