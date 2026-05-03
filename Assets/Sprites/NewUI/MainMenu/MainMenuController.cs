@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
@@ -89,6 +89,12 @@ public class MainMenuController : MonoBehaviour
         if (creditsPanel) creditsPanel.SetActive(false);
         if (controlsPanel) controlsPanel.SetActive(false);
         if (saveLoadPanel) saveLoadPanel.SetActive(false);
+    }
+
+    public void CloseActivePanel()
+    {
+        CloseAllRightPanels();
+        SetSelected(firstSelectedMainMenu);
     }
 
     private void SetSelected(GameObject obj)
