@@ -57,6 +57,8 @@ public class WorldMapManager : MonoBehaviour
         HandleConfirmInput();
     }
 
+    private bool dpadInUse = false;
+
     void HandleDirectionInput()
     {
         MapDirection? direction = null;
@@ -75,11 +77,22 @@ public class WorldMapManager : MonoBehaviour
 #if ENABLE_INPUT_SYSTEM
             if (UnityEngine.InputSystem.Gamepad.current != null)
             {
-                var dpad = UnityEngine.InputSystem.Gamepad.current.dpad;
-                if (dpad.up.wasPressedThisFrame) direction = MapDirection.Up;
-                else if (dpad.down.wasPressedThisFrame) direction = MapDirection.Down;
-                else if (dpad.left.wasPressedThisFrame) direction = MapDirection.Left;
-                else if (dpad.right.wasPressedThisFrame) direction = MapDirection.Right;
+                Vector2 dpadVal = UnityEngine.InputSystem.Gamepad.current.dpad.ReadValue();
+                if (dpadVal.sqrMagnitude > 0.1f)
+                {
+                    if (!dpadInUse)
+                    {
+                        dpadInUse = true;
+                        if (Mathf.Abs(dpadVal.x) > Mathf.Abs(dpadVal.y))
+                            direction = dpadVal.x > 0 ? MapDirection.Right : MapDirection.Left;
+                        else
+                            direction = dpadVal.y > 0 ? MapDirection.Up : MapDirection.Down;
+                    }
+                }
+                else
+                {
+                    dpadInUse = false;
+                }
             }
 #endif
         }
@@ -293,4 +306,5 @@ public class WorldMapManager : MonoBehaviour
         Debug.Log($"[Map] Movido forzosamente a nodo: {nodeId}");
     }
 }
+
 

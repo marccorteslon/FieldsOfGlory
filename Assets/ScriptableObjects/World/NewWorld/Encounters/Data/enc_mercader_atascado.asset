@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: enc_mercader_atascado
+  m_EditorClassIdentifier: 
+  encounterId: enc_mercader_atascado
+  title: El Mercader Atascado
+  description: "Mientras viajas, encuentras a un mercader cuyo carro de mulas se
+    ha quedado hundido en un foso de barro. Su peque\xF1a escolta parece nerviosa
+    e incompetente para sacarlo."
+  options:
+  - optionText: Tirar del carro con fuerza brute.
+    statToCheck: 1
+    difficulty: 12
+    successText: "Tus hombres tiran al un\xEDsono y logran liberar el carro. El mercader,
+      muy agradecido, os recompensa con unas monedas."
+    failureText: "El carro est\xE1 demasiado hundido y tus hombres resbalan en el
+      barro. Tras horas de esfuerzo in\xFAtil, os rend\xEDs, habiendo perdido un
+      tiempo valioso."
+    successEffects:
+    - type: 0
+      value: 50
+      targetNodeId: 
+    failureEffects:
+    - type: 2
+      value: 1
+      targetNodeId: 
+  - optionText: "\xA1Matar a la escolta y saquear el carro!"
+    statToCheck: 5
+    difficulty: 15
+    successText: La cobarde escolta huye despavorida ante tu feroz carga. te llevas
+      todo el oro del carro.
+    failureText: "La escolta estaba mejor preparada de lo que parec\xEDa y te repele
+      duramente. Tienes que retirarte para curar heridas."
+    successEffects:
+    - type: 0
+      value: 150
+      targetNodeId: 
+    failureEffects:
+    - type: 2
+      value: 2
+      targetNodeId: 
+  - optionText: Ignorarlo. No hay tiempo.
+    statToCheck: 0
+    difficulty: 0
+    successText: Ignoras los gritos del mercader y sigues tu camino sin contratiempos.
+    failureText: 
+    successEffects: []
+    failureEffects: []
