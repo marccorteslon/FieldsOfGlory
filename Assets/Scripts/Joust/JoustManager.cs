@@ -134,7 +134,7 @@ public class JoustManager : MonoBehaviour
     
         void ApplyDifficulty()
     {
-        int basePoints = 30;
+        int basePoints = 10;
 
         switch (difficulty)
         {
@@ -152,7 +152,7 @@ public class JoustManager : MonoBehaviour
                 defenseDuration = 2f;
                 horsePhaseSpeed = 10f;
                 combatPhaseSpeed = 4f;
-                if (winManager != null) winManager.winPoints = basePoints + 20; // 50
+                if (winManager != null) winManager.winPoints = basePoints + 10; // 50
                 break;
             case JoustDifficulty.Hard:
                 horsePhaseDuration = 4f;
@@ -160,7 +160,7 @@ public class JoustManager : MonoBehaviour
                 defenseDuration = 1.5f;
                 horsePhaseSpeed = 12f;
                 combatPhaseSpeed = 5f;
-                if (winManager != null) winManager.winPoints = basePoints + 50; // 80
+                if (winManager != null) winManager.winPoints = basePoints + 20; // 80
                 break;
             case JoustDifficulty.Epic:
                 horsePhaseDuration = 3.5f;
@@ -168,7 +168,7 @@ public class JoustManager : MonoBehaviour
                 defenseDuration = 1f;
                 horsePhaseSpeed = 14f;
                 combatPhaseSpeed = 6f;
-                if (winManager != null) winManager.winPoints = basePoints + 90; // 120
+                if (winManager != null) winManager.winPoints = basePoints + 30; // 120
                 break;
         }
     }

@@ -16859,6 +16859,7 @@ MonoBehaviour:
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
   initialEnemyPos: {x: 0, y: 0, z: 0}
   initialEnemyRot: {x: 0, y: 0, z: 0, w: 0}
+  difficulty: 0
 --- !u!4 &1318912932
 Transform:
   m_ObjectHideFlags: 0
