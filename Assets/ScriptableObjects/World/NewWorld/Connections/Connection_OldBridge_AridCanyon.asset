@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeAId: node_old_bridge
   nodeBId: node_arid_canyon
-  directionFromA: 2
-  directionFromB: 3
+  directionFromA: 0
+  directionFromB: 1
