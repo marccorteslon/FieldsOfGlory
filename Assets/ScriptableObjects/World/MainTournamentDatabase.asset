@@ -15,3 +15,8 @@ MonoBehaviour:
   tournaments:
   - {fileID: 11400000, guid: 5e115674dc29551459c7aa4e15f5e369, type: 2}
   - {fileID: 11400000, guid: bab93b3f934fb4b4f9ef711e417c4957, type: 2}
+  - {fileID: 11400000, guid: f9a6bdc936b13584c8dec1f39974b82c, type: 2}
+  - {fileID: 11400000, guid: 269f8edfc6f57e24aa2c72ec51d88246, type: 2}
+  - {fileID: 11400000, guid: abfc4c5d406079f43b3e772a8509cec3, type: 2}
+  - {fileID: 11400000, guid: 9669048540af2154088c2a4b331779de, type: 2}
+  - {fileID: 11400000, guid: d3f49ffedb0228046babd312adb71277, type: 2}

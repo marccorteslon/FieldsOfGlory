@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09e156310751914f8d9089c1ddc7b2b, type: 3}
-  m_Name: Tournament_Valdoren_10_01
+  m_Name: Tournament_PuertoAlondra_15_03
   m_EditorClassIdentifier: 
-  tournamentId: valdoren_10_01
-  displayName: Justa de Valdoren
-  cityId: city_valdoren
-  day: 10
-  month: 1
-  difficulty: 3
+  tournamentId: puertoalondra_15_03
+  displayName: Justa de Brisa Marina
+  cityId: city_puertoalondra
+  day: 15
+  month: 3
+  difficulty: 0

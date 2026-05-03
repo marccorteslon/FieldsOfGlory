@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09e156310751914f8d9089c1ddc7b2b, type: 3}
-  m_Name: Tournament_Montelirio_12_01
+  m_Name: Tournament_Davronne_01_08
   m_EditorClassIdentifier: 
-  tournamentId: montelirio_12_01
-  displayName: Justa de Montelirio
-  cityId: city_montelirio
-  day: 12
-  month: 1
+  tournamentId: davronne_01_08
+  displayName: Torneo de Campeones
+  cityId: city_Davronne
+  day: 1
+  month: 8
+  difficulty: 3
