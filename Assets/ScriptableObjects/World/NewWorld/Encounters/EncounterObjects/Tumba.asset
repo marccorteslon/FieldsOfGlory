@@ -34,7 +34,7 @@ MonoBehaviour:
     failureEffects:
     - type: 3
       value: 0
-      targetNodeId: city_valdoren
+      targetNodeId: node_valdoren
     - type: 2
       value: 2
       targetNodeId: 

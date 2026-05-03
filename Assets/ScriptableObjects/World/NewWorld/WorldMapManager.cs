@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WorldMapManager : MonoBehaviour
 {
@@ -15,11 +16,21 @@ public class WorldMapManager : MonoBehaviour
     public Transform mapPlayerIcon;
     public float moveSpeed = 300f;
 
+    [Header("Player Animation (Bandera)")]
+    public Image playerImage;
+    public Sprite[] playerAnimSprites;
+    public float animFramesPerSecond = 6f;
+    
+    private float animTimer;
+    private int currentAnimFrame;
+
     [Header("Input")]
     public string horizontalAxis = "Horizontal";
     public string verticalAxis = "Vertical";
     public KeyCode confirmKey = KeyCode.JoystickButton0;
     public KeyCode keyboardConfirmKey = KeyCode.Return;
+    public KeyCode interactKey = KeyCode.X;
+    public KeyCode joystickInteractKey = KeyCode.JoystickButton2; // BotÃ³n X en mando Xbox
     public float inputDeadzone = 0.6f;
 
     private MapNodeView[] nodeViews;
@@ -40,65 +51,135 @@ public class WorldMapManager : MonoBehaviour
 
         nodeViews = FindObjectsByType<MapNodeView>(FindObjectsSortMode.None);
         connectionViews = FindObjectsByType<MapConnectionView>(FindObjectsSortMode.None);
+
+        if (mapPlayerIcon != null)
+        {
+            if (playerImage == null)
+                playerImage = mapPlayerIcon.GetComponent<Image>();
+
+            if (playerImage == null)
+                playerImage = mapPlayerIcon.gameObject.AddComponent<Image>();
+        }
+
+        if (playerAnimSprites == null || playerAnimSprites.Length == 0)
+        {
+            Sprite[] loadedSprites = Resources.LoadAll<Sprite>("Sprites/BANDERA");
+            if (loadedSprites != null && loadedSprites.Length > 0)
+                playerAnimSprites = loadedSprites;
+        }
     }
 
-    void Start()
+    IEnumerator Start()
     {
+        yield return new WaitForEndOfFrame();
         PlacePlayerAtCurrentNode();
         RefreshAvailableRoutes();
     }
 
     void Update()
     {
+        UpdatePlayerAnimation();
+
         if (isMoving)
             return;
 
+        HandleCityInteractionInput();
         HandleDirectionInput();
         HandleConfirmInput();
     }
 
-    private bool dpadInUse = false;
+        private bool axisInUse = false;
+
+    void UpdatePlayerAnimation()
+    {
+        if (playerImage == null || playerAnimSprites == null || playerAnimSprites.Length == 0)
+            return;
+
+        animTimer += Time.deltaTime;
+        if (animTimer >= 1f / animFramesPerSecond)
+        {
+            animTimer = 0f;
+            currentAnimFrame = (currentAnimFrame + 1) % playerAnimSprites.Length;
+            playerImage.sprite = playerAnimSprites[currentAnimFrame];
+        }
+    }
+
+    void HandleCityInteractionInput()
+    {
+        if (Input.GetKeyDown(interactKey) || Input.GetKeyDown(joystickInteractKey))
+        {
+            if (mapDatabase == null || progressManager == null) return;
+
+            MapNodeDefinition currentNode = mapDatabase.GetNodeById(progressManager.CurrentNodeId);
+            if (currentNode != null && currentNode.isTown)
+            {
+                MapNodeView nodeView = GetNodeView(progressManager.CurrentNodeId);
+                if (nodeView != null)
+                {
+                    TownNode townNode = nodeView.GetComponent<TownNode>();
+                    if (townNode != null)
+                    {
+                        townNode.EnterTown();
+                        Debug.Log("[Interaction] Abriendo panel de ciudad: " + currentNode.cityId);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[Interaction] El nodo " + progressManager.CurrentNodeId + " es una ciudad pero no tiene componente TownNode.");
+                    }
+                }
+            }
+        }
+    }
 
     void HandleDirectionInput()
     {
         MapDirection? direction = null;
 
-        if (Input.GetKeyDown(KeyCode.W))
-            direction = MapDirection.Up;
-        else if (Input.GetKeyDown(KeyCode.S))
-            direction = MapDirection.Down;
-        else if (Input.GetKeyDown(KeyCode.A))
-            direction = MapDirection.Left;
-        else if (Input.GetKeyDown(KeyCode.D))
-            direction = MapDirection.Right;
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) { direction = MapDirection.Up; Debug.Log("[Input] W/UpArrow pressed"); }
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) { direction = MapDirection.Down; Debug.Log("[Input] S/DownArrow pressed"); }
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) { direction = MapDirection.Left; Debug.Log("[Input] A/LeftArrow pressed"); }
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) { direction = MapDirection.Right; Debug.Log("[Input] D/RightArrow pressed"); }
+
+#if ENABLE_INPUT_SYSTEM
+        if (direction == null && UnityEngine.InputSystem.Gamepad.current != null)
+        {
+            var dpad = UnityEngine.InputSystem.Gamepad.current.dpad;
+            if (dpad.up.wasPressedThisFrame) { direction = MapDirection.Up; Debug.Log("[Input] Gamepad Dpad UP pressed"); }
+            else if (dpad.down.wasPressedThisFrame) { direction = MapDirection.Down; Debug.Log("[Input] Gamepad Dpad DOWN pressed"); }
+            else if (dpad.left.wasPressedThisFrame) { direction = MapDirection.Left; Debug.Log("[Input] Gamepad Dpad LEFT pressed"); }
+            else if (dpad.right.wasPressedThisFrame) { direction = MapDirection.Right; Debug.Log("[Input] Gamepad Dpad RIGHT pressed"); }
+        }
+#endif
 
         if (direction == null)
         {
-#if ENABLE_INPUT_SYSTEM
-            if (UnityEngine.InputSystem.Gamepad.current != null)
+            float h = Input.GetAxisRaw(horizontalAxis);
+            float v = Input.GetAxisRaw(verticalAxis);
+
+            Vector2 input = new Vector2(h, v);
+
+            if (input.magnitude >= inputDeadzone)
             {
-                Vector2 dpadVal = UnityEngine.InputSystem.Gamepad.current.dpad.ReadValue();
-                if (dpadVal.sqrMagnitude > 0.1f)
-                {
-                    if (!dpadInUse)
-                    {
-                        dpadInUse = true;
-                        if (Mathf.Abs(dpadVal.x) > Mathf.Abs(dpadVal.y))
-                            direction = dpadVal.x > 0 ? MapDirection.Right : MapDirection.Left;
-                        else
-                            direction = dpadVal.y > 0 ? MapDirection.Up : MapDirection.Down;
-                    }
-                }
+                if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+                    direction = input.x > 0 ? MapDirection.Right : MapDirection.Left;
                 else
-                {
-                    dpadInUse = false;
-                }
+                    direction = input.y > 0 ? MapDirection.Up : MapDirection.Down;
+                
+                // Reducimos el spam de log del AxisRaw limitÃƒÂ¡ndolo a cuando se acaba de pulsar
+                if (!axisInUse) Debug.Log($"[Input] AxisRaw triggered with direction: {direction}");
+                axisInUse = true;
             }
-#endif
+            else
+            {
+                axisInUse = false;
+            }
         }
 
         if (direction != null)
+        {
+            Debug.Log($"[Input] Trying to select connection for direction: {direction}");
             SelectConnectionByDirection(direction.Value);
+        }
     }
 
     void HandleConfirmInput()
@@ -148,7 +229,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (destinationNode != null)
         {
-            Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | Días: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
+            Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | DÃƒÂ­as: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
         }
     }
 
@@ -212,8 +293,10 @@ public class WorldMapManager : MonoBehaviour
 
     IEnumerator MoveToPoint(Vector3 targetPosition)
     {
-        while (Vector3.Distance(mapPlayerIcon.position, targetPosition) > 0.05f)
+        float timeout = 5f;
+        while (Vector3.Distance(mapPlayerIcon.position, targetPosition) > 1f && timeout > 0f)
         {
+            timeout -= Time.deltaTime;
             mapPlayerIcon.position = Vector3.MoveTowards(
                 mapPlayerIcon.position,
                 targetPosition,
@@ -235,7 +318,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (nodeView == null)
         {
-            Debug.LogWarning("No se encontró MapNodeView para " + progressManager.CurrentNodeId);
+            Debug.LogWarning("No se encontrÃƒÂ³ MapNodeView para " + progressManager.CurrentNodeId);
             return;
         }
 
@@ -282,7 +365,7 @@ public class WorldMapManager : MonoBehaviour
 
         if (nodeView == null)
         {
-            Debug.LogWarning("No se encontró nodo para mover: " + nodeId);
+            Debug.LogWarning("No se encontrÃƒÂ³ nodo para mover: " + nodeId);
             return;
         }
 
@@ -306,5 +389,12 @@ public class WorldMapManager : MonoBehaviour
         Debug.Log($"[Map] Movido forzosamente a nodo: {nodeId}");
     }
 }
+
+
+
+
+
+
+
 
 
