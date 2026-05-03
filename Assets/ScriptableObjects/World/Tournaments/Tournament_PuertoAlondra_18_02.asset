@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09e156310751914f8d9089c1ddc7b2b, type: 3}
-  m_Name: Tournament_Davronne_01_08
+  m_Name: Tournament_PuertoAlondra_18_02
   m_EditorClassIdentifier: 
-  tournamentId: davronne_01_08
-  displayName: Torneo de Campeones
-  cityId: city_Davronne
-  day: 1
-  month: 8
-  difficulty: 3
+  tournamentId: puertoalondra_18_02
+  displayName: Justa del Pirata
+  cityId: city_puertoalondra
+  day: 18
+  month: 2
+  difficulty: 1

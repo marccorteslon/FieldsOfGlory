@@ -13,10 +13,14 @@ MonoBehaviour:
   m_Name: MainTournamentDatabase
   m_EditorClassIdentifier: 
   tournaments:
-  - {fileID: 11400000, guid: 5e115674dc29551459c7aa4e15f5e369, type: 2}
-  - {fileID: 11400000, guid: bab93b3f934fb4b4f9ef711e417c4957, type: 2}
   - {fileID: 11400000, guid: f9a6bdc936b13584c8dec1f39974b82c, type: 2}
   - {fileID: 11400000, guid: 269f8edfc6f57e24aa2c72ec51d88246, type: 2}
+  - {fileID: 11400000, guid: bab93b3f934fb4b4f9ef711e417c4957, type: 2}
   - {fileID: 11400000, guid: abfc4c5d406079f43b3e772a8509cec3, type: 2}
+  - {fileID: 11400000, guid: efab17d123cd14344adbda89d00833eb, type: 2}
   - {fileID: 11400000, guid: 9669048540af2154088c2a4b331779de, type: 2}
+  - {fileID: 11400000, guid: 6283a078d2682ae458805331321932ba, type: 2}
   - {fileID: 11400000, guid: d3f49ffedb0228046babd312adb71277, type: 2}
+  - {fileID: 11400000, guid: 5e115674dc29551459c7aa4e15f5e369, type: 2}
+  - {fileID: 11400000, guid: c75bce224bf511e4bbe79284c08b63d8, type: 2}
+  - {fileID: 11400000, guid: 55ec847b253a6c147b841a6223c1a365, type: 2}

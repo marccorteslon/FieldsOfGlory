@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09e156310751914f8d9089c1ddc7b2b, type: 3}
-  m_Name: Tournament_Valdoren_10_01
+  m_Name: Tournament_Montelirio_05_02
   m_EditorClassIdentifier: 
-  tournamentId: valdoren_10_01
-  displayName: Justa de Valdoren
-  cityId: city_valdoren
-  day: 10
-  month: 1
-  difficulty: 0
+  tournamentId: montelirio_05_02
+  displayName: Torneo de la Nieve
+  cityId: city_montelirio
+  day: 5
+  month: 2
+  difficulty: 1
