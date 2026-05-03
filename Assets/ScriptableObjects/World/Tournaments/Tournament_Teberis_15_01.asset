@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e09e156310751914f8d9089c1ddc7b2b, type: 3}
-  m_Name: Tournament_Teberis_20_06
+  m_Name: Tournament_Teberis_15_01
   m_EditorClassIdentifier: 
-  tournamentId: teberis_20_06
+  tournamentId: teberis_15_01
   displayName: Gran Justa de Teberis
   cityId: city_teberis
-  day: 20
-  month: 6
+  day: 15
+  month: 1
   difficulty: 2
