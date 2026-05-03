@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeId: node_montelirio
   displayName: Montelirio
-  travelDaysCost: 0
+  travelDaysCost: 1
   dangerIndex: 0
   isTown: 1
   cityId: city_montelirio
-  possibleEventIds: []
+  possibleEncounters: []

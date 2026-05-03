@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: Tumba
+  m_EditorClassIdentifier: 
+  encounterId: hero_tomb
+  title: "La tumba del H\xE9roe"
+  description: "Frente a ti se abre una brecha en la roca. Un estrecho sendero que
+    conduce a unas famosas ruinas repletas de peligros y bot\xEDn."
+  options:
+  - optionText: Adentrarse
+    statToCheck: 1
+    difficulty: 15
+    successText: "Antorcha en mano te adentras en la oscuridad. Recorres peligrosas
+      salas y estrechos pasillos hasta dar con un cofre escondido. El bot\xEDn es
+      descomunal. "
+    failureText: "Antorcha en mano te adentras en la oscuridad. Recorres peligrosas
+      salas y estrechos pasillos hasta que tu pie se hunde en una losa, unos peligrosos
+      dardos se clavan en tu cuello y pierdes la conciencia.  Por suerte para ti,
+      alguien te sac\xF3 a rastras y te llev\xF3 a un lugar seguro."
+    successEffects:
+    - type: 0
+      value: 100
+      targetNodeId: 
+    failureEffects:
+    - type: 3
+      value: 0
+      targetNodeId: city_valdoren
+    - type: 2
+      value: 2
+      targetNodeId: 
+  - optionText: Huir a caballo
+    statToCheck: 0
+    difficulty: 10
+    successText: Escapas antes de que puedan reaccionar.
+    failureText: Tropiezas durante la huida y pierdes tiempo.
+    successEffects: []
+    failureEffects:
+    - type: 2
+      value: 1
+      targetNodeId: 

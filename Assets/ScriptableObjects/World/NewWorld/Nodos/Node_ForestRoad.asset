@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeId: node_forest_road
   displayName: Camino del Bosque
-  travelDaysCost: 0
+  travelDaysCost: 1
   dangerIndex: 100
   isTown: 0
   cityId: 
