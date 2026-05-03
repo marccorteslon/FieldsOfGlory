@@ -1,4 +1,4 @@
-using System.Text;
+ï»¿using System.Text;
 using TMPro;
 using UnityEngine;
 
@@ -40,7 +40,7 @@ public class CalendarPanelController : MonoBehaviour
             return;
 
         if (currentDateText != null)
-            currentDateText.text = $"Día {progressManager.CurrentDay} - Mes {progressManager.CurrentMonth}";
+            currentDateText.text = "DÃ­a " + progressManager.CurrentDay + " - Mes " + progressManager.CurrentMonth;
 
         if (tournamentsListText == null)
             return;
@@ -53,13 +53,23 @@ public class CalendarPanelController : MonoBehaviour
             return;
         }
 
-        StringBuilder sb = new();
+        StringBuilder sb = new StringBuilder();
 
         foreach (var tournament in tournaments)
         {
             if (tournament == null) continue;
 
-            sb.AppendLine($"{tournament.displayName} - {tournament.cityId} - Día {tournament.day}");
+            string cityName = tournament.cityId; // Por defecto la ID
+            
+            if (GameManager.dataRepository != null)
+            {
+                GameManager.dataRepository.GetCityById(tournament.cityId, 
+                    city => { cityName = city.displayName; },
+                    err => { }
+                );
+            }
+
+            sb.AppendLine(cityName + " - DÃ­a " + tournament.day + " - Mes " + progressManager.CurrentMonth);
         }
 
         tournamentsListText.text = sb.ToString();
