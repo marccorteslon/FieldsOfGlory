@@ -142,31 +142,31 @@ public class JoustManager : MonoBehaviour
                 horsePhaseDuration = 6f;
                 attackDuration = 4f;
                 defenseDuration = 2.5f;
-                horsePhaseSpeed = 8f;
-                combatPhaseSpeed = 3f;
+                horsePhaseSpeed = 9f;
+                combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints;
                 break;
             case JoustDifficulty.Normal:
                 horsePhaseDuration = 5f;
                 attackDuration = 3f;
                 defenseDuration = 2f;
-                horsePhaseSpeed = 10f;
-                combatPhaseSpeed = 4f;
+                horsePhaseSpeed = 12f;
+                combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 10; // 50
                 break;
             case JoustDifficulty.Hard:
                 horsePhaseDuration = 4f;
                 attackDuration = 2f;
                 defenseDuration = 1.5f;
-                horsePhaseSpeed = 12f;
-                combatPhaseSpeed = 5f;
+                horsePhaseSpeed = 13f;
+                combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 20; // 80
                 break;
             case JoustDifficulty.Epic:
                 horsePhaseDuration = 3.5f;
                 attackDuration = 1.5f;
                 defenseDuration = 1f;
-                horsePhaseSpeed = 14f;
+                horsePhaseSpeed = 15f;
                 combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 30; // 120
                 break;

@@ -58,6 +58,19 @@ public class HorsePart_Joust : MonoBehaviour
     public int fallbackMV = 3;
     public int fallbackV = 1;
 
+    [Header("Sounds")]
+    public AudioSource audioSource;
+    public AudioClip redSound;
+    public AudioClip yellowSound;
+    public AudioClip greenSound;
+
+    [Header("Pitch")]
+    public float pitchIncrease = 0.1f;
+    public float maxPitch = 2f;
+
+    private string lastSoundZone = "";
+    private int consecutiveHits = 0;
+
     [Header("Extra")]
     public GameObject objectToDisableOnEnd;
 
@@ -85,6 +98,9 @@ public class HorsePart_Joust : MonoBehaviour
 
         if (scoreManager == null)
             scoreManager = FindObjectOfType<ScoreManager>();
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     void Start()
@@ -308,6 +324,7 @@ public class HorsePart_Joust : MonoBehaviour
 
         string zone = GetCurrentZone();
 
+        PlayZoneSound(zone);
         ShowResult(zone);
 
         if (zone != "Rojo")
@@ -382,6 +399,47 @@ public class HorsePart_Joust : MonoBehaviour
 
         hasResolved = true;
         isActive = false;
+    }
+
+    void PlayZoneSound(string zone)
+    {
+        if (audioSource == null) return;
+
+        AudioClip clip = null;
+
+        switch (zone)
+        {
+            case "Rojo":
+                clip = redSound;
+                break;
+
+            case "Amarillo":
+                clip = yellowSound;
+                break;
+
+            case "Verde":
+                clip = greenSound;
+                break;
+        }
+
+        if (clip == null) return;
+
+        // Si repites color, aumenta pitch
+        if (zone == lastSoundZone)
+        {
+            consecutiveHits++;
+        }
+        else
+        {
+            consecutiveHits = 0;
+            lastSoundZone = zone;
+        }
+
+        float pitch = 1f + (consecutiveHits * pitchIncrease);
+        pitch = Mathf.Clamp(pitch, 1f, maxPitch);
+
+        audioSource.pitch = pitch;
+        audioSource.PlayOneShot(clip);
     }
 
     void ShowResult(string zone)
