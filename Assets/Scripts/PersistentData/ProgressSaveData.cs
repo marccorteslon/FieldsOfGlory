@@ -15,4 +15,6 @@ public class ProgressSaveData
 
     public int currentDay = 1;
     public int currentMonth = 1;
+
+    public System.Collections.Generic.List<string> completedEncounters = new System.Collections.Generic.List<string>();
 }

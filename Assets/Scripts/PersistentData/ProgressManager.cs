@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class ProgressManager : MonoBehaviour
 {
@@ -203,7 +203,7 @@ public class ProgressManager : MonoBehaviour
         }
 
         SaveProgress();
-        Debug.Log($"[Progress] Fecha actual: Día {data.currentDay}, Mes {data.currentMonth}");
+        Debug.Log($"[Progress] Fecha actual: Dï¿½a {data.currentDay}, Mes {data.currentMonth}");
     }
 
     public void SetDate(int day, int month)
@@ -212,11 +212,28 @@ public class ProgressManager : MonoBehaviour
         data.currentMonth = Mathf.Clamp(month, 1, 12);
 
         SaveProgress();
-        Debug.Log($"[Progress] Fecha fijada: Día {data.currentDay}, Mes {data.currentMonth}");
+        Debug.Log($"[Progress] Fecha fijada: Dï¿½a {data.currentDay}, Mes {data.currentMonth}");
     }
 
     public void SaveProgress()
     {
         ProgressSaveSystem.Save(data);
+    }
+    public bool IsEncounterCompleted(string encounterId)
+    {
+        if (data.completedEncounters == null) return false;
+        return data.completedEncounters.Contains(encounterId);
+    }
+
+    public void MarkEncounterCompleted(string encounterId)
+    {
+        if (data.completedEncounters == null)
+            data.completedEncounters = new System.Collections.Generic.List<string>();
+
+        if (!data.completedEncounters.Contains(encounterId))
+        {
+            data.completedEncounters.Add(encounterId);
+            SaveProgress();
+        }
     }
 }

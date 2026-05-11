@@ -8,6 +8,7 @@ public class EncounterPopupController : MonoBehaviour
     public GameObject panelObject;
     public TMP_Text titleText;
     public TMP_Text descriptionText;
+    public Image encounterImageUI;
 
     [Header("Buttons")]
     public Button[] optionButtons;
@@ -19,6 +20,7 @@ public class EncounterPopupController : MonoBehaviour
     [Header("Managers")]
     public ProgressManager progressManager;
     public WorldMapManager worldMapManager;
+    public EquipmentManager equipmentManager;
 
     private RandomEncounterDefinition currentEncounter;
     private bool resultShown = false;
@@ -33,6 +35,9 @@ public class EncounterPopupController : MonoBehaviour
 
         if (worldMapManager == null)
             worldMapManager = FindFirstObjectByType<WorldMapManager>();
+
+        if (equipmentManager == null)
+            equipmentManager = FindFirstObjectByType<EquipmentManager>();
 
         Close();
     }
@@ -50,6 +55,19 @@ public class EncounterPopupController : MonoBehaviour
 
         if (descriptionText != null)
             descriptionText.text = encounter.description;
+
+        if (encounterImageUI != null)
+        {
+            if (encounter.encounterImage != null)
+            {
+                encounterImageUI.sprite = encounter.encounterImage;
+                encounterImageUI.gameObject.SetActive(true);
+            }
+            else
+            {
+                encounterImageUI.gameObject.SetActive(false);
+            }
+        }
 
         RefreshOptions();
     }
@@ -143,6 +161,15 @@ public class EncounterPopupController : MonoBehaviour
 
                         if (worldMapManager != null)
                             worldMapManager.ForceMoveToNode(effect.targetNodeId);
+                    }
+                    break;
+
+                case EncounterEffectType.AddItem:
+                    if (effect.itemReward != null && equipmentManager != null && progressManager != null)
+                    {
+                        equipmentManager.Equip(effect.itemReward);
+                        progressManager.SaveEquipped();
+                        Debug.Log($"[Encounter] Acquired and equipped item: {effect.itemReward.displayName}");
                     }
                     break;
             }

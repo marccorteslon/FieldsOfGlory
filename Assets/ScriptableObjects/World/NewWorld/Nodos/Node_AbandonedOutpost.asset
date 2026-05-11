@@ -24,3 +24,5 @@ MonoBehaviour:
     weight: 70
   - encounterId: enc_bandidos_camino
     weight: 30
+  - encounterId: enc_templo_parte1
+    weight: 100
