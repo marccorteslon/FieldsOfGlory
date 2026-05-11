@@ -100,7 +100,7 @@ public class EncounterPopupController : MonoBehaviour
 
         Debug.Log($"[Encounter] {option.statToCheck}: {roll}+{statValue} = {total} vs {option.difficulty} ? {(success ? "SUCCESS" : "FAIL")}");
 
-        ShowContinueOnly();
+        ShowContinueOnly(option, success);
         resultShown = true;
     }
 
@@ -149,7 +149,7 @@ public class EncounterPopupController : MonoBehaviour
         }
     }
 
-    void ShowContinueOnly()
+    void ShowContinueOnly(EncounterOptionDefinition option, bool success)
     {
         for (int i = 0; i < optionButtons.Length; i++)
         {
@@ -163,7 +163,21 @@ public class EncounterPopupController : MonoBehaviour
             if (optionButtonTexts != null && i < optionButtonTexts.Length)
                 optionButtonTexts[i].text = "Continue";
 
-            optionButtons[i].onClick.AddListener(Close);
+            optionButtons[i].onClick.AddListener(() => OnContinueClicked(option, success));
+        }
+    }
+
+    void OnContinueClicked(EncounterOptionDefinition option, bool success)
+    {
+        RandomEncounterDefinition nextEvent = success ? option.nextEncounterOnSuccess : option.nextEncounterOnFailure;
+        
+        if (nextEvent != null)
+        {
+            OpenEncounter(nextEvent);
+        }
+        else
+        {
+            Close();
         }
     }
 

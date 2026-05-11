@@ -18,4 +18,8 @@ public class EncounterOptionDefinition
     [Header("Effects")]
     public EncounterEffect[] successEffects;
     public EncounterEffect[] failureEffects;
+
+    [Header("Branching Narrative (Optional)")]
+    public RandomEncounterDefinition nextEncounterOnSuccess;
+    public RandomEncounterDefinition nextEncounterOnFailure;
 }
