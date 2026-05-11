@@ -17,6 +17,15 @@ public class RandomEncounterManager : MonoBehaviour
         if (node.possibleEncounters == null || node.possibleEncounters.Count == 0)
             return;
 
+        ProgressManager progressManager = FindFirstObjectByType<ProgressManager>();
+        
+        string encounterId = PickWeightedEncounter(node, progressManager);
+        if (string.IsNullOrEmpty(encounterId))
+        {
+            Debug.Log($"[Encounter] Todos los encuentros de este nodo ya estÃ¡n completados.");
+            return;
+        }
+
         int roll = Random.Range(1, 101);
 
         if (roll > node.dangerIndex)
@@ -25,7 +34,6 @@ public class RandomEncounterManager : MonoBehaviour
             return;
         }
 
-        string encounterId = PickWeightedEncounter(node);
         RandomEncounterDefinition encounter = encounterDatabase.GetById(encounterId);
 
         if (encounter == null)
@@ -34,30 +42,41 @@ public class RandomEncounterManager : MonoBehaviour
             return;
         }
 
+        if (progressManager != null)
+            progressManager.MarkEncounterCompleted(encounterId);
+
         popupController.OpenEncounter(encounter);
     }
 
-    string PickWeightedEncounter(MapNodeDefinition node)
+    string PickWeightedEncounter(MapNodeDefinition node, ProgressManager progressManager)
     {
         int totalWeight = 0;
 
         foreach (var entry in node.possibleEncounters)
+        {
+            if (progressManager != null && progressManager.IsEncounterCompleted(entry.encounterId))
+                continue;
+            
             totalWeight += Mathf.Max(0, entry.weight);
+        }
 
         if (totalWeight <= 0)
-            return node.possibleEncounters[0].encounterId;
+            return null; // All possible encounters are completed
 
         int roll = Random.Range(0, totalWeight);
         int current = 0;
 
         foreach (var entry in node.possibleEncounters)
         {
+            if (progressManager != null && progressManager.IsEncounterCompleted(entry.encounterId))
+                continue;
+
             current += Mathf.Max(0, entry.weight);
 
             if (roll < current)
                 return entry.encounterId;
         }
 
-        return node.possibleEncounters[0].encounterId;
+        return null;
     }
 }

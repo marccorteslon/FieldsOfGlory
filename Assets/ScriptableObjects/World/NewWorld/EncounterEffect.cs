@@ -11,4 +11,7 @@ public class EncounterEffect
 
     [Header("Only for MoveToNode")]
     public string targetNodeId;
+
+    [Header("Only for AddItem")]
+    public EquipmentDefinition itemReward;
 }

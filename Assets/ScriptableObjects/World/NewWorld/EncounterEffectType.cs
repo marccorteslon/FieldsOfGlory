@@ -3,5 +3,6 @@ public enum EncounterEffectType
     AddMoney,
     LoseMoney,
     AddDays,
-    MoveToNode
+    MoveToNode,
+    AddItem
 }
