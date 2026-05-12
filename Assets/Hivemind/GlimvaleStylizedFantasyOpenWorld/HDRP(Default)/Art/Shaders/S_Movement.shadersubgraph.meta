@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 27667dc9122cb524aa72371e8e4c3d5a
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 60072b568d64c40a485e0fc55012dc9f, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 314617
+  packageName: 'Glimvale: Stylized Fantasy Open World (Modular Medieval Town, Medieval
+    Village)'
+  packageVersion: 2.0
+  assetPath: Assets/Hivemind/GlimvaleStylizedFantasyOpenWorld/HDRP(Default)/Art/Shaders/S_Movement.shadersubgraph
+  uploadId: 859552
