@@ -24,13 +24,16 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_Water
-  m_Shader: {fileID: -6465566751694194690, guid: 0eaae29f371926a4fb41ee2ce13d0bf3,
-    type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 0eaae29f371926a4fb41ee2ce13d0bf3, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
+  - _ALPHATEST_ON
+  - _SURFACE_TYPE_TRANSPARENT
+  - _SURFACE_TYPE_TRANSPARENT
+  m_InvalidKeywords:
   - _DISABLE_SSR_TRANSPARENT
   - _ENABLE_FOG_ON_TRANSPARENT
-  - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -44,6 +47,8 @@ Material:
   - TransparentBackface
   - RayTracingPrepass
   - MOTIONVECTORS
+  - DepthOnly
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -110,16 +115,21 @@ Material:
     - Vector1_b9115520341e462a8318e8622b851afa_4: 1
     - Vector1_fc96597b428e46a2bdcf3aa68b48cb8b: 1
     - _AddPrecomputedVelocity: 0
+    - _AlphaClip: 1
     - _AlphaClipping: 0.5
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 10
     - _AlphaSrcBlend: 1
     - _AlphaToMask: 0
     - _AlphaToMaskInspectorValue: 0
+    - _Blend: 0
     - _BlendMode: 0
+    - _BlendModePreserveSpecular: 0
+    - _CastShadows: 1
     - _ColorContrast: 0.5
     - _ColorDepth: 260
     - _ConservativeDepthOffsetEnable: 0
+    - _Cull: 2
     - _CullMode: 2
     - _CullModeForward: 2
     - _DepthOffsetEnable: 0
@@ -136,7 +146,10 @@ Material:
     - _HeightFrequency: 0
     - _NormalStrength: 0.2
     - _OpaqueCullMode: 2
+    - _QueueControl: 1
+    - _QueueOffset: 0
     - _RayTracing: 0
+    - _ReceiveShadows: 1
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
     - _RefractionModel: 0
@@ -145,7 +158,7 @@ Material:
     - _Roughness: 0.95
     - _Smoothness: 0.4
     - _Speed: 0.1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _StencilRef: 0
     - _StencilRefDepth: 0
     - _StencilRefDistortionVec: 4
@@ -157,6 +170,7 @@ Material:
     - _StencilWriteMaskGBuffer: 14
     - _StencilWriteMaskMV: 40
     - _SupportDecals: 1
+    - _Surface: 1
     - _SurfaceType: 1
     - _TransparentBackfaceEnable: 0
     - _TransparentCullMode: 2
@@ -170,18 +184,18 @@ Material:
     - _WaveAmplitude: 0
     - _WaveSize: 350
     - _WaveSpeed: 0
+    - _WorkflowMode: 1
+    - _ZTest: 4
     - _ZTestDepthEqualForOpaque: 4
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 0
+    - _ZWriteControl: 0
     m_Colors:
     - Color_1: {r: 0.23994802, g: 0.58051944, b: 0.59599996, a: 1}
-    - Color_13ec232c958d4c648c90624257c5b37c: {r: 5.992157, g: 5.992157, b: 5.992157,
-        a: 1}
-    - Color_21fed8c222a347c79b773bdea87c50cb: {r: 0.12735847, g: 0.5811269, b: 1,
-        a: 0}
-    - Color_35a38b55f4c144bd891ce06b7562e933: {r: 0.09549664, g: 0.4712458, b: 0.6981132,
-        a: 1}
+    - Color_13ec232c958d4c648c90624257c5b37c: {r: 5.992157, g: 5.992157, b: 5.992157, a: 1}
+    - Color_21fed8c222a347c79b773bdea87c50cb: {r: 0.12735847, g: 0.5811269, b: 1, a: 0}
+    - Color_35a38b55f4c144bd891ce06b7562e933: {r: 0.09549664, g: 0.4712458, b: 0.6981132, a: 1}
     - LocalObjectBoundsMax: {r: 100, g: 100, b: 100, a: 0}
     - LocalObjectBoundsMin: {r: 0, g: 0, b: 0, a: 0}
     - View_BufferSizeAndInvSize: {r: 1920, g: 1080, b: 0.00052, a: 0.00092}
@@ -194,3 +208,17 @@ Material:
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _FoamColor: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &7668706054527497337
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 10

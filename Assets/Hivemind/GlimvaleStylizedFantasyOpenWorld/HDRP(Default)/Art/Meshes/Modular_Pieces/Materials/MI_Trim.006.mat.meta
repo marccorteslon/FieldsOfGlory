@@ -1,16 +1,8 @@
 fileFormatVersion: 2
-guid: 17bf8b1ea37ef6740958f14fb8d1347a
+guid: 36413524c7ba5924f83098be0e4878ac
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 2100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 314617
-  packageName: 'Glimvale: Stylized Fantasy Open World (Modular Medieval Town, Medieval
-    Village)'
-  packageVersion: 2.0
-  assetPath: Assets/Hivemind/GlimvaleStylizedFantasyOpenWorld/HDRP(Default)/Art/Meshes/Modular_Pieces/Materials/MI_Trim.006.mat
-  uploadId: 859552
