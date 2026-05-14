@@ -82,6 +82,7 @@ public class JoustCinematicManager : MonoBehaviour
     {
         SetCamera(attackSlowCam);
         SetTimeScale(attackSlowTimeScale);
+
     }
 
     public void OnAttackInputReleased()

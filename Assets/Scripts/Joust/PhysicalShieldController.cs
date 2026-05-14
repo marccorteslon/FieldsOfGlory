@@ -23,9 +23,9 @@ public class PhysicalShieldController : MonoBehaviour
 
     void HandleInput()
     {
-        // Stick Izquierdo o Teclas WASD
-        float inputX = Input.GetAxis("Horizontal") + Input.GetAxis("LeftStickHorizontal");
-        float inputY = Input.GetAxis("Vertical") + Input.GetAxis("LeftStickVertical");
+        // TECLADO (Teclas WASD o Flechas)
+        float inputX = Input.GetAxis("Horizontal");
+        float inputY = Input.GetAxis("Vertical");
 
         // Limitamos input para no pasarnos de velocidad diagonal
         Vector2 inputDir = new Vector2(inputX, inputY);

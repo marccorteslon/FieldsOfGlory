@@ -42,12 +42,12 @@ public class PhysicalLanceController : MonoBehaviour
 
     void HandleInput()
     {
-        // Soporte para Ratón y Mando (Stick Derecho)
-        float inputX = Input.GetAxis("Mouse X") + Input.GetAxis("RightStickHorizontal");
-        float inputY = Input.GetAxis("Mouse Y") - Input.GetAxis("RightStickVertical");
+        // RATÓN: Usa movimiento Delta
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
 
-        targetAimPosition.x += inputX * inputSensitivity;
-        targetAimPosition.y += inputY * inputSensitivity;
+        targetAimPosition.x += mouseX * inputSensitivity;
+        targetAimPosition.y += mouseY * inputSensitivity;
 
         // Limitar la mira para que no rompas el cuello
         targetAimPosition.x = Mathf.Clamp(targetAimPosition.x, -maxAimAngles.x, maxAimAngles.x);
@@ -56,8 +56,8 @@ public class PhysicalLanceController : MonoBehaviour
 
     void HandleCharge()
     {
-        // Cargar con Clic Izquierdo o Gatillo Derecho (R2)
-        bool attackInput = Input.GetMouseButton(0) || Input.GetAxis("Attack") > 0.2f;
+        // Cargar con Clic Izquierdo (Ratón)
+        bool attackInput = Input.GetMouseButton(0);
 
         if (attackInput)
         {

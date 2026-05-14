@@ -9,6 +9,12 @@ public class AttackPart_Joust : MonoBehaviour
     public Canvas canvas;
     public Image powerRadial;
 
+    [Header("Physical Lance (3D Pointer)")]
+    public Transform lance3DModel; 
+    public Vector3 lanceRotationOffset; 
+    public Transform hitMarker; // El "Punto Rojo" del láser
+
+
     [Header("Settings")]
     public float maxChargeTime = 2f;
     public float baseShakeAmount = 200f;
@@ -119,6 +125,10 @@ public class AttackPart_Joust : MonoBehaviour
                 ResetCharge();
                 StartTimingBonusTimer();
 
+                // Bloqueamos el cursor de Windows para no salirnos de la pantalla
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+
                 if (crosshair != null)
                     crosshair.localScale = Vector3.one * crosshairStartScale;
 
@@ -128,12 +138,16 @@ public class AttackPart_Joust : MonoBehaviour
                 TryStartAttackCamera();
 
                 if (crosshair != null)
-                    crosshairPos = crosshair.anchoredPosition;
+                    crosshairPos = Vector2.zero; // Empezar en el centro
             }
             else
             {
                 attackCameraStartedForThisPhase = false;
                 CloseTimingWindow();
+
+                // Liberamos el cursor al terminar
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
             }
         }
 
@@ -147,7 +161,58 @@ public class AttackPart_Joust : MonoBehaviour
         UpdateTimingBonusTimer();
         UpdateCrosshairScale();
         UpdateCrosshair();
+        UpdateLance3DPointer();
+        UpdateHitMarker();
         HandleChargeInput();
+    }
+
+    void UpdateHitMarker()
+    {
+        if (hitMarker == null || cam == null || crosshair == null) return;
+
+        Ray ray = cam.ScreenPointToRay(crosshair.position);
+
+        // Tiramos un Raycast cada frame para ver dónde está apuntando
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+        {
+            if (!hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(true);
+            
+            // Colocamos el marcador en el punto de impacto, separado 2 centímetros para evitar que se hunda en la malla
+            hitMarker.position = hit.point + hit.normal * 0.02f;
+            
+            // Lo rotamos para que se pegue plano contra la superficie
+            hitMarker.rotation = Quaternion.LookRotation(hit.normal);
+        }
+        else
+        {
+            // Si apunta al cielo, lo ocultamos
+            if (hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(false);
+        }
+    }
+
+    void UpdateLance3DPointer()
+    {
+        if (lance3DModel == null || cam == null || crosshair == null) return;
+
+        // Ocultar la imagen de la cruceta para que la lanza sea el puntero real
+        Image crosshairImg = crosshair.GetComponent<Image>();
+        if (crosshairImg != null && crosshairImg.enabled)
+            crosshairImg.enabled = false;
+
+        // Crear un rayo desde la cámara hacia donde apunta la cruceta invisible
+        Ray ray = cam.ScreenPointToRay(crosshair.position);
+        
+        Debug.DrawRay(ray.origin, ray.direction * 50f, Color.magenta); // Láser guía en la pestaña Scene del Editor
+        
+        // Coger un punto a 100 metros de distancia (lejos) para evitar el error de paralaje.
+        // Si ponemos 10m, la lanza se tuerce hacia el centro muy rápido y a lo lejos parece que apunta mal.
+        Vector3 targetPoint = ray.GetPoint(100f);
+
+        // Hacer que el modelo 3D mire hacia ese punto
+        lance3DModel.LookAt(targetPoint);
+        
+        // Aplicar offset por si el modelo de Blender está girado (ej. apuntando hacia un lado)
+        lance3DModel.Rotate(lanceRotationOffset);
     }
 
 
@@ -414,15 +479,10 @@ public class AttackPart_Joust : MonoBehaviour
         }
         else
         {
-            Vector2 localPoint;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRect,
-                Input.mousePosition,
-                canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam,
-                out localPoint))
-            {
-                crosshairPos = localPoint;
-            }
+            // Usamos el Delta del ratón (cuánto se movió) en vez de su posición absoluta
+            float mouseSensitivity = 20f; // Ajusta este valor si va muy rápido o lento
+            crosshairPos.x += mouseX * mouseSensitivity;
+            crosshairPos.y += mouseY * mouseSensitivity;
         }
 
         Vector2 canvasSize = canvasRect.rect.size;
@@ -453,8 +513,12 @@ public class AttackPart_Joust : MonoBehaviour
 
         Ray ray = cam.ScreenPointToRay(crosshair.position);
 
+        // Volvemos al Raycast original (línea perfecta). El SphereCast gigante estaba chocando 
+        // probablemente con el propio cuerpo/caballo del jugador nada más salir de la cámara.
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
         {
+            Debug.Log($"<color=orange>[Ataque Lanza] ¡Impacto detectado contra: {hit.collider.gameObject.name} (Tag: {hit.collider.tag})!</color>");
+
             float chargePercent = Mathf.Clamp01(chargeTimer / maxChargeTime) * 100f;
 
             scoreManager.AddAttackScore(hit.collider.tag, GetBF(), GetBL(), chargePercent, 0, 0);
