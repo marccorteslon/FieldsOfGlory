@@ -42961,7 +42961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   travelDatabase: {fileID: 11400000, guid: 9d6243e70d6cb86478209fa3fc8ceed2, type: 2}
   progress: {fileID: 1696376387}
-  calendarPanelController: {fileID: 0}
+  calendarPanelController: {fileID: 2114281192}
 --- !u!4 &1838615565
 Transform:
   m_ObjectHideFlags: 0
@@ -48022,6 +48022,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2108881234}
   m_CullTransparentMesh: 1
+--- !u!1 &2114281191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2114281193}
+  - component: {fileID: 2114281192}
+  m_Layer: 0
+  m_Name: CalendarPanelController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2114281192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114281191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf757e5a18eec184dae7acf75649cbe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  progressManager: {fileID: 1696376387}
+  tournamentManager: {fileID: 1398906533}
+  currentDateText: {fileID: 277580286}
+  tournamentsListText: {fileID: 1523737777}
+  panelObject: {fileID: 1088282738}
+--- !u!4 &2114281193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114281191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -614.4449, y: -355.15958, z: 235.43556}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2122847612
 GameObject:
   m_ObjectHideFlags: 0
@@ -81080,6 +81129,7 @@ SceneRoots:
   - {fileID: 165861173}
   - {fileID: 1838615565}
   - {fileID: 1398906534}
+  - {fileID: 2114281193}
   - {fileID: 1781542598}
   - {fileID: 241728244}
   - {fileID: 446976909}
