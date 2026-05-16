@@ -37,6 +37,9 @@ public class JoustManager : MonoBehaviour
     public float combatPhaseSpeed = 4f;
     private float currentSpeed;
 
+    [Header("Effects")]
+    public EffectManager effectManager;
+
     [Header("Pre Joust Intro")]
     public bool usePreJoustIntro = true;
 
@@ -379,6 +382,9 @@ public class JoustManager : MonoBehaviour
     void StartJoustNormally()
     {
         joustStarted = true;
+
+        if (effectManager != null)
+            effectManager.ChooseRandomEffect();
 
         horsePartIsOn = true;
         attackPartIsOn = false;
