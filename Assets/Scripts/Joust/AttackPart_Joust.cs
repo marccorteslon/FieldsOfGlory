@@ -192,6 +192,7 @@ public class AttackPart_Joust : MonoBehaviour
 
     void UpdateLance3DPointer()
     {
+        return;
         if (lance3DModel == null || cam == null || crosshair == null) return;
 
         // Ocultar la imagen de la cruceta para que la lanza sea el puntero real
@@ -450,6 +451,8 @@ public class AttackPart_Joust : MonoBehaviour
 
     void UpdateCrosshair()
     {
+        return;
+
         if (crosshair == null || canvas == null) return;
 
         float horizontal = Input.GetAxis("RightStickHorizontal");
