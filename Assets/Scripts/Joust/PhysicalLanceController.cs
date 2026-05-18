@@ -1,120 +1,322 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PhysicalLanceController : MonoBehaviour
 {
     [Header("Referencias")]
-    [Tooltip("El objeto vacío que hace de 'Mano' (Eje). Debe estar fuera de cámara.")]
     public Transform lancePivot;
     public LoadoutStatsComponent loadout;
+    public JoustManager joustManager;
 
-    [Header("Sensación de Peso (Inercia)")]
-    public float mass = 5f;
-    public float springForce = 50f;
-    public float damping = 3f;
+    [Header("Hit Marker (UI Ayuda)")]
+    public Transform hitMarker;
+    public Color colorNada = Color.red;
+    public Color colorCuerpoEscudo = Color.yellow;
+    public Color colorCabeza = Color.green;
 
-    [Header("Input y Límites")]
+    [Header("Input")]
     public float inputSensitivity = 2f;
-    public Vector2 maxAimAngles = new Vector2(30f, 20f);
+
+    [Header("Físicas (Peso de la Lanza)")]
+    [Tooltip("El retraso o 'peso' base de la lanza al moverse.")]
+    public float baseSwayDamping = 0.05f;
+    [Tooltip("Cuánto retraso extra se añade por cada punto de M (Maniobrabilidad). Si M es alto, más pesada se sentirá.")]
+    public float swayDampingPerM = 0.02f;
 
     [Header("Carga del Golpe")]
     public float maxChargeTime = 2f;
-    private float currentCharge = 0f;
-    private bool isCharging = false;
+    public float currentCharge = 0f;
+    [Tooltip("Asigna aquí el Slider de UI que mostrará la barra de carga.")]
+    public Slider chargeSlider;
 
-    // Físicas
-    private Vector2 targetAimPosition;
-    private Vector2 actualLancePosition;
-    private Vector2 lanceVelocity;
-    private float shakeTimer = 0f;
+    [Header("Cámara (Paneo 2D)")]
+    public bool moveCamera = true;
+    [Tooltip("El punto de la cámara o la propia cámara que se moverá. Si lo dejas vacío, usará el attackCameraPoint del JoustManager.")]
+    public Transform customCameraPoint;
+    [Range(0f, 1f)] public float cameraMoveMultiplier = 0.3f;
+
+    [Header("Visual Lance")]
+    public Transform lance3DModel;
+    public Vector3 lancePositionOffset = Vector3.zero;
+    public Vector3 lanceRotationOffset;
 
     [Header("Fallback Stats")]
-    public int fallbackBL = 2; // Stat de maniobrabilidad/Lanza
+    public int fallbackBL = 2; // Stat de Lanza
     public int fallbackBF = 4; // Stat de Fuerza/Daño
+    public int fallbackM = 2;  // Stat de Maniobrabilidad
 
-    void Update()
+    private Vector3 currentAimAngles;
+    private Vector3 targetAimAngles;
+    private Vector3 aimAnglesVelocity;
+    
+    private float mousePreviousX, mousePreviousY;
+    private Renderer markerRenderer;
+    private Image markerImage;
+    private bool wasPlaying = false;
+    private Quaternion initialCameraPointRot;
+
+    void Awake()
     {
-        if (lancePivot == null) return;
-
-        HandleInput();
-        HandleCharge();
-        ApplyPhysics();
-    }
-
-    void HandleInput()
-    {
-        // RATÓN: Usa movimiento Delta
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        targetAimPosition.x += mouseX * inputSensitivity;
-        targetAimPosition.y += mouseY * inputSensitivity;
-
-        // Limitar la mira para que no rompas el cuello
-        targetAimPosition.x = Mathf.Clamp(targetAimPosition.x, -maxAimAngles.x, maxAimAngles.x);
-        targetAimPosition.y = Mathf.Clamp(targetAimPosition.y, -maxAimAngles.y, maxAimAngles.y);
-    }
-
-    void HandleCharge()
-    {
-        // Cargar con Clic Izquierdo (Ratón)
-        bool attackInput = Input.GetMouseButton(0);
-
-        if (attackInput)
+        if (loadout == null)
         {
-            isCharging = true;
-            currentCharge = Mathf.Min(currentCharge + Time.deltaTime, maxChargeTime);
-        }
-        else
-        {
-            isCharging = false;
-            if (currentCharge > 0)
+            GameObject ghost = GameObject.Find("GhostPlayer");
+            if (ghost != null)
             {
-                currentCharge -= Time.deltaTime * 2f; // Pierdes fuerza lentamente si dejas de cargar
-                currentCharge = Mathf.Max(0, currentCharge);
+                loadout = ghost.GetComponent<LoadoutStatsComponent>();
+            }
+            else
+            {
+                loadout = FindFirstObjectByType<LoadoutStatsComponent>();
             }
         }
     }
 
-    void ApplyPhysics()
+    void Start()
     {
-        // 1. Físicas de muelle (Spring Physics)
-        Vector2 force = (targetAimPosition - actualLancePosition) * springForce;
-        Vector2 acceleration = force / mass;
+        if (joustManager == null) joustManager = FindFirstObjectByType<JoustManager>();
 
-        lanceVelocity += acceleration * Time.deltaTime;
-        lanceVelocity *= (1f - damping * Time.deltaTime); // Freno natural
+        Transform camPoint = customCameraPoint != null ? customCameraPoint : (joustManager != null ? joustManager.attackCameraPoint : null);
+        if (camPoint != null)
+        {
+            initialCameraPointRot = camPoint.localRotation;
+        }
 
-        actualLancePosition += lanceVelocity * Time.deltaTime;
+        if (hitMarker != null)
+        {
+            markerRenderer = hitMarker.GetComponentInChildren<Renderer>();
+            markerImage = hitMarker.GetComponentInChildren<Image>();
+        }
 
-        // 2. Temblor (Sway)
-        float maniobrabilidad = loadout != null ? loadout.stats.Get(StatType.BL) : fallbackBL;
-        float chargePercent = currentCharge / maxChargeTime;
-        
-        // A más carga, más tiembla. A más maniobrabilidad, menos tiembla.
-        float shakeAmount = (chargePercent * 5f) / Mathf.Max(0.5f, maniobrabilidad);
-
-        shakeTimer += Time.deltaTime * (10f + chargePercent * 5f);
-        float shakeX = (Mathf.PerlinNoise(shakeTimer, 0) - 0.5f) * shakeAmount;
-        float shakeY = (Mathf.PerlinNoise(0, shakeTimer) - 0.5f) * shakeAmount;
-
-        Vector2 finalPosition = actualLancePosition + new Vector2(shakeX, shakeY);
-
-        // Aplicamos la rotación final al pivote (invirtiendo Y para que arriba sea arriba)
-        lancePivot.localRotation = Quaternion.Euler(-finalPosition.y, finalPosition.x, 0);
+        mousePreviousX = Input.mousePosition.x;
+        mousePreviousY = Input.mousePosition.y;
     }
 
-    public float GetImpactDamage()
+    void Update()
     {
-        float damageBase = loadout != null ? loadout.stats.Get(StatType.BF) : fallbackBF;
-        float totalDamage = damageBase * (1f + currentCharge);
-        
-        // Reseteo por impacto
-        currentCharge = 0f; 
-        isCharging = false;
-        
-        // Retroceso visual en la cámara/lanza (opcional, simulado con velocidad de inercia)
-        lanceVelocity = new Vector2(Random.Range(-30f, 30f), Random.Range(30f, 60f)); 
+        if (lancePivot == null) 
+        {
+            Debug.LogWarning("⚠️ Falta asignar 'Lance Pivot' en PhysicalLanceController.");
+            return;
+        }
 
-        return totalDamage;
+        // Siempre mantenemos la lanza pegada a la mano visualmente, estemos jugando o no
+        UpdateLanceVisuals();
+
+        bool isPlaying = joustManager != null && (joustManager.attackPartIsOn || joustManager.horsePartIsOn);
+
+        if (isPlaying)
+        {
+            if (!wasPlaying)
+            {
+                mousePreviousX = Input.mousePosition.x;
+                mousePreviousY = Input.mousePosition.y;
+                wasPlaying = true;
+            }
+
+            HandleInput();
+            HandleCharge();
+            ApplyMovement();
+
+            if (hitMarker != null && !hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(true);
+            
+            // Mostrar la barra de carga solo si estamos activamente en la fase de ataque
+            if (chargeSlider != null)
+            {
+                bool showSlider = joustManager != null && joustManager.attackPartIsOn;
+                if (chargeSlider.gameObject.activeSelf != showSlider)
+                    chargeSlider.gameObject.SetActive(showSlider);
+            }
+
+            UpdateHitMarker();
+        }
+        else
+        {
+            if (wasPlaying)
+            {
+                wasPlaying = false;
+                if (hitMarker != null && hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(false);
+                if (chargeSlider != null && chargeSlider.gameObject.activeSelf) chargeSlider.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        mousePreviousX = Input.mousePosition.x;
+        mousePreviousY = Input.mousePosition.y;
+    }
+
+    void HandleInput()
+    {
+        float mouseX = Input.mousePosition.x;
+        float mouseY = Input.mousePosition.y;
+
+        // Escalamos la sensibilidad para que valores como "2" en el Inspector sean suaves
+        // y no giren la lanza 100 grados en un solo frame.
+        float effectiveSensitivity = inputSensitivity * 0.05f;
+        Vector2 inputDelta = new Vector2(mouseX - mousePreviousX, mouseY - mousePreviousY) * effectiveSensitivity;
+
+        mousePreviousX = mouseX;
+        mousePreviousY = mouseY;
+
+        // Sumamos el movimiento del ratón a la rotación OBJETIVO
+        targetAimAngles += new Vector3(-inputDelta.y, inputDelta.x, 0f);
+    }
+
+    void HandleCharge()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            currentCharge = Mathf.Min(currentCharge + Time.deltaTime, maxChargeTime);
+        }
+        else
+        {
+            if (currentCharge > 0)
+            {
+                currentCharge -= Time.deltaTime * 2f;
+                currentCharge = Mathf.Max(0, currentCharge);
+            }
+        }
+
+        // Actualizar la barra visual de UI
+        if (chargeSlider != null)
+        {
+            chargeSlider.value = currentCharge / maxChargeTime;
+        }
+    }
+
+    void ApplyMovement()
+    {
+        // NO rotamos lancePivot en absoluto. Se queda como un punto estático puro (la mano).
+        // Calculamos cuánto tarda en seguir al ratón dependiendo de la maniobrabilidad (M)
+        float currentDamping = baseSwayDamping + (GetM() * swayDampingPerM);
+
+        // Interpolación fluida (SmoothDamp crea el efecto de muelle/peso arrastrado)
+        currentAimAngles = Vector3.SmoothDamp(currentAimAngles, targetAimAngles, ref aimAnglesVelocity, currentDamping);
+    }
+
+    void UpdateHitMarker()
+    {
+        if (hitMarker == null) return;
+
+        // La rotación virtual generada por el ratón
+        Quaternion localAimRotation = Quaternion.Euler(currentAimAngles);
+        Quaternion worldAimRotation = lancePivot.rotation * localAimRotation;
+
+        Ray ray = new Ray(lancePivot.position, worldAimRotation * Vector3.forward);
+        Vector3 targetWorldPos;
+        Vector3 targetNormal;
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        {
+            if (!hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(true);
+            
+            targetWorldPos = hit.point;
+            targetNormal = hit.normal;
+
+            string hitTag = hit.collider.tag;
+            if (hitTag == "Head")
+            {
+                SetMarkerColor(colorCabeza);
+            }
+            else if (hitTag == "Body" || hitTag == "Shield")
+            {
+                SetMarkerColor(colorCuerpoEscudo);
+            }
+            else 
+            {
+                SetMarkerColor(colorNada);
+            }
+        }
+        else
+        {
+            if (!hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(true);
+            targetWorldPos = ray.GetPoint(50f);
+            targetNormal = -ray.direction;
+            SetMarkerColor(colorNada);
+        }
+
+        RectTransform rt = hitMarker.GetComponent<RectTransform>();
+        Canvas canvas = hitMarker.GetComponentInParent<Canvas>();
+
+        if (rt != null && canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        {
+            if (Camera.main != null)
+            {
+                Vector3 screenPos = Camera.main.WorldToScreenPoint(targetWorldPos);
+                if (screenPos.z > 0)
+                {
+                    rt.position = screenPos;
+                }
+            }
+        }
+        else
+        {
+            hitMarker.position = targetWorldPos + targetNormal * 0.05f;
+            hitMarker.rotation = Quaternion.LookRotation(targetNormal);
+        }
+
+    }
+
+    void UpdateLanceVisuals()
+    {
+        if (lance3DModel != null)
+        {
+            Quaternion localAimRotation = Quaternion.Euler(currentAimAngles);
+            Quaternion worldAimRotation = lancePivot.rotation * localAimRotation;
+
+            // Combinamos la rotación de la mira con el offset de Blender
+            Quaternion finalLanceRotation = worldAimRotation * Quaternion.Euler(lanceRotationOffset);
+            
+            // La lanza orbita mágicamente sobre el lancePivot estático
+            lance3DModel.position = lancePivot.position + finalLanceRotation * lancePositionOffset;
+            lance3DModel.rotation = finalLanceRotation;
+        }
+    }
+
+    void SetMarkerColor(Color color)
+    {
+        if (markerRenderer != null) markerRenderer.material.color = color;
+        if (markerImage != null) markerImage.color = color;
+    }
+
+    public float GetChargePercent()
+    {
+        return (currentCharge / maxChargeTime) * 100f;
+    }
+
+    public int GetBF()
+    {
+        if (loadout == null) return fallbackBF;
+        int val = Mathf.RoundToInt(loadout.stats.Get(StatType.BF));
+        return val > 0 ? val : fallbackBF;
+    }
+
+    public int GetBL()
+    {
+        if (loadout == null) return fallbackBL;
+        int val = Mathf.RoundToInt(loadout.stats.Get(StatType.BL));
+        return val > 0 ? val : fallbackBL;
+    }
+
+    public int GetM()
+    {
+        if (loadout == null) return fallbackM;
+        int val = Mathf.RoundToInt(loadout.stats.Get(StatType.M));
+        return val > 0 ? val : fallbackM;
+    }
+
+    void LateUpdate()
+    {
+        Transform camPoint = customCameraPoint != null ? customCameraPoint : (joustManager != null ? joustManager.attackCameraPoint : null);
+
+        if (moveCamera && joustManager != null && joustManager.attackPartIsOn && camPoint != null)
+        {
+            // Paneo puro en 2D (Arriba/Abajo, Izquierda/Derecha) siguiendo los ángulos de la lanza
+            Quaternion cameraPan = Quaternion.Euler(currentAimAngles.x * cameraMoveMultiplier, currentAimAngles.y * cameraMoveMultiplier, 0);
+            
+            // Aplicamos la rotación relativa al punto inicial de la cámara
+            camPoint.localRotation = initialCameraPointRot * cameraPan;
+        }
     }
 }

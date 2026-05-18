@@ -108,8 +108,11 @@ public class EnemyRagdollController : MonoBehaviour
     {
         foreach (var rb in allBodies)
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
             rb.isKinematic = true;
             rb.useGravity = false;
         }

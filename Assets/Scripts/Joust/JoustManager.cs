@@ -25,6 +25,8 @@ public class JoustManager : MonoBehaviour
     [Header("Camera Follow")]
     public float followSpeed = 5f;
     private Transform currentCameraPoint;
+    [Header("Camera Control")]
+    public bool lockCameraToPoints = true;
 
     [Header("Win System")]
     public WinManager winManager;
@@ -191,7 +193,9 @@ public class JoustManager : MonoBehaviour
     void LateUpdate()
     {
         if (preJoustIntroRunning && cinematicManager != null) return;
-
+        
+        if (!lockCameraToPoints) return;
+        
         if (mainCamera == null || currentCameraPoint == null) return;
 
         mainCamera.transform.position = Vector3.Lerp(

@@ -14,6 +14,8 @@ public class DefensePart_Joust : MonoBehaviour
     public int fallbackBB = 2;
 
     [Header("UI Defensa")]
+    [Tooltip("Panel principal que engloba toda la interfaz de defensa. Se activará cuando empiece la fase.")]
+    public GameObject defensePanel;
     public RectTransform defenseCircle;
     public RectTransform attackIndicator;
     public Image attackIndicatorImage;
@@ -48,7 +50,13 @@ public class DefensePart_Joust : MonoBehaviour
     void Awake()
     {
         if (loadout == null)
-            loadout = FindObjectOfType<LoadoutStatsComponent>();
+        {
+            GameObject ghost = GameObject.Find("GhostPlayer");
+            if (ghost != null)
+                loadout = ghost.GetComponent<LoadoutStatsComponent>();
+            else
+                loadout = FindFirstObjectByType<LoadoutStatsComponent>();
+        }
     }
 
     void OnEnable()
@@ -164,6 +172,9 @@ public class DefensePart_Joust : MonoBehaviour
 
     void ShowDefenseUI(bool show)
     {
+        if (defensePanel != null)
+            defensePanel.SetActive(show);
+
         if (defenseCircle != null)
             defenseCircle.gameObject.SetActive(show);
 

@@ -40,8 +40,8 @@ public class ShopPanelController : MonoBehaviour
 
     void Awake()
     {
-        if (progress == null) progress = FindObjectOfType<ProgressManager>();
-        if (equipment == null) equipment = FindObjectOfType<EquipmentManager>();
+        if (progress == null) progress = FindFirstObjectByType<ProgressManager>();
+        if (equipment == null) equipment = FindFirstObjectByType<EquipmentManager>();
     }
 
     void Start()
@@ -214,5 +214,6 @@ public class ShopPanelController : MonoBehaviour
         }
     }
 }
+
 
 

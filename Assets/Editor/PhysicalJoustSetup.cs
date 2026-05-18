@@ -6,7 +6,7 @@ public class PhysicalJoustSetup : EditorWindow
     [MenuItem("Tools/Fields of Glory/Setup Physical Jousting")]
     public static void SetupJousting()
     {
-        JoustManager manager = FindObjectOfType<JoustManager>();
+        JoustManager manager = FindFirstObjectByType<JoustManager>();
         if (manager == null)
         {
             Debug.LogError("No se encontró un JoustManager en la escena. Abre la escena de la justa primero.");

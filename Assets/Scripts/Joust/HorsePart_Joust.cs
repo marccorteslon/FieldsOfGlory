@@ -91,13 +91,19 @@ public class HorsePart_Joust : MonoBehaviour
     void Awake()
     {
         if (loadout == null)
-            loadout = FindObjectOfType<LoadoutStatsComponent>();
+        {
+            GameObject ghost = GameObject.Find("GhostPlayer");
+            if (ghost != null)
+                loadout = ghost.GetComponent<LoadoutStatsComponent>();
+            else
+                loadout = FindFirstObjectByType<LoadoutStatsComponent>();
+        }
 
         if (joustManager == null)
-            joustManager = FindObjectOfType<JoustManager>();
+            joustManager = FindFirstObjectByType<JoustManager>();
 
         if (scoreManager == null)
-            scoreManager = FindObjectOfType<ScoreManager>();
+            scoreManager = FindFirstObjectByType<ScoreManager>();
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();

@@ -51,7 +51,7 @@ public class WinManager : MonoBehaviour
         }
 
         if (progressManager == null)
-            progressManager = FindObjectOfType<ProgressManager>();
+            progressManager = FindFirstObjectByType<ProgressManager>();
 
         if (gameEnded) return;
 
@@ -64,7 +64,13 @@ public class WinManager : MonoBehaviour
 
         DisableTutorialAfterThisJoust();
 
-        bool fightWon = roundScore >= winPoints;
+        bool hasEnoughPoints = roundScore >= winPoints;
+        bool fightWon = hasEnoughPoints && scoreManager.hasLandedAttack;
+
+        if (hasEnoughPoints && !scoreManager.hasLandedAttack)
+        {
+            Debug.Log("[Justa finalizada] TenÃ­as los puntos, pero perdiste por no impactar con la lanza.");
+        }
 
         Debug.Log($"[Justa finalizada] Puntos: {roundScore}/{winPoints} | Resultado: {(fightWon ? "Victoria" : "Derrota")}");
 
@@ -73,8 +79,6 @@ public class WinManager : MonoBehaviour
 
     IEnumerator ProcessJoustEndSequence(int roundScore, bool fightWon)
     {
-        if (attackPart != null)
-            attackPart.ApplyEnemyImpact(roundScore, fightWon);
 
         if (cinematicManager != null)
             yield return StartCoroutine(cinematicManager.PlayEnemyImpactSequence(fightWon));
@@ -129,7 +133,7 @@ public class WinManager : MonoBehaviour
         if (gameWinPanel != null)
             gameWinPanel.SetActive(true);
 
-        Debug.Log("¡Has ganado la justa!");
+        Debug.Log("Â¡Has ganado la justa!");
 
         int moneyEarned = WinGame();
         UpdateVictoryTexts(currentWinPoints, moneyEarned);
@@ -144,10 +148,10 @@ public class WinManager : MonoBehaviour
 
     int WinGame()
     {
-        Debug.Log("¡Has alcanzado los puntos necesarios! ¡Has ganado la partida!");
+        Debug.Log("Â¡Has alcanzado los puntos necesarios! Â¡Has ganado la partida!");
 
         if (progressManager == null)
-            progressManager = FindObjectOfType<ProgressManager>();
+            progressManager = FindFirstObjectByType<ProgressManager>();
 
         int reward = 0;
 
@@ -160,7 +164,7 @@ public class WinManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("No se encontró ProgressManager en la escena.");
+            Debug.LogError("No se encontrÃ³ ProgressManager en la escena.");
         }
 
         return reward;

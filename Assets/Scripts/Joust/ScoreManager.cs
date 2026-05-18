@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
     public int totalScore = 0;
+    public bool hasLandedAttack = false;
 
     // ---------------- Fase Caballo ----------------
     public void AddHorsePhaseScore(string zone, int MV, int mV)
@@ -28,6 +29,7 @@ public class ScoreManager : MonoBehaviour
     // ---------------- Fase Ataque ----------------
     public void AddAttackScore(string enemyTag, int BF, int BL, float chargePercent, int MV, int mV)
     {
+        hasLandedAttack = true;
         int valorZona = enemyTag switch
         {
             "Head" => 4,

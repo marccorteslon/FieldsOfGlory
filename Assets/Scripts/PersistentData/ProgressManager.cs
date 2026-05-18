@@ -15,7 +15,7 @@ public class ProgressManager : MonoBehaviour
         data = ProgressSaveSystem.Load();
 
         if (equipment == null)
-            equipment = FindObjectOfType<EquipmentManager>();
+            equipment = FindFirstObjectByType<EquipmentManager>();
 
         if (itemDatabase != null)
             itemDatabase.BuildLookup();
@@ -237,3 +237,4 @@ public class ProgressManager : MonoBehaviour
         }
     }
 }
+
