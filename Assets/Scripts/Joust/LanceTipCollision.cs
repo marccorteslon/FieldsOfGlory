@@ -47,6 +47,9 @@ public class LanceTipCollision : MonoBehaviour
 
                 // Aplicar fuerza física al ragdoll del enemigo
                 EnemyRagdollController ragdoll = other.GetComponentInParent<EnemyRagdollController>();
+                if (ragdoll == null) 
+                    ragdoll = FindFirstObjectByType<EnemyRagdollController>();
+
                 if (ragdoll != null)
                 {
                     // Usamos el daño/fuerza calculada para el impacto

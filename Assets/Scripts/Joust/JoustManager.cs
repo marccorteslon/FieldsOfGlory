@@ -77,15 +77,8 @@ public class JoustManager : MonoBehaviour
     private float transitionTimer = 0f;
     private bool waitingToStartCombat = false;
 
-    [Header("Attack Timer")]
-    public float attackDuration = 3f;
-    private float attackTimer = 0f;
-    private bool attackTimerRunning = false;
-
-    [Header("Defense Timer")]
-    public float defenseDuration = 2f;
-    private float defenseTimer = 0f;
-    private bool defenseTimerRunning = false;
+    // Los timers ciegos de ataque y defensa han sido eliminados.
+    // La fase de combate terminará de forma realista calculando la distancia Z entre los dos caballos.
 
     private bool attackResolved = false;
     private bool defenseResolved = false;
@@ -145,35 +138,51 @@ public class JoustManager : MonoBehaviour
         {
             case JoustDifficulty.Easy:
                 horsePhaseDuration = 6f;
-                attackDuration = 4f;
-                defenseDuration = 2.5f;
                 horsePhaseSpeed = 9f;
                 combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints;
+                if (defensePart != null)
+                {
+                    defensePart.attackMoveSpeed = 0.5f;
+                    defensePart.captureDistanceTolerance = 60f;
+                    defensePart.requiredCaptureTime = 0.5f;
+                }
                 break;
             case JoustDifficulty.Normal:
                 horsePhaseDuration = 5f;
-                attackDuration = 3f;
-                defenseDuration = 2f;
                 horsePhaseSpeed = 12f;
                 combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 10; // 50
+                if (defensePart != null)
+                {
+                    defensePart.attackMoveSpeed = 1f;
+                    defensePart.captureDistanceTolerance = 50f;
+                    defensePart.requiredCaptureTime = 0.8f;
+                }
                 break;
             case JoustDifficulty.Hard:
                 horsePhaseDuration = 4f;
-                attackDuration = 2f;
-                defenseDuration = 1.5f;
                 horsePhaseSpeed = 13f;
                 combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 20; // 80
+                if (defensePart != null)
+                {
+                    defensePart.attackMoveSpeed = 2f;
+                    defensePart.captureDistanceTolerance = 40f;
+                    defensePart.requiredCaptureTime = 1.0f;
+                }
                 break;
             case JoustDifficulty.Epic:
                 horsePhaseDuration = 3.5f;
-                attackDuration = 1.5f;
-                defenseDuration = 1f;
                 horsePhaseSpeed = 15f;
                 combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 30; // 120
+                if (defensePart != null)
+                {
+                    defensePart.attackMoveSpeed = 3f;
+                    defensePart.captureDistanceTolerance = 30f;
+                    defensePart.requiredCaptureTime = 1.2f;
+                }
                 break;
         }
     }
@@ -186,8 +195,7 @@ public class JoustManager : MonoBehaviour
         MoveJousters();
         HandleHorseTimer();
         HandleTransitionTimer();
-        HandleAttackTimer();
-        HandleDefenseTimer();
+        CheckCombatDistance();
     }
 
     void LateUpdate()
@@ -221,8 +229,6 @@ public class JoustManager : MonoBehaviour
         defensePartIsOn = false;
 
         horseTimerRunning = false;
-        attackTimerRunning = false;
-        defenseTimerRunning = false;
         waitingToStartCombat = false;
 
         UpdatePhases();
@@ -404,12 +410,6 @@ public class JoustManager : MonoBehaviour
         horseTimer = 0f;
         horseTimerRunning = true;
 
-        attackTimer = 0f;
-        attackTimerRunning = false;
-
-        defenseTimer = 0f;
-        defenseTimerRunning = false;
-
         currentCameraPoint = horseCameraPoint;
 
         if (cinematicManager != null)
@@ -459,37 +459,39 @@ public class JoustManager : MonoBehaviour
         }
     }
 
-    void HandleAttackTimer()
+    void CheckCombatDistance()
     {
-        if (!attackTimerRunning) return;
+        if (!attackPartIsOn && !defensePartIsOn) return;
 
-        attackTimer += Time.deltaTime;
-
-        if (attackTimer >= attackDuration)
+        if (player != null && enemy != null)
         {
-            attackTimerRunning = false;
+            Vector3 dirToEnemy = (enemy.position - player.position).normalized;
+            float dot = Vector3.Dot(player.forward, dirToEnemy);
 
-            if (attackPart != null)
+            // Si el dot product es muy negativo, el enemigo está firmemente detrás nuestro.
+            // Usamos -0.2f en lugar de 0f para darle un margen de tiempo al motor de físicas
+            // (FixedUpdate) de procesar las colisiones (OnTriggerEnter) antes de apagar la lanza.
+            if (dot < -0.2f)
             {
-                attackPart.ForceAttack();
+                EndCombatPhase();
             }
         }
     }
 
-    void HandleDefenseTimer()
+    void EndCombatPhase()
     {
-        if (!defenseTimerRunning) return;
-
-        defenseTimer += Time.deltaTime;
-
-        if (defenseTimer >= defenseDuration)
+        if (attackPartIsOn)
         {
-            defenseTimerRunning = false;
+            if (attackPart != null)
+                attackPart.ForceAttack();
+            EndAttackPhase();
+        }
 
+        if (defensePartIsOn)
+        {
             if (defensePart != null)
-            {
                 defensePart.ForceEndDefense(false);
-            }
+            // EndDefensePhase es llamado desde dentro de ForceEndDefense
         }
     }
 
@@ -567,12 +569,6 @@ public class JoustManager : MonoBehaviour
         currentSpeed = combatPhaseSpeed;
         currentCameraPoint = attackCameraPoint;
 
-        attackTimer = 0f;
-        attackTimerRunning = true;
-
-        defenseTimer = 0f;
-        defenseTimerRunning = true;
-
         UpdatePhases();
 
         if (tutorialManager != null && tutorialManager.ShouldShowTutorial())
@@ -585,7 +581,6 @@ public class JoustManager : MonoBehaviour
         if (attackResolved) return;
 
         attackResolved = true;
-        attackTimerRunning = false;
         attackPartIsOn = false;
 
         UpdatePhases();
@@ -597,7 +592,6 @@ public class JoustManager : MonoBehaviour
         if (defenseResolved) return;
 
         defenseResolved = true;
-        defenseTimerRunning = false;
         defensePartIsOn = false;
 
         UpdatePhases();

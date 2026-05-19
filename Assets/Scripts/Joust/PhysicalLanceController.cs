@@ -20,8 +20,10 @@ public class PhysicalLanceController : MonoBehaviour
     [Header("Físicas (Peso de la Lanza)")]
     [Tooltip("El retraso o 'peso' base de la lanza al moverse.")]
     public float baseSwayDamping = 0.05f;
-    [Tooltip("Cuánto retraso extra se añade por cada punto de M (Maniobrabilidad). Si M es alto, más pesada se sentirá.")]
-    public float swayDampingPerM = 0.02f;
+    [Tooltip("Cuánto retraso extra se añade por cada punto de M. Si M es alto, más pesada se sentirá.")]
+    public float swayDampingPerM = 0.005f;
+    [Tooltip("Cuánto retraso extra se añade si la lanza está cargada de fuerza al máximo (100%).")]
+    public float swayDampingFromCharge = 0.05f;
 
     [Header("Carga del Golpe")]
     public float maxChargeTime = 2f;
@@ -188,11 +190,19 @@ public class PhysicalLanceController : MonoBehaviour
     void ApplyMovement()
     {
         // NO rotamos lancePivot en absoluto. Se queda como un punto estático puro (la mano).
-        // Calculamos cuánto tarda en seguir al ratón dependiendo de la maniobrabilidad (M)
-        float currentDamping = baseSwayDamping + (GetM() * swayDampingPerM);
+        // Calculamos cuánto tarda en seguir al ratón dependiendo de la maniobrabilidad (M) y la fuerza
+        float chargePercent = currentCharge / maxChargeTime;
+        float currentDamping = baseSwayDamping + (GetM() * swayDampingPerM) + (chargePercent * swayDampingFromCharge);
 
-        // Interpolación fluida (SmoothDamp crea el efecto de muelle/peso arrastrado)
-        currentAimAngles = Vector3.SmoothDamp(currentAimAngles, targetAimAngles, ref aimAnglesVelocity, currentDamping);
+        // Interpolación fluida usando unscaledDeltaTime para que la cámara lenta no afecte la responsividad del ratón
+        currentAimAngles = Vector3.SmoothDamp(
+            currentAimAngles, 
+            targetAimAngles, 
+            ref aimAnglesVelocity, 
+            currentDamping, 
+            Mathf.Infinity, 
+            Time.unscaledDeltaTime
+        );
     }
 
     void UpdateHitMarker()

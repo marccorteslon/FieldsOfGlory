@@ -79,6 +79,26 @@ public class WinManager : MonoBehaviour
 
     IEnumerator ProcessJoustEndSequence(int roundScore, bool fightWon)
     {
+        if (!fightWon)
+        {
+            // Si perdimos la justa, nos aseguramos de que el oponente NO esté en ragdoll
+            EnemyRagdollController enemyRagdoll = FindFirstObjectByType<EnemyRagdollController>();
+            if (enemyRagdoll != null)
+            {
+                enemyRagdoll.ResetRagdoll();
+            }
+
+            // Activamos el ragdoll del propio jugador para que salga volando!
+            EnemyRagdollController playerRagdoll = GetPlayerRagdoll();
+            if (playerRagdoll != null)
+            {
+                // El impacto viene en dirección frontal (hacia atrás para el jugador)
+                Vector3 direction = Vector3.forward;
+                Vector3 point = playerRagdoll.transform.position + Vector3.up;
+                int force = winPoints; // Fuerza del golpe proporcional a los puntos mínimos requeridos
+                playerRagdoll.PlayImpact(point, direction, force, true);
+            }
+        }
 
         if (cinematicManager != null)
             yield return StartCoroutine(cinematicManager.PlayEnemyImpactSequence(fightWon));
@@ -87,6 +107,64 @@ public class WinManager : MonoBehaviour
             StartCoroutine(ShowGameWinPanel());
         else
             StartCoroutine(ShowRoundLosePanel());
+    }
+
+    private EnemyRagdollController GetPlayerRagdoll()
+    {
+        Transform playerRoot = (joustManager != null) ? joustManager.player : null;
+        GameObject playerObj = playerRoot != null ? playerRoot.gameObject : null;
+
+        if (playerObj == null)
+        {
+            playerObj = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        if (playerObj == null)
+        {
+            playerObj = GameObject.Find("Player");
+        }
+
+        if (playerObj == null)
+        {
+            Debug.LogError("[WinManager] ERROR: ¡No se pudo encontrar el GameObject del Player por ninguna vía! Asegúrate de que el JoustManager tiene asignado el campo Player o que el objeto está tagged como 'Player'.");
+            return null;
+        }
+
+        Debug.Log($"[WinManager] GameObject del Player localizado con éxito: '{playerObj.name}'");
+
+        EnemyRagdollController controller = playerObj.GetComponentInChildren<EnemyRagdollController>();
+        if (controller != null)
+        {
+            Debug.Log($"[WinManager] Se encontró un EnemyRagdollController preexistente en el Player: '{controller.gameObject.name}'");
+            return controller;
+        }
+
+        // Si no tiene el componente, buscamos su Animator (jinete) para acoplar el Ragdoll ahí
+        Animator anim = playerObj.GetComponentInChildren<Animator>();
+        if (anim != null)
+        {
+            controller = anim.gameObject.AddComponent<EnemyRagdollController>();
+            Debug.Log($"[WinManager] Se añadió dinámicamente EnemyRagdollController al Animator del Player: '{anim.gameObject.name}'");
+            
+            // Forzar carga de rigidbodies e inicialización manual inmediata
+            Rigidbody[] bodies = anim.gameObject.GetComponentsInChildren<Rigidbody>();
+            controller.allBodies = bodies;
+            controller.animator = anim;
+            Debug.Log($"[WinManager] Inicialización del Ragdoll del Player: Encontrados {bodies.Length} Rigidbodies.");
+            if (bodies.Length == 0)
+            {
+                Debug.LogWarning("[WinManager] ADVERTENCIA: El esqueleto del Player no tiene ningún Rigidbody. ¡El ragdoll no funcionará si no hay rigidbodies físicos creados en sus huesos!");
+            }
+        }
+        else
+        {
+            controller = playerObj.AddComponent<EnemyRagdollController>();
+            Rigidbody[] bodies = playerObj.GetComponentsInChildren<Rigidbody>();
+            controller.allBodies = bodies;
+            Debug.Log($"[WinManager] Se añadió EnemyRagdollController en la raíz del Player '{playerObj.name}' con {bodies.Length} Rigidbodies.");
+        }
+
+        return controller;
     }
 
     void DisableTutorialAfterThisJoust()

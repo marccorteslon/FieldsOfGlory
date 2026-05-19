@@ -33,6 +33,38 @@ public class EnemyRagdollController : MonoBehaviour
 
         CachePose();
         DisableRagdoll();
+        IgnoreCollisions();
+    }
+
+    void IgnoreCollisions()
+    {
+        Collider[] myColliders = GetComponentsInChildren<Collider>();
+        
+        // Ignorar colisiones internas (entre los propios huesos del ragdoll)
+        for (int i = 0; i < myColliders.Length; i++)
+        {
+            for (int j = i + 1; j < myColliders.Length; j++)
+            {
+                Physics.IgnoreCollision(myColliders[i], myColliders[j], true);
+            }
+        }
+
+        // Ignorar colisiones con los caballos
+        GameObject[] horses = GameObject.FindGameObjectsWithTag("Horse");
+        foreach (GameObject horse in horses)
+        {
+            Collider[] horseColliders = horse.GetComponentsInChildren<Collider>();
+            foreach (Collider hc in horseColliders)
+            {
+                // NO ignorar los colliders que sean triggers (como la punta de la lanza)
+                if (hc.isTrigger) continue;
+
+                foreach (Collider mc in myColliders)
+                {
+                    Physics.IgnoreCollision(mc, hc, true);
+                }
+            }
+        }
     }
 
     void CachePose()
