@@ -44621,6 +44621,10 @@ MonoBehaviour:
   moveSpeed: 600
   speedIncreasePerHit: 75
   maxMoveSpeed: 900
+  virtualCamera: {fileID: 1426918078}
+  yellowFovIncrease: 3
+  greenFovIncrease: 6
+  fovSmoothSpeed: 6
   redColor: {r: 0.7924528, g: 0.12335351, b: 0.12335351, a: 1}
   yellowColor: {r: 0.9433962, g: 0.74168086, b: 0.048949808, a: 1}
   greenColor: {r: 0.19207366, g: 0.8679245, b: 0.08597365, a: 1}
