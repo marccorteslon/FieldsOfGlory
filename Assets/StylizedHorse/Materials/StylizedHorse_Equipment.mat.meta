@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8d6e7bc9816ea9e4db0db8d9c7c41414
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 174520
+  packageName: Stylized Horse
+  packageVersion: 1.0
+  assetPath: Assets/StylizedHorse/Materials/StylizedHorse_Equipment.mat
+  uploadId: 577419

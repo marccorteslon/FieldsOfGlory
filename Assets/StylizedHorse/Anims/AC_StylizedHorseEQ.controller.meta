@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 54e022f2f67b91b4585ccb4ec0523c6a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 174520
+  packageName: Stylized Horse
+  packageVersion: 1.0
+  assetPath: Assets/StylizedHorse/Anims/AC_StylizedHorseEQ.controller
+  uploadId: 577419

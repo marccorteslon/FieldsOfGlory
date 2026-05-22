@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 577daab1de9b6bb4986170a1e221bc84
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 174520
+  packageName: Stylized Horse
+  packageVersion: 1.0
+  assetPath: Assets/StylizedHorse/Materials/StylizedHorse_Skin5.mat
+  uploadId: 577419
