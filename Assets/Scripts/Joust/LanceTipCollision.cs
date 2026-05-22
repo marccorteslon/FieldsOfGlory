@@ -9,6 +9,15 @@ public class LanceTipCollision : MonoBehaviour
     [Header("Efectos")]
     public ParticleSystem hitParticles;
 
+    void Awake()
+    {
+        if (lanceController == null)
+        {
+            // Busca el controlador en este objeto o en los padres (por si está en un modelo 3D instanciado)
+            lanceController = GetComponentInParent<PhysicalLanceController>();
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         // Ignorar nuestro propio escudo o cuerpo

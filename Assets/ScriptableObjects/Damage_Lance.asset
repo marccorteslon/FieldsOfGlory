@@ -17,6 +17,11 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 724aa17f8c4c6ae4789075ccb352d44d, type: 3}
   description: Una tramposa lanza con punta hueca.
   price: 30
+  visualPrefab: {fileID: 3826336643044889565, guid: 82294897b3e479746ad0d81b2037652d, type: 3}
+  visualMaterial: {fileID: 0}
+  positionOffset: {x: -0.0185, y: -0.0078, z: -0.0559}
+  rotationOffset: {x: 90, y: 0, z: 0}
+  scaleOffset: {x: 0.3, y: 0.6805187, z: 0.3}
   slot: 1
   modifiers:
   - stat: 0

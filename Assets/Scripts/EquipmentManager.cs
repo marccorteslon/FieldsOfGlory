@@ -11,12 +11,14 @@ public class EquipmentManager : MonoBehaviour
     [SerializeField] private EquipmentDefinition armor;
 
     [Header("Visual Attachments")]
-    public Transform horseAttachment;
+    public Renderer horseRenderer;
     public Transform lanceAttachment;
+    [Tooltip("Opcional: Después de spawnearse en lanceAttachment, se convertirá en hijo de este objeto.")]
+    public Transform finalLanceParent;
     public Transform shieldAttachment;
     public Transform armorAttachment;
 
-    private GameObject currentHorseVisual;
+    private Material originalHorseMaterial;
     private GameObject currentLanceVisual;
     private GameObject currentShieldVisual;
     private GameObject currentArmorVisual;
@@ -44,11 +46,15 @@ public class EquipmentManager : MonoBehaviour
         {
             case EquipmentSlot.Horse: 
                 horse = item; 
-                UpdateVisual(item, horseAttachment, ref currentHorseVisual);
+                if (horseRenderer != null && item.visualMaterial != null)
+                {
+                    if (originalHorseMaterial == null) originalHorseMaterial = horseRenderer.sharedMaterial;
+                    horseRenderer.material = item.visualMaterial;
+                }
                 break;
             case EquipmentSlot.Lance: 
                 lance = item; 
-                UpdateVisual(item, lanceAttachment, ref currentLanceVisual);
+                UpdateVisual(item, lanceAttachment, ref currentLanceVisual, finalLanceParent);
                 break;
             case EquipmentSlot.Shield: 
                 shield = item; 
@@ -69,7 +75,10 @@ public class EquipmentManager : MonoBehaviour
         {
             case EquipmentSlot.Horse: 
                 horse = null; 
-                ClearVisual(ref currentHorseVisual);
+                if (horseRenderer != null && originalHorseMaterial != null)
+                {
+                    horseRenderer.material = originalHorseMaterial;
+                }
                 break;
             case EquipmentSlot.Lance: 
                 lance = null; 
@@ -88,18 +97,38 @@ public class EquipmentManager : MonoBehaviour
         OnEquipmentChanged?.Invoke();
     }
 
-    private void UpdateVisual(EquipmentDefinition item, Transform attachment, ref GameObject currentVisual)
+    private void UpdateVisual(EquipmentDefinition item, Transform attachment, ref GameObject currentVisual, Transform finalParent = null)
     {
         ClearVisual(ref currentVisual);
 
-        if (item.visualPrefab != null && attachment != null)
+        if (item.visualPrefab == null)
         {
-            currentVisual = Instantiate(item.visualPrefab, attachment);
-            currentVisual.transform.localPosition = Vector3.zero;
-            currentVisual.transform.localRotation = Quaternion.identity;
-            
-            OnVisualInstantiated?.Invoke(item.slot, currentVisual);
+            Debug.LogWarning($"[EquipmentManager] No se pudo spawnear {item.name}: El campo 'visualPrefab' está vacío en el ScriptableObject.");
+            return;
         }
+
+        if (attachment == null)
+        {
+            Debug.LogWarning($"[EquipmentManager] No se pudo spawnear {item.name}: El 'Attachment' correspondiente está vacío en el Inspector del EquipmentManager.");
+            return;
+        }
+
+        currentVisual = Instantiate(item.visualPrefab, attachment);
+        
+        // Aplicamos los ajustes manuales definidos en el ScriptableObject
+        currentVisual.transform.localPosition = item.positionOffset;
+        currentVisual.transform.localRotation = Quaternion.Euler(item.rotationOffset);
+        currentVisual.transform.localScale = item.scaleOffset;
+        
+        // Si hay un padre final, lo re-emparentamos manteniendo su posición y tamaño exactos en el mundo 3D
+        if (finalParent != null)
+        {
+            currentVisual.transform.SetParent(finalParent, true);
+        }
+        
+        Debug.Log($"[EquipmentManager] Spawneado con éxito el visual para {item.name} en {attachment.name}.");
+        
+        OnVisualInstantiated?.Invoke(item.slot, currentVisual);
     }
 
     private void ClearVisual(ref GameObject currentVisual)

@@ -6,6 +6,10 @@ public abstract class EquipmentDefinition : ItemDefinition
 {
     [Header("Visuals")]
     public GameObject visualPrefab;
+    public Material visualMaterial;
+    public Vector3 positionOffset = Vector3.zero;
+    public Vector3 rotationOffset = Vector3.zero;
+    public Vector3 scaleOffset = Vector3.one;
 
     public EquipmentSlot slot;
     public List<StatModifier> modifiers = new();
