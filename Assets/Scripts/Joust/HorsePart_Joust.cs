@@ -111,6 +111,11 @@ public class HorsePart_Joust : MonoBehaviour
 
     void Start()
     {
+        if (loadout != null && loadout.equipment != null)
+        {
+            loadout.equipment.OnVisualInstantiated += HandleVisualInstantiated;
+        }
+
         sliderHeight = sliderArea.rect.height;
         currentMoveSpeed = moveSpeed;
 
@@ -118,6 +123,26 @@ public class HorsePart_Joust : MonoBehaviour
         DrawZones();
         CreateIndicator();
         InitializeUI();
+    }
+
+    void OnDestroy()
+    {
+        if (loadout != null && loadout.equipment != null)
+        {
+            loadout.equipment.OnVisualInstantiated -= HandleVisualInstantiated;
+        }
+    }
+
+    private void HandleVisualInstantiated(EquipmentSlot slot, GameObject visualInstance)
+    {
+        if (slot == EquipmentSlot.Horse && visualInstance != null)
+        {
+            Animator newAnimator = visualInstance.GetComponent<Animator>();
+            if (newAnimator != null)
+            {
+                horseAnimator = newAnimator;
+            }
+        }
     }
 
     void Update()

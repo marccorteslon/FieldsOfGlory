@@ -10,8 +10,22 @@ public class EquipmentManager : MonoBehaviour
     [SerializeField] private EquipmentDefinition shield;
     [SerializeField] private EquipmentDefinition armor;
 
+    [Header("Visual Attachments")]
+    public Transform horseAttachment;
+    public Transform lanceAttachment;
+    public Transform shieldAttachment;
+    public Transform armorAttachment;
+
+    private GameObject currentHorseVisual;
+    private GameObject currentLanceVisual;
+    private GameObject currentShieldVisual;
+    private GameObject currentArmorVisual;
+
     public delegate void EquipmentChanged();
     public event EquipmentChanged OnEquipmentChanged;
+
+    public delegate void VisualInstantiated(EquipmentSlot slot, GameObject visualInstance);
+    public event VisualInstantiated OnVisualInstantiated;
 
     public EquipmentDefinition GetEquipped(EquipmentSlot slot) => slot switch
     {
@@ -28,10 +42,22 @@ public class EquipmentManager : MonoBehaviour
 
         switch (item.slot)
         {
-            case EquipmentSlot.Horse: horse = item; break;
-            case EquipmentSlot.Lance: lance = item; break;
-            case EquipmentSlot.Shield: shield = item; break;
-            case EquipmentSlot.Armor: armor = item; break;
+            case EquipmentSlot.Horse: 
+                horse = item; 
+                UpdateVisual(item, horseAttachment, ref currentHorseVisual);
+                break;
+            case EquipmentSlot.Lance: 
+                lance = item; 
+                UpdateVisual(item, lanceAttachment, ref currentLanceVisual);
+                break;
+            case EquipmentSlot.Shield: 
+                shield = item; 
+                UpdateVisual(item, shieldAttachment, ref currentShieldVisual);
+                break;
+            case EquipmentSlot.Armor: 
+                armor = item; 
+                UpdateVisual(item, armorAttachment, ref currentArmorVisual);
+                break;
         }
 
         OnEquipmentChanged?.Invoke();
@@ -41,13 +67,48 @@ public class EquipmentManager : MonoBehaviour
     {
         switch (slot)
         {
-            case EquipmentSlot.Horse: horse = null; break;
-            case EquipmentSlot.Lance: lance = null; break;
-            case EquipmentSlot.Shield: shield = null; break;
-            case EquipmentSlot.Armor: armor = null; break;
+            case EquipmentSlot.Horse: 
+                horse = null; 
+                ClearVisual(ref currentHorseVisual);
+                break;
+            case EquipmentSlot.Lance: 
+                lance = null; 
+                ClearVisual(ref currentLanceVisual);
+                break;
+            case EquipmentSlot.Shield: 
+                shield = null; 
+                ClearVisual(ref currentShieldVisual);
+                break;
+            case EquipmentSlot.Armor: 
+                armor = null; 
+                ClearVisual(ref currentArmorVisual);
+                break;
         }
 
         OnEquipmentChanged?.Invoke();
+    }
+
+    private void UpdateVisual(EquipmentDefinition item, Transform attachment, ref GameObject currentVisual)
+    {
+        ClearVisual(ref currentVisual);
+
+        if (item.visualPrefab != null && attachment != null)
+        {
+            currentVisual = Instantiate(item.visualPrefab, attachment);
+            currentVisual.transform.localPosition = Vector3.zero;
+            currentVisual.transform.localRotation = Quaternion.identity;
+            
+            OnVisualInstantiated?.Invoke(item.slot, currentVisual);
+        }
+    }
+
+    private void ClearVisual(ref GameObject currentVisual)
+    {
+        if (currentVisual != null)
+        {
+            Destroy(currentVisual);
+            currentVisual = null;
+        }
     }
 
     public List<StatModifier> GetAllModifiers()
