@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Cinemachine;
 
 public class HorsePart_Joust : MonoBehaviour
 {
@@ -47,6 +48,18 @@ public class HorsePart_Joust : MonoBehaviour
     public float moveSpeed = 300f;
     public float speedIncreasePerHit = 75f;
     public float maxMoveSpeed = 900f;
+
+    [Header("Camera FOV")]
+    public CinemachineCamera virtualCamera;
+    public float yellowFovIncrease = 3f;
+    public float greenFovIncrease = 6f;
+    public float fovSmoothSpeed = 6f;
+
+    private float originalFOV;
+    private float targetFOV;
+    private bool hasOriginalFOV = false;
+    private bool fovWasModified = false;
+    private bool waitingForCameraChangeToRestoreFOV = false;
 
     [Header("Colors")]
     public Color redColor = Color.red;
@@ -107,6 +120,9 @@ public class HorsePart_Joust : MonoBehaviour
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+
+        if (virtualCamera == null)
+            virtualCamera = FindFirstObjectByType<CinemachineCamera>();
     }
 
     void Start()
@@ -118,6 +134,8 @@ public class HorsePart_Joust : MonoBehaviour
 
         sliderHeight = sliderArea.rect.height;
         currentMoveSpeed = moveSpeed;
+
+        SaveOriginalFOV();
 
         CalculateZones();
         DrawZones();
@@ -147,12 +165,15 @@ public class HorsePart_Joust : MonoBehaviour
 
     void Update()
     {
+        UpdateCameraFOV();
+
         if (joustManager == null) return;
 
         UpdateHorseAnimation();
 
         if (!joustManager.horsePartIsOn)
         {
+            RestoreOriginalFOVWhenCameraChanged();
             HideUI();
             return;
         }
@@ -181,10 +202,10 @@ public class HorsePart_Joust : MonoBehaviour
         }
 
         currentAnimSpeed = Mathf.Lerp(currentAnimSpeed, targetAnimSpeed, animationBlendSpeed * Time.deltaTime);
-        
+
         if (horseAnimator != null)
             horseAnimator.SetFloat(SpeedParam, currentAnimSpeed);
-            
+
         if (opponentHorseAnimator != null)
             opponentHorseAnimator.SetFloat(SpeedParam, currentAnimSpeed);
 
@@ -195,7 +216,7 @@ public class HorsePart_Joust : MonoBehaviour
             else if (targetAnimSpeed < 2f && gallopSmoke.isPlaying)
                 gallopSmoke.Stop();
         }
-        
+
         if (opponentGallopSmoke != null)
         {
             if (targetAnimSpeed >= 2f && !opponentGallopSmoke.isPlaying)
@@ -203,6 +224,80 @@ public class HorsePart_Joust : MonoBehaviour
             else if (targetAnimSpeed < 2f && opponentGallopSmoke.isPlaying)
                 opponentGallopSmoke.Stop();
         }
+    }
+
+    void SaveOriginalFOV()
+    {
+        if (virtualCamera == null) return;
+
+        originalFOV = virtualCamera.Lens.FieldOfView;
+        targetFOV = originalFOV;
+        hasOriginalFOV = true;
+        fovWasModified = false;
+        waitingForCameraChangeToRestoreFOV = false;
+    }
+
+    void IncreaseCameraFOV(string zone)
+    {
+        if (virtualCamera == null) return;
+
+        if (!hasOriginalFOV)
+            SaveOriginalFOV();
+
+        if (zone == "Amarillo")
+        {
+            targetFOV += yellowFovIncrease;
+            fovWasModified = true;
+        }
+        else if (zone == "Verde")
+        {
+            targetFOV += greenFovIncrease;
+            fovWasModified = true;
+        }
+    }
+
+    void UpdateCameraFOV()
+    {
+        if (virtualCamera == null) return;
+        if (!hasOriginalFOV) return;
+
+        if (fovWasModified && !waitingForCameraChangeToRestoreFOV)
+        {
+            virtualCamera.Lens.FieldOfView = Mathf.Lerp(
+                virtualCamera.Lens.FieldOfView,
+                targetFOV,
+                fovSmoothSpeed * Time.deltaTime
+            );
+        }
+    }
+
+    void RestoreOriginalFOVWhenCameraChanged()
+    {
+        if (virtualCamera == null) return;
+        if (!hasOriginalFOV) return;
+        if (!fovWasModified) return;
+
+        waitingForCameraChangeToRestoreFOV = true;
+
+        if (!virtualCamera.IsLive)
+        {
+            virtualCamera.Lens.FieldOfView = originalFOV;
+            targetFOV = originalFOV;
+            fovWasModified = false;
+            waitingForCameraChangeToRestoreFOV = false;
+        }
+    }
+
+    void RestoreOriginalFOV()
+    {
+        if (virtualCamera == null) return;
+        if (!hasOriginalFOV) return;
+        if (!fovWasModified) return;
+
+        virtualCamera.Lens.FieldOfView = originalFOV;
+        targetFOV = originalFOV;
+        fovWasModified = false;
+        waitingForCameraChangeToRestoreFOV = false;
     }
 
     void CalculateZones()
@@ -364,6 +459,8 @@ public class HorsePart_Joust : MonoBehaviour
             pointsAwardedThisPhase = true;
             lastScoredZone = zone;
 
+            IncreaseCameraFOV(zone);
+
             if (scoreManager != null)
             {
                 scoreManager.AddHorsePhaseScore(zone, GetMV(), GetV());
@@ -499,16 +596,20 @@ public class HorsePart_Joust : MonoBehaviour
     }
 
     public void ForceEndHorsePhase()
-{
-    EvaluateZone();
-    HideUI();
+    {
+        EvaluateZone();
+        RestoreOriginalFOVWhenCameraChanged();
+        HideUI();
 
-    if (objectToDisableOnEnd != null)
-        objectToDisableOnEnd.SetActive(false);
-}
+        if (objectToDisableOnEnd != null)
+            objectToDisableOnEnd.SetActive(false);
+    }
 
     public void ResetHorsePhase()
     {
+        RestoreOriginalFOV();
+        SaveOriginalFOV();
+
         isActive = true;
         hasResolved = false;
         pressCount = 0;

@@ -25,6 +25,7 @@ public class JoustManager : MonoBehaviour
     [Header("Camera Follow")]
     public float followSpeed = 5f;
     private Transform currentCameraPoint;
+
     [Header("Camera Control")]
     public bool lockCameraToPoints = true;
 
@@ -41,6 +42,10 @@ public class JoustManager : MonoBehaviour
 
     [Header("Effects")]
     public EffectManager effectManager;
+
+    [Header("Effect Choice")]
+    public bool useEffectChoiceButtons = true;
+    private bool waitingForEffectChoice = false;
 
     [Header("Pre Joust Intro")]
     public bool usePreJoustIntro = true;
@@ -60,6 +65,12 @@ public class JoustManager : MonoBehaviour
     public float preJoustFinalPause = 1f;
 
     public Transform[] playerPreJoustWaypoints;
+
+    [Header("Pre Joust Horse Animation")]
+    public Animator playerHorseAnimator;
+    public string horseSpeedParameter = "Speed";
+    public float preJoustRunAnimSpeed = 1f;
+    public float preJoustIdleAnimSpeed = 0f;
 
     public bool snapPlayerToFirstWaypoint = true;
 
@@ -94,12 +105,13 @@ public class JoustManager : MonoBehaviour
     [HideInInspector] public Vector3 initialEnemyPos;
     [HideInInspector] public Quaternion initialEnemyRot;
 
-        [Header("Difficulty Settings")]
+    [Header("Difficulty Settings")]
     public JoustDifficulty difficulty = JoustDifficulty.Normal;
 
     void Start()
     {
         ApplyDifficulty();
+
         if (player != null)
         {
             initialPlayerPos = player.position;
@@ -111,6 +123,11 @@ public class JoustManager : MonoBehaviour
             initialEnemyPos = enemy.position;
             initialEnemyRot = enemy.rotation;
         }
+
+        if (playerHorseAnimator == null && player != null)
+            playerHorseAnimator = player.GetComponentInChildren<Animator>();
+
+        SetPreJoustHorseRunning(false);
 
         if (mainCamera != null && horseCameraPoint != null)
         {
@@ -126,11 +143,10 @@ public class JoustManager : MonoBehaviour
         if (usePreJoustIntro)
             preJoustIntroCoroutine = StartCoroutine(PreJoustIntroSequence());
         else
-            StartJoustNormally();
+            ShowEffectChoicesBeforeHorsePhase();
     }
 
-    
-        void ApplyDifficulty()
+    void ApplyDifficulty()
     {
         int basePoints = 10;
 
@@ -148,6 +164,7 @@ public class JoustManager : MonoBehaviour
                     defensePart.requiredCaptureTime = 0.5f;
                 }
                 break;
+
             case JoustDifficulty.Normal:
                 horsePhaseDuration = 5f;
                 horsePhaseSpeed = 12f;
@@ -160,6 +177,7 @@ public class JoustManager : MonoBehaviour
                     defensePart.requiredCaptureTime = 0.8f;
                 }
                 break;
+
             case JoustDifficulty.Hard:
                 horsePhaseDuration = 4f;
                 horsePhaseSpeed = 13f;
@@ -172,6 +190,7 @@ public class JoustManager : MonoBehaviour
                     defensePart.requiredCaptureTime = 1.0f;
                 }
                 break;
+
             case JoustDifficulty.Epic:
                 horsePhaseDuration = 3.5f;
                 horsePhaseSpeed = 15f;
@@ -189,7 +208,7 @@ public class JoustManager : MonoBehaviour
 
     void Update()
     {
-        if (!joustStarted || preJoustIntroRunning)
+        if (!joustStarted || preJoustIntroRunning || waitingForEffectChoice)
             return;
 
         MoveJousters();
@@ -201,9 +220,9 @@ public class JoustManager : MonoBehaviour
     void LateUpdate()
     {
         if (preJoustIntroRunning && cinematicManager != null) return;
-        
+
         if (!lockCameraToPoints) return;
-        
+
         if (mainCamera == null || currentCameraPoint == null) return;
 
         mainCamera.transform.position = Vector3.Lerp(
@@ -223,6 +242,7 @@ public class JoustManager : MonoBehaviour
     {
         joustStarted = false;
         preJoustIntroRunning = false;
+        waitingForEffectChoice = false;
 
         horsePartIsOn = false;
         attackPartIsOn = false;
@@ -255,7 +275,7 @@ public class JoustManager : MonoBehaviour
             yield return new WaitForSeconds(preJoustFinalPause);
 
         preJoustIntroRunning = false;
-        StartJoustNormally();
+        ShowEffectChoicesBeforeHorsePhase();
     }
 
     IEnumerator PlayOverviewCamIntro()
@@ -300,6 +320,7 @@ public class JoustManager : MonoBehaviour
             yield break;
 
         Transform[] validWaypoints = GetValidPreJoustWaypoints();
+
         if (validWaypoints.Length == 0)
             yield break;
 
@@ -307,8 +328,11 @@ public class JoustManager : MonoBehaviour
         {
             player.position = validWaypoints[0].position;
             player.rotation = validWaypoints[0].rotation;
+            SetPreJoustHorseRunning(false);
             yield break;
         }
+
+        SetPreJoustHorseRunning(true);
 
         float totalDistance = GetTotalWaypointDistance(validWaypoints);
         float fallbackSegmentDuration = preJoustMoveDuration / (validWaypoints.Length - 1);
@@ -337,6 +361,7 @@ public class JoustManager : MonoBehaviour
             }
 
             float elapsed = 0f;
+
             while (elapsed < segmentDuration)
             {
                 elapsed += Time.deltaTime;
@@ -352,6 +377,16 @@ public class JoustManager : MonoBehaviour
             player.position = endPosition;
             player.rotation = endRotation;
         }
+
+        SetPreJoustHorseRunning(false);
+    }
+
+    void SetPreJoustHorseRunning(bool isRunning)
+    {
+        if (playerHorseAnimator == null) return;
+
+        int speedParam = Animator.StringToHash(horseSpeedParameter);
+        playerHorseAnimator.SetFloat(speedParam, isRunning ? preJoustRunAnimSpeed : preJoustIdleAnimSpeed);
     }
 
     Transform[] GetValidPreJoustWaypoints()
@@ -389,12 +424,30 @@ public class JoustManager : MonoBehaviour
         return totalDistance;
     }
 
+    void ShowEffectChoicesBeforeHorsePhase()
+    {
+        if (!useEffectChoiceButtons || effectManager == null)
+        {
+            StartJoustNormally();
+            return;
+        }
+
+        waitingForEffectChoice = true;
+
+        effectManager.ShowEffectChoices(() =>
+        {
+            waitingForEffectChoice = false;
+            StartJoustNormally();
+        });
+
+        UpdateControlsUI();
+    }
+
     void StartJoustNormally()
     {
-        joustStarted = true;
+        SetPreJoustHorseRunning(false);
 
-        if (effectManager != null)
-            effectManager.ChooseRandomEffect();
+        joustStarted = true;
 
         horsePartIsOn = true;
         attackPartIsOn = false;
@@ -484,6 +537,7 @@ public class JoustManager : MonoBehaviour
         {
             if (attackPart != null)
                 attackPart.ForceAttack();
+
             EndAttackPhase();
         }
 
@@ -491,6 +545,7 @@ public class JoustManager : MonoBehaviour
         {
             if (defensePart != null)
                 defensePart.ForceEndDefense(false);
+
             // EndDefensePhase es llamado desde dentro de ForceEndDefense
         }
     }
@@ -513,7 +568,7 @@ public class JoustManager : MonoBehaviour
     {
         if (controlsText == null) return;
 
-        if (preJoustIntroRunning)
+        if (preJoustIntroRunning || waitingForEffectChoice)
         {
             controlsText.text = "";
         }
@@ -575,7 +630,6 @@ public class JoustManager : MonoBehaviour
             tutorialManager.ShowAttackTutorial();
     }
 
-
     public void EndAttackPhase()
     {
         if (attackResolved) return;
@@ -617,6 +671,7 @@ public class JoustManager : MonoBehaviour
         {
             StopCoroutine(preJoustIntroCoroutine);
             preJoustIntroCoroutine = null;
+            SetPreJoustHorseRunning(false);
         }
 
         if (player != null)
@@ -646,7 +701,6 @@ public class JoustManager : MonoBehaviour
         if (usePreJoustIntro)
             preJoustIntroCoroutine = StartCoroutine(PreJoustIntroSequence());
         else
-            StartJoustNormally();
+            ShowEffectChoicesBeforeHorsePhase();
     }
 }
-
