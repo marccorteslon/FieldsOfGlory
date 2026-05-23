@@ -78,19 +78,18 @@ public class EffectManager : MonoBehaviour
     private Coroutine textCoroutine;
     private Action onEffectsChosen;
 
-    // Mantenemos enums anteriores obsoletos como compatibilidad por si acaso
-    public enum JoustEffectType { EfectoPositivo1, EfectoPositivo2, EfectoPositivo3, EfectoPositivo4, Fog, Rain, EfectoNegativo3, EfectoNegativo4 }
-    public enum EffectKind { Positive, Negative }
-    [System.Serializable] public class JoustEffect { public JoustEffectType type; public EffectKind kind; public string displayName; public bool canAppear = true; }
-    [HideInInspector] public List<JoustEffect> positiveEffects = new List<JoustEffect>();
-    [HideInInspector] public List<JoustEffect> negativeEffects = new List<JoustEffect>();
-    [HideInInspector] public bool efectoPositivo1IsActive, efectoPositivo2IsActive, efectoPositivo3IsActive, efectoPositivo4IsActive, efectoNegativo3IsActive, efectoNegativo4IsActive;
-
     void Awake()
     {
         originalFogState = RenderSettings.fog;
         DisableAllEffects();
         HideEffectChoices();
+
+        // Asegurar la presencia de un EventSystem en tiempo de ejecución
+        if (UnityEngine.EventSystems.EventSystem.current == null)
+        {
+            GameObject eventSystemObj = new GameObject("EventSystem_RuntimeFallback", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.EventSystems.StandaloneInputModule));
+            Debug.LogWarning("[EffectManager] No se detectó un EventSystem activo a nivel de ejecución. Se ha instanciado un 'EventSystem_RuntimeFallback' dinámicamente.");
+        }
         
         // Búsqueda dinámica robusta del botón 'Sin Modificador' si no está asignado
         if (noModifierButton == null && choicePanel != null)
@@ -117,6 +116,10 @@ public class EffectManager : MonoBehaviour
 
         if (choicePanel != null)
             choicePanel.SetActive(true);
+
+        // Forzar visibilidad y desbloqueo del cursor para que el usuario pueda seleccionar con total seguridad
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
 
         // Preparamos listas para elegir combinaciones aleatorias y únicas en los 3 botones
         List<NegativeType> availableNegatives = new List<NegativeType>

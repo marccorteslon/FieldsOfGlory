@@ -12,8 +12,6 @@ public class WinManager : MonoBehaviour
     public int winPoints = 30;
     public int currentWinPoints = 0;
 
-    [Range(0f, 1f)] public float minPointsFraction = 1f;
-
     public ScoreManager scoreManager;
     public JoustManager joustManager;
 
@@ -25,23 +23,15 @@ public class WinManager : MonoBehaviour
 
     public int roundNumber = 1;
 
-    [Header("UI Panels")]
-    public GameObject roundWinPanel;
-    public GameObject roundLosePanel;
-    public GameObject gameWinPanel;
-
-    [Header("Victory UI Texts")]
-    public TextMeshProUGUI victoryMoneyText;
-    public TextMeshProUGUI victoryScoreText;
-
-    [Header("UI Timing")]
-    public float panelDisplayTime = 3f;
-
     [Header("Scene Settings")]
-    public string nextSceneName = "Shop";
+    public string nextSceneName = "World";
+    
+    [Header("UI Stats Panel")]
+    public JoustStatsPanelController statsPanelController;
 
     private bool gameEnded = false;
     private bool tutorialDisabledAfterJoust = false;
+    private string itemEarnedName = "";
 
     [Header("Impact Data Cache")]
     private bool hasCachedImpact = false;
@@ -257,37 +247,53 @@ public class WinManager : MonoBehaviour
     {
         gameEnded = true;
 
-        if (roundLosePanel != null)
-            roundLosePanel.SetActive(true);
-
         LoseGame();
 
-        yield return new WaitForSeconds(5f);
+        // Breve pausa de 0.5 segundos para una transición suave tras la cinemática de impacto
+        yield return new WaitForSeconds(0.5f);
 
-        if (!string.IsNullOrEmpty(nextSceneName))
-            SceneManager.LoadScene(nextSceneName);
+        // Mostrar directamente el nuevo Panel de Estadísticas en lugar de la UI antigua
+        if (statsPanelController != null)
+        {
+            statsPanelController.PopulateAndShow(false, 0, "");
+        }
         else
-            Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        {
+            // Fallback si no está asignado
+            if (!string.IsNullOrEmpty(nextSceneName))
+                SceneManager.LoadScene(nextSceneName);
+            else
+                Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        }
     }
 
     IEnumerator ShowGameWinPanel()
     {
         gameEnded = true;
 
-        if (gameWinPanel != null)
-            gameWinPanel.SetActive(true);
-
         Debug.Log("¡Has ganado la justa!");
 
+        // Reiniciar item ganado de la ronda anterior
+        itemEarnedName = "";
+
         int moneyEarned = WinGame();
-        UpdateVictoryTexts(currentWinPoints, moneyEarned);
 
-        yield return new WaitForSeconds(3f);
+        // Breve pausa de 0.5 segundos para una transición suave tras la cinemática de impacto
+        yield return new WaitForSeconds(0.5f);
 
-        if (!string.IsNullOrEmpty(nextSceneName))
-            SceneManager.LoadScene(nextSceneName);
+        // Mostrar directamente el nuevo Panel de Estadísticas en lugar de la UI antigua
+        if (statsPanelController != null)
+        {
+            statsPanelController.PopulateAndShow(true, moneyEarned, itemEarnedName);
+        }
         else
-            Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        {
+            // Fallback si no está asignado
+            if (!string.IsNullOrEmpty(nextSceneName))
+                SceneManager.LoadScene(nextSceneName);
+            else
+                Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        }
     }
 
     int WinGame()
@@ -360,23 +366,9 @@ public class WinManager : MonoBehaviour
         {
             progressManager.equipment.Equip(randomItem);
             progressManager.SaveEquipped();
+            itemEarnedName = randomItem.displayName; // Guardar el nombre del objeto ganado
             Debug.Log($"[REWARD] ¡Objeto de equipamiento aleatorio ganado y equipado de inmediato!: {randomItem.displayName} ({randomItem.id})");
-            
-            // Reflejar visualmente en el panel de texto de victoria
-            if (victoryMoneyText != null)
-            {
-                victoryMoneyText.text += $"\n<size=20>¡Ganaste objeto!: {randomItem.displayName}</size>";
-            }
         }
-    }
-
-    void UpdateVictoryTexts(int roundScore, int moneyEarned)
-    {
-        if (victoryMoneyText != null)
-            victoryMoneyText.text = $"Money earned: {moneyEarned}";
-
-        if (victoryScoreText != null)
-            victoryScoreText.text = $"Points: {roundScore}";
     }
 
     void LoseGame()

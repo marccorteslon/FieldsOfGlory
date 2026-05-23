@@ -8,34 +8,35 @@ public class ScoreUIManager : MonoBehaviour
     public WinManager winManager;
 
     [Header("Bars (Superpuestas)")]
-
-    // La barra general de progreso
+    // La barra general de progreso (acumulado anterior)
     public Slider baseBar;   
     
-    // El progreso espec�fico de la ronda
+    // El progreso específico de la ronda actual
     public Slider currentRoundBar;  
 
     [Header("Min Win Indicator")]
+    [Tooltip("Indicador visual de la marca mínima para ganar en la barra de progreso.")]
     public Slider minWinSlider;
 
     private int lastRoundScore = 0;
     private int basePoints = 0;
-
     private bool lockCurrentRoundBar = false;
 
     void Start()
     {
-        baseBar.maxValue = winManager.winPoints;
-        currentRoundBar.maxValue = winManager.winPoints;
+        if (winManager == null) winManager = FindFirstObjectByType<WinManager>();
+        if (scoreManager == null) scoreManager = FindFirstObjectByType<ScoreManager>();
 
-        baseBar.value = 0;
-        currentRoundBar.value = 0;
-
-        if (minWinSlider != null)
+        if (winManager != null)
         {
-            minWinSlider.maxValue = winManager.winPoints;
-            minWinSlider.value = 0;
+            if (baseBar != null) baseBar.maxValue = winManager.winPoints;
+            if (currentRoundBar != null) currentRoundBar.maxValue = winManager.winPoints;
+            if (minWinSlider != null) minWinSlider.maxValue = winManager.winPoints;
         }
+
+        if (baseBar != null) baseBar.value = 0;
+        if (currentRoundBar != null) currentRoundBar.value = 0;
+        if (minWinSlider != null) minWinSlider.value = 0;
     }
 
     void Update()
@@ -46,60 +47,58 @@ public class ScoreUIManager : MonoBehaviour
 
     void UpdateCurrentRoundProgress()
     {
-        if (lockCurrentRoundBar)
+        if (lockCurrentRoundBar || scoreManager == null || winManager == null)
             return;
 
         int currentScore = scoreManager.GetScore();
-
         if (currentScore == lastRoundScore)
             return;
 
         lastRoundScore = currentScore;
-
-        currentRoundBar.value = Mathf.Min(basePoints + currentScore, winManager.winPoints);
+        
+        if (currentRoundBar != null)
+        {
+            currentRoundBar.value = Mathf.Min(currentScore, winManager.winPoints);
+        }
     }
 
     public void ConsolidateRound()
     {
-        basePoints += lastRoundScore;
-        basePoints = Mathf.Min(basePoints, winManager.winPoints);
+        if (scoreManager == null || winManager == null) return;
 
-        baseBar.value = basePoints;
-        currentRoundBar.value = basePoints;
+        int currentScore = scoreManager.GetScore();
+        basePoints = Mathf.Min(currentScore, winManager.winPoints);
 
-        lockCurrentRoundBar = true;
-
+        if (baseBar != null) baseBar.value = basePoints;
+        if (currentRoundBar != null) currentRoundBar.value = basePoints;
+        
         lastRoundScore = 0;
     }
 
     public void PrepareNextRound()
     {
-        // El score de la nueva ronda empieza desde 0, pero visualmente la barra current arranca desde la base ya consolidada
         lastRoundScore = 0;
-        currentRoundBar.value = basePoints;
-        lockCurrentRoundBar = false;
+        if (currentRoundBar != null)
+        {
+            currentRoundBar.value = basePoints;
+        }
     }
 
     public void ResetAll()
     {
         basePoints = 0;
         lastRoundScore = 0;
-        lockCurrentRoundBar = false;
-
-        baseBar.value = 0;
-        currentRoundBar.value = 0;
-
-        if (minWinSlider != null)
-            minWinSlider.value = 0;
+        
+        if (baseBar != null) baseBar.value = 0;
+        if (currentRoundBar != null) currentRoundBar.value = 0;
+        if (minWinSlider != null) minWinSlider.value = 0;
     }
 
-    void UpdateMinWinSliderInstant() // Actualizar el minimo de ronda para ganar
+    void UpdateMinWinSliderInstant()
     {
         if (minWinSlider == null || winManager == null) return;
 
-        float targetValue = basePoints + (winManager.winPoints * winManager.minPointsFraction);
-        targetValue = Mathf.Min(targetValue, winManager.winPoints);
-
-        minWinSlider.value = targetValue;
+        // Ahora la marca de victoria se posiciona siempre al 100% del total necesario (al final de la barra)
+        minWinSlider.value = winManager.winPoints;
     }
 }

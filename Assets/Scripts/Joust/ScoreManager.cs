@@ -5,6 +5,11 @@ public class ScoreManager : MonoBehaviour
     public int totalScore = 0;
     public bool hasLandedAttack = false;
 
+    [Header("Desglose por Fases")]
+    public int horsePhaseScore = 0;
+    public int attackPhaseScore = 0;
+    public int defensePhaseScore = 0;
+
     // ---------------- Fase Caballo ----------------
     public void AddHorsePhaseScore(string zone, int MV, int mV)
     {
@@ -22,6 +27,7 @@ public class ScoreManager : MonoBehaviour
                 break;
         }
 
+        horsePhaseScore += points;
         totalScore += points;
         Debug.Log($"[Caballo] Zona {zone} → +{points} puntos | Total: {totalScore}");
     }
@@ -46,6 +52,7 @@ public class ScoreManager : MonoBehaviour
         int locationPoints = BL * valorZona;
 
         int total = forcePoints + locationPoints;
+        attackPhaseScore += total;
         totalScore += total;
 
         Debug.Log($"[Ataque] Tag {enemyTag} → Fuerza: {forcePoints} + Localización: {locationPoints} = +{total} puntos | Total: {totalScore}");
@@ -55,6 +62,7 @@ public class ScoreManager : MonoBehaviour
     public void ApplyDefense(bool blockedCorrectly, int BB)
     {
         int penalty = blockedCorrectly ? 4 - BB : 4;
+        defensePhaseScore -= penalty;
         totalScore -= penalty;
         Debug.Log($"[Defensa] Bloqueo correcto: {blockedCorrectly} → Penalización: {penalty} | Total: {totalScore}");
     }
