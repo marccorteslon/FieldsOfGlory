@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
 
@@ -42,6 +43,52 @@ public class WinManager : MonoBehaviour
     private bool gameEnded = false;
     private bool tutorialDisabledAfterJoust = false;
 
+    [Header("Impact Data Cache")]
+    private bool hasCachedImpact = false;
+    private Vector3 cachedHitPoint;
+    private Vector3 cachedHitDirection;
+    private int cachedForceScore;
+    private string cachedHitTag = "";
+
+    void Awake()
+    {
+        hasCachedImpact = false;
+        cachedHitTag = "";
+    }
+
+    public void CacheEnemyImpact(Vector3 hitPoint, Vector3 hitDirection, int forceScore, string hitTag = "")
+    {
+        hasCachedImpact = true;
+        cachedHitPoint = hitPoint;
+        cachedHitDirection = hitDirection;
+        cachedForceScore = forceScore;
+        cachedHitTag = hitTag;
+    }
+
+    private EnemyRagdollController GetEnemyRagdoll()
+    {
+        Transform enemyRoot = (joustManager != null) ? joustManager.enemy : null;
+        GameObject enemyObj = enemyRoot != null ? enemyRoot.gameObject : null;
+
+        if (enemyObj == null)
+        {
+            enemyObj = GameObject.FindGameObjectWithTag("Enemy");
+        }
+
+        if (enemyObj == null)
+        {
+            enemyObj = GameObject.Find("Enemy");
+        }
+
+        if (enemyObj == null)
+        {
+            return FindFirstObjectByType<EnemyRagdollController>();
+        }
+
+        return enemyObj.GetComponentInChildren<EnemyRagdollController>();
+    }
+
+
     public void ProcessRoundEnd()
     {
         if (scoreManager == null || joustManager == null)
@@ -79,10 +126,29 @@ public class WinManager : MonoBehaviour
 
     IEnumerator ProcessJoustEndSequence(int roundScore, bool fightWon)
     {
-        if (!fightWon)
+        if (fightWon)
+        {
+            // Si ganamos la justa, activamos el ragdoll del oponente
+            EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
+            if (enemyRagdoll != null)
+            {
+                if (hasCachedImpact)
+                {
+                    enemyRagdoll.PlayImpact(cachedHitPoint, cachedHitDirection, cachedForceScore, true, cachedHitTag);
+                }
+                else
+                {
+                    // Fallback si no hay impacto registrado
+                    Vector3 direction = Vector3.back;
+                    Vector3 point = enemyRagdoll.transform.position + Vector3.up;
+                    enemyRagdoll.PlayImpact(point, direction, winPoints, true);
+                }
+            }
+        }
+        else
         {
             // Si perdimos la justa, nos aseguramos de que el oponente NO esté en ragdoll
-            EnemyRagdollController enemyRagdoll = FindFirstObjectByType<EnemyRagdollController>();
+            EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
             if (enemyRagdoll != null)
             {
                 enemyRagdoll.ResetRagdoll();
@@ -236,7 +302,30 @@ public class WinManager : MonoBehaviour
         if (progressManager != null)
         {
             reward = progressManager.CalculateReward(winPoints, roundNumber);
+
+            // --- APLICACIÓN DE RECOMPENSAS DE LA CARTA ---
+            EffectManager effectManager = FindFirstObjectByType<EffectManager>();
+            if (effectManager != null && effectManager.hasActiveCard)
+            {
+                if (effectManager.activeReward == EffectManager.RewardType.ExtraGoldMultiplier)
+                {
+                    reward = Mathf.RoundToInt(reward * effectManager.appliedGoldMultiplier);
+                    Debug.Log($"[REWARD] Multiplicador de oro aplicado por carta (x{effectManager.appliedGoldMultiplier}). Nuevo total: {reward}");
+                }
+                else if (effectManager.activeReward == EffectManager.RewardType.ExtraGoldFlat)
+                {
+                    reward += effectManager.appliedFlatGoldReward;
+                    Debug.Log($"[REWARD] Bono de oro fijo aplicado por carta (+{effectManager.appliedFlatGoldReward}). Nuevo total: {reward}");
+                }
+            }
+
             progressManager.AddMoney(reward);
+
+            // Si la recompensa es un objeto gratis, lo otorgamos e instalamos de inmediato
+            if (effectManager != null && effectManager.hasActiveCard && effectManager.activeReward == EffectManager.RewardType.RandomItem)
+            {
+                GiveRandomItemReward();
+            }
 
             Debug.Log($"[REWARD] HP enemigo: {winPoints} | Ronda: {roundNumber} | Dinero ganado: {reward}");
         }
@@ -246,6 +335,39 @@ public class WinManager : MonoBehaviour
         }
 
         return reward;
+    }
+
+    private void GiveRandomItemReward()
+    {
+        if (progressManager == null || progressManager.itemDatabase == null || progressManager.equipment == null)
+        {
+            Debug.LogError("[WinManager] No se pudo otorgar el objeto aleatorio: faltan referencias en la escena.");
+            return;
+        }
+
+        List<EquipmentDefinition> items = progressManager.itemDatabase.allEquipment;
+        if (items == null || items.Count == 0)
+        {
+            Debug.LogWarning("[WinManager] No hay objetos en la base de datos de items para regalar.");
+            return;
+        }
+
+        // Elegir un objeto aleatorio de la base de datos
+        int randIdx = UnityEngine.Random.Range(0, items.Count);
+        EquipmentDefinition randomItem = items[randIdx];
+
+        if (randomItem != null)
+        {
+            progressManager.equipment.Equip(randomItem);
+            progressManager.SaveEquipped();
+            Debug.Log($"[REWARD] ¡Objeto de equipamiento aleatorio ganado y equipado de inmediato!: {randomItem.displayName} ({randomItem.id})");
+            
+            // Reflejar visualmente en el panel de texto de victoria
+            if (victoryMoneyText != null)
+            {
+                victoryMoneyText.text += $"\n<size=20>¡Ganaste objeto!: {randomItem.displayName}</size>";
+            }
+        }
     }
 
     void UpdateVictoryTexts(int roundScore, int moneyEarned)

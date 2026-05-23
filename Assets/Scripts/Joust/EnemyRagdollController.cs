@@ -80,7 +80,7 @@ public class EnemyRagdollController : MonoBehaviour
         }
     }
 
-    public void PlayImpact(Vector3 hitPoint, Vector3 hitDirection, int roundScore, bool fullRagdoll)
+    public void PlayImpact(Vector3 hitPoint, Vector3 hitDirection, int roundScore, bool fullRagdoll, string hitPart = "")
     {
         if (fullRagdoll)
             EnableFullRagdoll();
@@ -93,7 +93,44 @@ public class EnemyRagdollController : MonoBehaviour
         Rigidbody closestBody = GetClosestBody(hitPoint);
 
         if (closestBody != null)
+        {
+            // Aplicamos la fuerza de impacto lineal principal en el hueso más cercano
             closestBody.AddForceAtPosition(finalForce, hitPoint, ForceMode.Impulse);
+
+            // --- APLICACIÓN DE TORQUE LOCALIZADO Y EXAGERADO ---
+            // Calculamos el eje de rotación perpendicular a la dirección del golpe y la vertical
+            Vector3 torqueAxis = Vector3.Cross(hitDirection.normalized, Vector3.up).normalized;
+            if (torqueAxis.magnitude > 0.1f)
+            {
+                // El torque base es proporcional a la fuerza
+                float torqueAmount = forceAmount * 0.15f; 
+
+                // Si golpeamos la cabeza o el hueso más cercano es la cabeza, aplicamos un fuerte efecto de látigo ("retroceso")
+                bool isHead = hitPart == "Head" || closestBody.gameObject.name.ToLower().Contains("head");
+                if (isHead)
+                {
+                    torqueAmount *= 2.5f; // Multiplicador extra para la cabeza
+                    
+                    // Incrementamos la resistencia en el resto del cuerpo para que la cabeza lidere el movimiento claramente
+                    foreach (var rb in allBodies)
+                    {
+                        if (rb != closestBody)
+                        {
+                            rb.linearDamping = 2.0f; 
+                            rb.angularDamping = 2.0f;
+                        }
+                    }
+                }
+                else if (hitPart == "Shield" || closestBody.gameObject.name.ToLower().Contains("shield") || closestBody.gameObject.name.ToLower().Contains("arm"))
+                {
+                    // Si golpeamos el escudo o brazo, causamos una torsión lateral violenta
+                    torqueAmount *= 1.8f;
+                    torqueAxis = Vector3.up; 
+                }
+
+                closestBody.AddTorque(torqueAxis * torqueAmount, ForceMode.Impulse);
+            }
+        }
 
         if (!fullRagdoll)
             StartCoroutine(ResetAfterDelay());
@@ -147,6 +184,8 @@ public class EnemyRagdollController : MonoBehaviour
             }
             rb.isKinematic = true;
             rb.useGravity = false;
+            rb.linearDamping = 0.05f; // Restablecer damping lineal por defecto
+            rb.angularDamping = 0.05f; // Restablecer damping angular por defecto
         }
 
         if (animator != null)

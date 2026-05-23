@@ -101,10 +101,7 @@ public class PhysicalLanceController : MonoBehaviour
             return;
         }
 
-        // Siempre mantenemos la lanza pegada a la mano visualmente, estemos jugando o no
-        UpdateLanceVisuals();
-
-        bool isPlaying = joustManager != null && (joustManager.attackPartIsOn || joustManager.horsePartIsOn);
+        bool isPlaying = joustManager != null && joustManager.attackPartIsOn;
 
         if (isPlaying)
         {
@@ -121,12 +118,9 @@ public class PhysicalLanceController : MonoBehaviour
 
             if (hitMarker != null && !hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(true);
             
-            // Mostrar la barra de carga solo si estamos activamente en la fase de ataque
-            if (chargeSlider != null)
+            if (chargeSlider != null && !chargeSlider.gameObject.activeSelf)
             {
-                bool showSlider = joustManager != null && joustManager.attackPartIsOn;
-                if (chargeSlider.gameObject.activeSelf != showSlider)
-                    chargeSlider.gameObject.SetActive(showSlider);
+                chargeSlider.gameObject.SetActive(true);
             }
 
             UpdateHitMarker();
@@ -139,7 +133,14 @@ public class PhysicalLanceController : MonoBehaviour
                 if (hitMarker != null && hitMarker.gameObject.activeSelf) hitMarker.gameObject.SetActive(false);
                 if (chargeSlider != null && chargeSlider.gameObject.activeSelf) chargeSlider.gameObject.SetActive(false);
             }
+
+            // Retorno suave a la posición original/reposo (cero)
+            targetAimAngles = Vector3.zero;
+            ApplyMovement();
         }
+
+        // Siempre mantenemos la lanza pegada a la mano visualmente con los ángulos actualizados
+        UpdateLanceVisuals();
     }
 
     private void OnApplicationFocus(bool focus)

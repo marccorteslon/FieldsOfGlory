@@ -447,6 +447,15 @@ public class JoustManager : MonoBehaviour
     {
         SetPreJoustHorseRunning(false);
 
+        // Volver a aplicar la dificultad base para asegurar consistencia
+        ApplyDifficulty();
+
+        // Aplicar los modificadores de penalización de la carta seleccionada
+        if (effectManager != null && effectManager.hasActiveCard)
+        {
+            effectManager.ApplyActiveNegativeModifiers();
+        }
+
         joustStarted = true;
 
         horsePartIsOn = true;

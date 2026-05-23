@@ -54,25 +54,35 @@ public class LanceTipCollision : MonoBehaviour
                 // Resetea la carga
                 lanceController.currentCharge = 0f;
 
-                // Aplicar fuerza física al ragdoll del enemigo
-                EnemyRagdollController ragdoll = other.GetComponentInParent<EnemyRagdollController>();
-                if (ragdoll == null) 
-                    ragdoll = FindFirstObjectByType<EnemyRagdollController>();
-
-                if (ragdoll != null)
+                // Si la defensa sigue activa en el momento de la colisión física, el jugador no la completó a tiempo.
+                // Forzamos su fin como fallida.
+                JoustManager joustManager = lanceController.joustManager;
+                if (joustManager != null)
                 {
-                    // Usamos el daño/fuerza calculada para el impacto
+                    if (joustManager.defensePartIsOn && joustManager.defensePart != null)
+                    {
+                        joustManager.defensePart.ForceEndDefense(false);
+                    }
+                }
+
+                // Guardamos los datos del impacto en el WinManager, que decidirá de inmediato
+                // en este mismo frame a quién aplicar el ragdoll (según si ganamos la justa o perdimos).
+                WinManager winManager = FindFirstObjectByType<WinManager>();
+                if (winManager != null)
+                {
                     int forceScore = Mathf.RoundToInt(BF * (1 + chargePercent / 100f));
                     Vector3 hitDirection = lanceController.lancePivot.forward;
-                    // Pasamos 'true' para activar el full ragdoll y que salga volando
                     Vector3 hitPoint = other.ClosestPoint(transform.position);
-                    ragdoll.PlayImpact(hitPoint, hitDirection, forceScore, true);
+                    winManager.CacheEnemyImpact(hitPoint, hitDirection, forceScore, hitTag);
                 }
 
                 PlayHitEffect();
 
-                // Terminar la fase de ataque
-                lanceController.joustManager.EndAttackPhase();
+                // Terminar la fase de ataque (esto consolidará y evaluará el fin de la justa en este frame)
+                if (joustManager != null)
+                {
+                    joustManager.EndAttackPhase();
+                }
             }
         }
     }
