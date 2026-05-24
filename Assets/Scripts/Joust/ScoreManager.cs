@@ -68,4 +68,13 @@ public class ScoreManager : MonoBehaviour
     }
 
     public int GetScore() => totalScore;
+
+    public void ResetScore()
+    {
+        totalScore = 0;
+        hasLandedAttack = false;
+        horsePhaseScore = 0;
+        attackPhaseScore = 0;
+        defensePhaseScore = 0;
+    }
 }

@@ -358,6 +358,23 @@ public class EffectManager : MonoBehaviour
         effectText.gameObject.SetActive(false);
     }
 
+    public void ShowCustomText(string text, float duration)
+    {
+        if (effectText == null) return;
+        if (textCoroutine != null) StopCoroutine(textCoroutine);
+        textCoroutine = StartCoroutine(SingleTextRoutineWithDuration(text, duration));
+    }
+
+    IEnumerator SingleTextRoutineWithDuration(string text, float duration)
+    {
+        effectText.gameObject.SetActive(true);
+        effectText.text = text;
+
+        yield return new WaitForSeconds(duration);
+
+        effectText.gameObject.SetActive(false);
+    }
+
     // Algoritmo de mezcla Fisher-Yates para asegurar diversidad en las tarjetas
     private void ShuffleList<T>(List<T> list)
     {

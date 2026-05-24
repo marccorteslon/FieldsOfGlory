@@ -595,6 +595,9 @@ public class HorsePart_Joust : MonoBehaviour
         ShowHorseBarUI();
         ResetIndicatorToBottom();
 
+        if (objectToDisableOnEnd != null)
+            objectToDisableOnEnd.SetActive(true);
+
         if (counterText != null)
         {
             counterText.gameObject.SetActive(true);

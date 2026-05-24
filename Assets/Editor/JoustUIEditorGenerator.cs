@@ -10,6 +10,11 @@ public class JoustUIEditorGenerator : EditorWindow
     [MenuItem("Tools/Fields of Glory/1. Generate Joust Cards UI")]
     public static void GenerateCardsUI()
     {
+        GenerateCardsUIInternal(true);
+    }
+
+    public static void GenerateCardsUIInternal(bool showDialog)
+    {
         // 1. Intentar localizar o crear el EffectManager en la escena
         EffectManager effectManager = FindFirstObjectByType<EffectManager>();
         GameObject effectManagerObj;
@@ -285,15 +290,23 @@ public class JoustUIEditorGenerator : EditorWindow
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
 
         // Mensaje de feedback exitoso
-        EditorUtility.DisplayDialog(
-            "UI Generada con Éxito",
-            "¡El Canvas y todo el panel premium de selección de cartas de Desafío/Recompensa han sido generados permanentemente en la escena y vinculados con éxito al EffectManager!",
-            "Excelente"
-        );
+        if (showDialog)
+        {
+            EditorUtility.DisplayDialog(
+                "UI Generada con Éxito",
+                "¡El Canvas y todo el panel premium de selección de cartas de Desafío/Recompensa han sido generados permanentemente en la escena y vinculados con éxito al EffectManager!",
+                "Excelente"
+            );
+        }
     }
 
     [MenuItem("Tools/Fields of Glory/2. Generate Joust Stats Panel")]
     public static void GenerateStatsPanelUI()
+    {
+        GenerateStatsPanelUIInternal(true);
+    }
+
+    public static void GenerateStatsPanelUIInternal(bool showDialog)
     {
         // 1. Intentar localizar el WinManager en la escena
         WinManager winManager = FindFirstObjectByType<WinManager>();
@@ -526,11 +539,14 @@ public class JoustUIEditorGenerator : EditorWindow
         UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
 
         // Mensaje de éxito
-        EditorUtility.DisplayDialog(
-            "Panel de Estadísticas Generado",
-            "¡El panel premium de estadísticas con su marco metálico, desglose de 3 columnas (equipo, estadísticas y puntuaciones/recompensas) y botón de finalizar torneo ha sido creado e integrado con éxito al WinManager de la justa!",
-            "Excelente"
-        );
+        if (showDialog)
+        {
+            EditorUtility.DisplayDialog(
+                "Panel de Estadísticas Generado",
+                "¡El panel premium de estadísticas con su marco metálico, desglose de 3 columnas (equipo, estadísticas y puntuaciones/recompensas) y botón de finalizar torneo ha sido creado e integrado con éxito al WinManager de la justa!",
+                "Excelente"
+            );
+        }
     }
 
     private static GameObject CreateColumn(Transform parent, float posX, string colTitle, TMP_FontAsset fontAsset)
@@ -665,12 +681,219 @@ public class JoustUIEditorGenerator : EditorWindow
             
             if (multilineValue)
             {
-                valTxt.enableWordWrapping = true;
+                valTxt.textWrappingMode = TextWrappingModes.Normal;
                 valTxt.fontSize = 12;
             }
         }
 
         return valTxt;
+    }
+
+    [MenuItem("Tools/Fields of Glory/3. Generate Best of 3 Rounds HUD")]
+    public static void GenerateRoundsHUDUI()
+    {
+        GenerateRoundsHUDUIInternal(true);
+    }
+
+    public static void GenerateRoundsHUDUIInternal(bool showDialog)
+    {
+        // 1. Locate WinManager
+        WinManager winManager = FindFirstObjectByType<WinManager>();
+        if (winManager == null)
+        {
+            EditorUtility.DisplayDialog("Falta WinManager", "No se encontró un componente WinManager en la escena activa. Asegúrate de estar en la escena de la Justa antes de crear el HUD de Rondas.", "Entendido");
+            return;
+        }
+
+        // 2. Find or create JoustCanvas
+        GameObject canvasObj = GameObject.Find("JoustCanvas");
+        Canvas canvasComp = canvasObj != null ? canvasObj.GetComponent<Canvas>() : null;
+        if (canvasObj == null || canvasComp == null)
+        {
+            canvasObj = new GameObject("JoustCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            canvasComp = canvasObj.GetComponent<Canvas>();
+            canvasComp.renderMode = RenderMode.ScreenSpaceOverlay;
+            
+            CanvasScaler scaler = canvasObj.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+
+            Undo.RegisterCreatedObjectUndo(canvasObj, "Create Canvas");
+        }
+
+        TMP_FontAsset fontAsset = GetDefaultFontAsset();
+
+        // 3. Check if HUD_RoundsPanel already exists, delete if so to rebuild fresh
+        GameObject oldHUD = GameObject.Find("HUD_RoundsPanelBorder");
+        if (oldHUD != null)
+        {
+            Undo.DestroyObjectImmediate(oldHUD);
+        }
+
+        // 4. Create premium border for the Rounds HUD (Marco dorado premium)
+        GameObject roundsBorder = new GameObject("HUD_RoundsPanelBorder", typeof(RectTransform), typeof(Image));
+        roundsBorder.transform.SetParent(canvasObj.transform, false);
+        
+        RectTransform borderRect = roundsBorder.GetComponent<RectTransform>();
+        borderRect.anchorMin = new Vector2(0.5f, 1f);
+        borderRect.anchorMax = new Vector2(0.5f, 1f);
+        borderRect.anchoredPosition = new Vector2(0f, -60f); // 60px below top
+        borderRect.sizeDelta = new Vector2(704f, 74f); // 2px border on all sides
+
+        Image borderImg = roundsBorder.GetComponent<Image>();
+        borderImg.color = new Color(1.0f, 0.72f, 0.18f, 0.65f); // Borde dorado premium semitransparente
+
+        // 5. Create main panel container
+        GameObject roundsPanel = new GameObject("HUD_RoundsPanel", typeof(RectTransform), typeof(Image));
+        roundsPanel.transform.SetParent(roundsBorder.transform, false);
+
+        RectTransform panelRect = roundsPanel.GetComponent<RectTransform>();
+        panelRect.anchorMin = Vector2.zero;
+        panelRect.anchorMax = Vector2.one;
+        panelRect.sizeDelta = new Vector2(-4f, -4f); // 2px margin inside border
+
+        Image panelImg = roundsPanel.GetComponent<Image>();
+        panelImg.color = new Color(0.06f, 0.06f, 0.08f, 0.90f); // Obsidian translúcido premium
+
+        Undo.RegisterCreatedObjectUndo(roundsBorder, "Create Rounds HUD Structure");
+
+        // 6. Central text for the Round title (HUD_RoundTitleText)
+        GameObject titleObj = new GameObject("HUD_RoundTitleText", typeof(RectTransform), typeof(TextMeshProUGUI));
+        titleObj.transform.SetParent(roundsPanel.transform, false);
+
+        TextMeshProUGUI titleTxt = titleObj.GetComponent<TextMeshProUGUI>();
+        titleTxt.text = "RONDA 1";
+        titleTxt.fontSize = 22;
+        titleTxt.fontStyle = FontStyles.Bold;
+        titleTxt.color = new Color(1.0f, 0.72f, 0.18f, 1f); // Dorado premium
+        titleTxt.alignment = TextAlignmentOptions.Center;
+        if (fontAsset != null) titleTxt.font = fontAsset;
+
+        RectTransform titleRect = titleObj.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0.5f, 0.5f);
+        titleRect.anchorMax = new Vector2(0.5f, 0.5f);
+        titleRect.anchoredPosition = Vector2.zero;
+        titleRect.sizeDelta = new Vector2(300f, 50f);
+
+        // 7. Get standard Knob sprite for premium circle slots
+        Sprite knobSprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/Knob.psd");
+
+        // Helper to spawn elegant win slots
+        Image CreateWinCircle(Transform parent, float posX, string name)
+        {
+            // Borde del círculo metálico
+            GameObject circBorder = new GameObject($"{name}_Border", typeof(RectTransform), typeof(Image));
+            circBorder.transform.SetParent(parent, false);
+
+            RectTransform cBorderRect = circBorder.GetComponent<RectTransform>();
+            cBorderRect.anchorMin = new Vector2(0.5f, 0.5f);
+            cBorderRect.anchorMax = new Vector2(0.5f, 0.5f);
+            cBorderRect.anchoredPosition = new Vector2(posX, 0f);
+            cBorderRect.sizeDelta = new Vector2(28f, 28f);
+
+            Image cbImg = circBorder.GetComponent<Image>();
+            cbImg.sprite = knobSprite;
+            cbImg.color = new Color(0.28f, 0.28f, 0.32f, 1f); // Gris metálico
+
+            // Círculo interno (color activo/inactivo se cambia en tiempo de ejecución)
+            GameObject circInner = new GameObject($"{name}_Inner", typeof(RectTransform), typeof(Image));
+            circInner.transform.SetParent(circBorder.transform, false);
+
+            RectTransform cInnerRect = circInner.GetComponent<RectTransform>();
+            cInnerRect.anchorMin = Vector2.zero;
+            cInnerRect.anchorMax = Vector2.one;
+            cInnerRect.sizeDelta = new Vector2(-4f, -4f); // 2px margin
+
+            Image ciImg = circInner.GetComponent<Image>();
+            ciImg.sprite = knobSprite;
+            ciImg.color = winManager.indicatorInactiveColor;
+
+            return ciImg;
+        }
+
+        // 8. Spawn Player Win Indicators
+        Image playerImg0 = CreateWinCircle(roundsPanel.transform, -220f, "PlayerIndicator_0");
+        Image playerImg1 = CreateWinCircle(roundsPanel.transform, -170f, "PlayerIndicator_1");
+
+        // 9. Spawn Enemy Win Indicators
+        Image enemyImg0 = CreateWinCircle(roundsPanel.transform, 170f, "EnemyIndicator_0");
+        Image enemyImg1 = CreateWinCircle(roundsPanel.transform, 220f, "EnemyIndicator_1");
+
+        // 10. Spawn Player Label Text
+        GameObject pLabelObj = new GameObject("PlayerLabelText", typeof(RectTransform), typeof(TextMeshProUGUI));
+        pLabelObj.transform.SetParent(roundsPanel.transform, false);
+
+        TextMeshProUGUI pLabelTxt = pLabelObj.GetComponent<TextMeshProUGUI>();
+        pLabelTxt.text = "JUGADOR";
+        pLabelTxt.fontSize = 13;
+        pLabelTxt.fontStyle = FontStyles.Bold;
+        pLabelTxt.color = new Color(0.75f, 0.75f, 0.8f, 1f);
+        pLabelTxt.alignment = TextAlignmentOptions.Right;
+        if (fontAsset != null) pLabelTxt.font = fontAsset;
+
+        RectTransform pLabelRect = pLabelObj.GetComponent<RectTransform>();
+        pLabelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        pLabelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        pLabelRect.anchoredPosition = new Vector2(-290f, 0f);
+        pLabelRect.sizeDelta = new Vector2(100f, 30f);
+
+        // 11. Spawn Enemy Label Text
+        GameObject eLabelObj = new GameObject("EnemyLabelText", typeof(RectTransform), typeof(TextMeshProUGUI));
+        eLabelObj.transform.SetParent(roundsPanel.transform, false);
+
+        TextMeshProUGUI eLabelTxt = eLabelObj.GetComponent<TextMeshProUGUI>();
+        eLabelTxt.text = "RIVAL";
+        eLabelTxt.fontSize = 13;
+        eLabelTxt.fontStyle = FontStyles.Bold;
+        eLabelTxt.color = new Color(0.75f, 0.75f, 0.8f, 1f);
+        eLabelTxt.alignment = TextAlignmentOptions.Left;
+        if (fontAsset != null) eLabelTxt.font = fontAsset;
+
+        RectTransform eLabelRect = eLabelObj.GetComponent<RectTransform>();
+        eLabelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        eLabelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        eLabelRect.anchoredPosition = new Vector2(290f, 0f);
+        eLabelRect.sizeDelta = new Vector2(100f, 30f);
+
+        // 12. Programmatically Bind to WinManager
+        winManager.hudRoundTitleText = titleTxt;
+        winManager.playerWinIndicators = new Image[] { playerImg0, playerImg1 };
+        winManager.enemyWinIndicators = new Image[] { enemyImg0, enemyImg1 };
+
+        // Save progress, update HUD initial state, and mark dirty
+        winManager.UpdateBestOf3UI();
+        EditorUtility.SetDirty(winManager);
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+
+        // Display Dialog success
+        if (showDialog)
+        {
+            EditorUtility.DisplayDialog(
+                "HUD de Rondas Generado con Éxito",
+                "¡El panel premium de Rondas ('Best of 3') en la parte superior con círculos dorados/esmeralda y rojo rubí procedurales ha sido creado y vinculado perfectamente al WinManager!",
+                "Excelente"
+            );
+        }
+    }
+
+    [MenuItem("Tools/Fields of Glory/4. Regenerate All Joust UIs")]
+    public static void RegenerateAllUIs()
+    {
+        // 1. Regenerar Tarjetas (sin popup individual)
+        GenerateCardsUIInternal(false);
+        
+        // 2. Regenerar Panel de Estadísticas (sin popup individual)
+        GenerateStatsPanelUIInternal(false);
+        
+        // 3. Regenerar HUD de Rondas (sin popup individual)
+        GenerateRoundsHUDUIInternal(false);
+        
+        EditorUtility.DisplayDialog(
+            "Regeneración Completa",
+            "¡Todas las interfaces premium de la Justa (Tarjetas, Panel de Estadísticas y HUD de Rondas) han sido recreadas y vinculadas perfectamente con éxito!",
+            "Excelente"
+        );
     }
 
     private static void EnsureEventSystemExists()

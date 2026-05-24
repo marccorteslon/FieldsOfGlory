@@ -70,10 +70,35 @@ public class JoustStatsPanelController : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
+        WinManager winManager = FindFirstObjectByType<WinManager>();
+        bool matchDecided = false;
+        if (winManager != null)
+        {
+            matchDecided = (winManager.playerRoundWins >= 2 || winManager.enemyRoundWins >= 2);
+        }
+
         // 1. Mostrar Resultado
         if (resultTitleText != null)
         {
-            resultTitleText.text = won ? "<color=#48e085>¡VICTORIA EN LA JUSTA!</color>" : "<color=#ef5350>¡DERROTA EN LA JUSTA!</color>";
+            if (winManager != null)
+            {
+                if (matchDecided)
+                {
+                    resultTitleText.text = won 
+                        ? $"<color=#48e085>¡VICTORIA EN EL TORNEO ({winManager.playerRoundWins} - {winManager.enemyRoundWins})!</color>" 
+                        : $"<color=#ef5350>¡DERROTA EN EL TORNEO ({winManager.playerRoundWins} - {winManager.enemyRoundWins})!</color>";
+                }
+                else
+                {
+                    resultTitleText.text = won 
+                        ? $"<color=#48e085>¡RONDA {winManager.roundNumber} GANADA!</color>" 
+                        : $"<color=#ef5350>¡RONDA {winManager.roundNumber} PERDIDA!</color>";
+                }
+            }
+            else
+            {
+                resultTitleText.text = won ? "<color=#48e085>¡VICTORIA EN LA JUSTA!</color>" : "<color=#ef5350>¡DERROTA EN LA JUSTA!</color>";
+            }
         }
 
         // 2. Poblar puntuaciones por fase
@@ -83,7 +108,20 @@ public class JoustStatsPanelController : MonoBehaviour
             if (horseScoreText != null) horseScoreText.text = $"+{score.horsePhaseScore} Ptos";
             if (attackScoreText != null) attackScoreText.text = $"+{score.attackPhaseScore} Ptos";
             if (defenseScoreText != null) defenseScoreText.text = $"{score.defensePhaseScore} Ptos"; // puede ser penalización negativa
-            if (totalScoreText != null) totalScoreText.text = $"{score.totalScore} Ptos";
+            
+            if (winManager != null && winManager.playerWonRoundsScores.Count > 0)
+            {
+                int totalWonScores = 0;
+                foreach (int s in winManager.playerWonRoundsScores)
+                {
+                    totalWonScores += s;
+                }
+                if (totalScoreText != null) totalScoreText.text = $"{totalWonScores} Ptos";
+            }
+            else
+            {
+                if (totalScoreText != null) totalScoreText.text = $"{score.totalScore} Ptos";
+            }
         }
 
         // 3. Poblar Equipamiento Actual
@@ -111,7 +149,14 @@ public class JoustStatsPanelController : MonoBehaviour
         // 5. Poblar Recompensas
         if (rewardsGoldText != null)
         {
-            rewardsGoldText.text = won ? $"+{goldEarned} Monedas" : "+0 Monedas (Derrota)";
+            if (matchDecided)
+            {
+                rewardsGoldText.text = won ? $"+{goldEarned} Monedas" : "+0 Monedas (Derrota)";
+            }
+            else
+            {
+                rewardsGoldText.text = "+0 Monedas (Torneo en curso)";
+            }
         }
 
         if (rewardsItemText != null)
@@ -119,25 +164,63 @@ public class JoustStatsPanelController : MonoBehaviour
             rewardsItemText.text = !string.IsNullOrEmpty(itemEarnedName) ? $"¡{itemEarnedName}!" : "Ninguno";
         }
         
-        // Poner focus en el botón de finalizar torneo
+        // Poner focus en el botón y cambiar su texto dinámicamente
         if (finishButton != null)
         {
             finishButton.gameObject.SetActive(true);
+            
+            TMP_Text btnTxtComp = finishButton.GetComponentInChildren<TMP_Text>();
+            if (btnTxtComp == null)
+            {
+                btnTxtComp = finishButton.GetComponentInChildren<TextMeshProUGUI>();
+            }
+
+            if (btnTxtComp != null)
+            {
+                btnTxtComp.text = matchDecided ? "REGRESAR AL MAPA" : "SIGUIENTE RONDA";
+            }
+
             UnityEngine.EventSystems.EventSystem.current?.SetSelectedGameObject(finishButton.gameObject);
         }
     }
 
     public void FinishTournament()
     {
-        Debug.Log($"[Tournament] Finalizando justa. Cargando siguiente escena: {nextSceneName}");
-        
-        // Limpiamos los efectos climatológicos y de cartas al salir de la escena
-        EffectManager effectManager = FindFirstObjectByType<EffectManager>();
-        if (effectManager != null)
+        WinManager winManager = FindFirstObjectByType<WinManager>();
+        bool matchDecided = false;
+        if (winManager != null)
         {
-            effectManager.DisableAllEffects();
+            matchDecided = (winManager.playerRoundWins >= 2 || winManager.enemyRoundWins >= 2);
         }
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        if (matchDecided)
+        {
+            Debug.Log($"[Tournament] Finalizando justa y regresando al mapa. Cargando siguiente escena: {nextSceneName}");
+            
+            // Limpiamos los efectos climatológicos y de cartas al salir de la escena
+            EffectManager effectManager = FindFirstObjectByType<EffectManager>();
+            if (effectManager != null)
+            {
+                effectManager.DisableAllEffects();
+            }
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            Debug.Log("[Tournament] Botón Siguiente Ronda pulsado. Avanzando...");
+            
+            // Ocultar panel
+            if (panelObject != null)
+            {
+                panelObject.SetActive(false);
+            }
+
+            // Avisar a WinManager que inicie la siguiente ronda
+            if (winManager != null)
+            {
+                winManager.StartNextRoundFromStatsPanel();
+            }
+        }
     }
 }

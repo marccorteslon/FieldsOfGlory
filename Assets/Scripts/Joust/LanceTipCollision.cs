@@ -44,13 +44,6 @@ public class LanceTipCollision : MonoBehaviour
                     scoreManager.AddAttackScore(hitTag, BF, BL, chargePercent, 0, 0);
                 }
 
-                // Intentar consumir el bonus de tiempo si el jugador atacó en el momento justo
-                AttackPart_Joust attackPart = FindFirstObjectByType<AttackPart_Joust>();
-                if (attackPart != null)
-                {
-                    attackPart.ConsumeTimingBonus();
-                }
-
                 // Resetea la carga
                 lanceController.currentCharge = 0f;
 

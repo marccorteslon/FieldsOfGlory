@@ -38,7 +38,7 @@ public class JoustManager : MonoBehaviour
 
     public float horsePhaseSpeed = 10f;
     public float combatPhaseSpeed = 4f;
-    private float currentSpeed;
+    [HideInInspector] public float currentSpeed;
 
     [Header("Effects")]
     public EffectManager effectManager;
@@ -711,5 +711,46 @@ public class JoustManager : MonoBehaviour
             preJoustIntroCoroutine = StartCoroutine(PreJoustIntroSequence());
         else
             ShowEffectChoicesBeforeHorsePhase();
+    }
+
+    public void StartJoustForSubsequentRounds()
+    {
+        if (preJoustIntroCoroutine != null)
+        {
+            StopCoroutine(preJoustIntroCoroutine);
+            preJoustIntroCoroutine = null;
+        }
+
+        SetPreJoustHorseRunning(false);
+
+        if (player != null)
+        {
+            player.position = initialPlayerPos;
+            player.rotation = initialPlayerRot;
+        }
+
+        if (enemy != null)
+        {
+            enemy.position = initialEnemyPos;
+            enemy.rotation = initialEnemyRot;
+        }
+
+        if (mainCamera != null && horseCameraPoint != null)
+        {
+            mainCamera.transform.position = horseCameraPoint.position;
+            mainCamera.transform.rotation = horseCameraPoint.rotation;
+            currentCameraPoint = horseCameraPoint;
+        }
+
+        PrepareBeforeJoustStarts();
+
+        // Direct, fast round start: skip introduction and cards
+        StartJoustNormally();
+
+        // Update the rounds HUD visual state immediately
+        if (winManager != null)
+        {
+            winManager.UpdateBestOf3UI();
+        }
     }
 }

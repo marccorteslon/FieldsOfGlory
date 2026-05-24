@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,19 @@ public class WinManager : MonoBehaviour
 
     public int winPoints = 30;
     public int currentWinPoints = 0;
+
+    [Header("Best of 3 Tournament")]
+    public int playerRoundWins = 0;
+    public int enemyRoundWins = 0;
+    public List<int> playerWonRoundsScores = new List<int>();
+
+    [Header("Best of 3 HUD Refs")]
+    public TextMeshProUGUI hudRoundTitleText;
+    public Image[] playerWinIndicators; // 2 elementos
+    public Image[] enemyWinIndicators;  // 2 elementos
+    public Color playerActiveColor = new Color(0.28f, 0.88f, 0.52f, 1f);
+    public Color enemyActiveColor = new Color(0.95f, 0.3f, 0.3f, 1f);
+    public Color indicatorInactiveColor = new Color(0.15f, 0.15f, 0.18f, 0.7f);
 
     public ScoreManager scoreManager;
     public JoustManager joustManager;
@@ -46,6 +60,17 @@ public class WinManager : MonoBehaviour
         cachedHitTag = "";
     }
 
+    void Start()
+    {
+        playerRoundWins = 0;
+        enemyRoundWins = 0;
+        playerWonRoundsScores.Clear();
+        roundNumber = 1;
+        gameEnded = false;
+
+        UpdateBestOf3UI();
+    }
+
     public void CacheEnemyImpact(Vector3 hitPoint, Vector3 hitDirection, int forceScore, string hitTag = "")
     {
         hasCachedImpact = true;
@@ -78,7 +103,6 @@ public class WinManager : MonoBehaviour
         return enemyObj.GetComponentInChildren<EnemyRagdollController>();
     }
 
-
     public void ProcessRoundEnd()
     {
         if (scoreManager == null || joustManager == null)
@@ -93,7 +117,6 @@ public class WinManager : MonoBehaviour
         if (gameEnded) return;
 
         int roundScore = scoreManager.GetScore();
-
         currentWinPoints = roundScore;
 
         if (scoreUIManager != null)
@@ -109,7 +132,21 @@ public class WinManager : MonoBehaviour
             Debug.Log("[Justa finalizada] Tenías los puntos, pero perdiste por no impactar con la lanza.");
         }
 
-        Debug.Log($"[Justa finalizada] Puntos: {roundScore}/{winPoints} | Resultado: {(fightWon ? "Victoria" : "Derrota")}");
+        Debug.Log($"[Justa finalizada - RONDA {roundNumber}] Puntos: {roundScore}/{winPoints} | Resultado: {(fightWon ? "Victoria" : "Derrota")}");
+
+        // Increment round wins and save player round score if they won
+        if (fightWon)
+        {
+            playerRoundWins++;
+            playerWonRoundsScores.Add(roundScore);
+        }
+        else
+        {
+            enemyRoundWins++;
+        }
+
+        // Update the HUD indicators immediately so they light up before/during ragdoll sequence
+        UpdateBestOf3UI();
 
         StartCoroutine(ProcessJoustEndSequence(roundScore, fightWon));
     }
@@ -159,10 +196,143 @@ public class WinManager : MonoBehaviour
         if (cinematicManager != null)
             yield return StartCoroutine(cinematicManager.PlayEnemyImpactSequence(fightWon));
 
-        if (fightWon)
-            StartCoroutine(ShowGameWinPanel());
+        // Gradual deceleration of player's horse (only if player won the round and is still on the horse!)
+        if (fightWon && joustManager != null)
+        {
+            float duration = 1.5f;
+            float elapsed = 0f;
+            float startSpeed = joustManager.combatPhaseSpeed;
+            int speedParam = Animator.StringToHash(joustManager.horseSpeedParameter);
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+                
+                // Decelerate speed
+                joustManager.currentSpeed = Mathf.Lerp(startSpeed, 0f, t);
+                
+                // Scale horse animator speed to walk, then idle
+                if (joustManager.playerHorseAnimator != null)
+                {
+                    float animVal = Mathf.Lerp(joustManager.preJoustRunAnimSpeed, joustManager.preJoustIdleAnimSpeed, t);
+                    joustManager.playerHorseAnimator.SetFloat(speedParam, animVal);
+                }
+
+                yield return null;
+            }
+
+            joustManager.currentSpeed = 0f;
+            if (joustManager.playerHorseAnimator != null)
+            {
+                joustManager.playerHorseAnimator.SetFloat(speedParam, joustManager.preJoustIdleAnimSpeed);
+            }
+        }
+
+        // Check if the match is decided (best of 3: first to 2 wins)
+        bool matchDecided = (playerRoundWins >= 2 || enemyRoundWins >= 2);
+
+        if (matchDecided)
+        {
+            if (playerRoundWins >= 2)
+                StartCoroutine(ShowGameWinPanel());
+            else
+                StartCoroutine(ShowRoundLosePanel());
+        }
         else
-            StartCoroutine(ShowRoundLosePanel());
+        {
+            // Match is in progress (undecided)! Show the round's stats directly
+            yield return new WaitForSeconds(0.5f);
+            if (statsPanelController != null)
+            {
+                statsPanelController.PopulateAndShow(fightWon, 0, "");
+            }
+        }
+    }
+
+    public void StartNextRoundFromStatsPanel()
+    {
+        // Move to the next round
+        roundNumber++;
+
+        // Reset and start next round
+        ResetJoustForNextRound();
+    }
+
+    public void ResetJoustForNextRound()
+    {
+        // 1. Reset score manager values
+        if (scoreManager != null)
+        {
+            scoreManager.ResetScore();
+        }
+
+        // 2. Reset progress bars in HUD
+        if (scoreUIManager != null)
+        {
+            scoreUIManager.ResetAll();
+        }
+
+        // 3. Deactivate active physical ragdolls
+        EnemyRagdollController playerRagdoll = GetPlayerRagdoll();
+        if (playerRagdoll != null)
+        {
+            playerRagdoll.ResetRagdoll();
+        }
+
+        EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
+        if (enemyRagdoll != null)
+        {
+            enemyRagdoll.ResetRagdoll();
+        }
+
+        // Reset hit data caches
+        hasCachedImpact = false;
+        cachedHitTag = "";
+
+        // 4. Reset positions and resume next round
+        if (joustManager != null)
+        {
+            joustManager.StartJoustForSubsequentRounds();
+        }
+    }
+
+    public void UpdateBestOf3UI()
+    {
+        // Update central round title
+        if (hudRoundTitleText != null)
+        {
+            if (roundNumber == 1)
+                hudRoundTitleText.text = "RONDA 1";
+            else if (roundNumber == 2)
+                hudRoundTitleText.text = "RONDA 2";
+            else
+                hudRoundTitleText.text = "RONDA 3 (Desempate)";
+        }
+
+        // Update player active indicators
+        if (playerWinIndicators != null)
+        {
+            for (int i = 0; i < playerWinIndicators.Length; i++)
+            {
+                if (playerWinIndicators[i] != null)
+                {
+                    playerWinIndicators[i].color = (i < playerRoundWins) ? playerActiveColor : indicatorInactiveColor;
+                }
+            }
+        }
+
+        // Update enemy active indicators
+        if (enemyWinIndicators != null)
+        {
+            for (int i = 0; i < enemyWinIndicators.Length; i++)
+            {
+                if (enemyWinIndicators[i] != null)
+                {
+                    enemyWinIndicators[i].color = (i < enemyRoundWins) ? enemyActiveColor : indicatorInactiveColor;
+                }
+            }
+        }
     }
 
     private EnemyRagdollController GetPlayerRagdoll()
@@ -307,7 +477,20 @@ public class WinManager : MonoBehaviour
 
         if (progressManager != null)
         {
-            reward = progressManager.CalculateReward(winPoints, roundNumber);
+            // Sum of the accumulated scores only from won rounds
+            int totalWonScores = 0;
+            foreach (int s in playerWonRoundsScores)
+            {
+                totalWonScores += s;
+            }
+
+            // Fallback in case list is somehow empty
+            if (totalWonScores == 0)
+            {
+                totalWonScores = winPoints;
+            }
+
+            reward = progressManager.CalculateReward(totalWonScores, roundNumber);
 
             // --- APLICACIÓN DE RECOMPENSAS DE LA CARTA ---
             EffectManager effectManager = FindFirstObjectByType<EffectManager>();
@@ -333,7 +516,7 @@ public class WinManager : MonoBehaviour
                 GiveRandomItemReward();
             }
 
-            Debug.Log($"[REWARD] HP enemigo: {winPoints} | Ronda: {roundNumber} | Dinero ganado: {reward}");
+            Debug.Log($"[REWARD] Puntos totales de rondas ganadas: {totalWonScores} | Rondas jugadas: {roundNumber} | Dinero ganado: {reward}");
         }
         else
         {
