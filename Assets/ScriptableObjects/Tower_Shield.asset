@@ -17,6 +17,11 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 093d21238e4ca9145a65ce61472f58c4, type: 3}
   description: Un gran escudo rectangular.
   price: 20
+  visualPrefab: {fileID: 4310646737043277619, guid: cb6470eeaed55f5458b576ded3a9283c, type: 3}
+  visualMaterial: {fileID: 0}
+  positionOffset: {x: 0.037, y: 0.037, z: 0}
+  rotationOffset: {x: -90, y: -90, z: 0}
+  scaleOffset: {x: 0.2, y: 0.2, z: 0.2}
   slot: 2
   modifiers:
   - stat: 0

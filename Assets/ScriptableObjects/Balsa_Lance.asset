@@ -19,9 +19,9 @@ MonoBehaviour:
   price: 40
   visualPrefab: {fileID: 6931688607105719967, guid: d3d5ca4218064c9409f393d50024f394, type: 3}
   visualMaterial: {fileID: 0}
-  positionOffset: {x: -0.0185, y: -0.0078, z: -0.0559}
+  positionOffset: {x: -0.0005, y: -0.0002, z: -0.00858}
   rotationOffset: {x: 90, y: 0, z: 0}
-  scaleOffset: {x: 0.3, y: 0.6805187, z: 0.3}
+  scaleOffset: {x: 0.006, y: 0.0136, z: 0.006}
   slot: 1
   modifiers:
   - stat: 0

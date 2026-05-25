@@ -21,7 +21,7 @@ MonoBehaviour:
   visualMaterial: {fileID: 0}
   positionOffset: {x: -0.0001, y: -0.00054, z: -0.007739}
   rotationOffset: {x: 90, y: 0, z: 0}
-  scaleOffset: {x: 0.01, y: 0.01, z: 0.01}
+  scaleOffset: {x: 0.01, y: 0.012, z: 0.01}
   slot: 1
   modifiers:
   - stat: 0

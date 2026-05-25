@@ -48,7 +48,7 @@ public class ShopUIManager : MonoBehaviour
         if (detailedCardBackgroundImage != null && clickedCard.cardBackgroundImage != null)
         {
             detailedCardBackgroundImage.sprite = clickedCard.cardBackgroundImage.sprite;
-            detailedCardBackgroundImage.color = clickedCard.cardBackgroundImage.color; // In case you use color tints!
+            detailedCardBackgroundImage.color = clickedCard.cardBackgroundImage.color;
         }
             
         if (detailedNameText != null && clickedCard.nameText != null) 
