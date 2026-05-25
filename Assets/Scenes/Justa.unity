@@ -18294,14 +18294,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 535711536}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.52179223, y: 0.43948272, z: 0.70834345, w: 0.18121089}
+  m_LocalRotation: {x: -0.5217923, y: 0.4394827, z: 0.7083435, w: 0.18121089}
   m_LocalPosition: {x: -0.014492514, y: 0.058281187, z: -0.14800009}
-  m_LocalScale: {x: 3.185, y: 3.185, z: 3.1849995}
+  m_LocalScale: {x: 3.1850002, y: 3.185, z: 3.1849992}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 620301618}
   - {fileID: 1458145658}
-  m_Father: {fileID: 1956626591532136697}
+  m_Father: {fileID: 1177905533}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &537650457 stripped
 Transform:
@@ -19533,6 +19533,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3272901932409178045, guid: 9839156fbbffdcc4cbcd0d6ac4b1bc63, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3727142133152861891}
+    - targetCorrespondingSourceObject: {fileID: 3272901932409178045, guid: 9839156fbbffdcc4cbcd0d6ac4b1bc63, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 535711537}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9839156fbbffdcc4cbcd0d6ac4b1bc63, type: 3}
 --- !u!1 &575908451
@@ -32153,81 +32156,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1280664059236524640, guid: 47cb5867a0184434185eac356e8dc101, type: 3}
   m_PrefabInstance: {fileID: 368937447}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &982879121
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 982879122}
-  - component: {fileID: 982879123}
-  m_Layer: 0
-  m_Name: CM_AttackSloCopy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &982879122
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 982879121}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0.08884833, y: 0.01307268, z: -0.037874274, w: 0.99523896}
-  m_LocalPosition: {x: -0.148, y: 0.171, z: 0.059}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1458145658}
-  m_LocalEulerAnglesHint: {x: 10.244, y: 1.123, z: -4.258}
---- !u!114 &982879123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 982879121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Priority:
-    Enabled: 1
-    m_Value: 0
-  OutputChannel: 1
-  StandbyUpdate: 2
-  m_StreamingVersion: 20241001
-  m_LegacyPriority: 0
-  Target:
-    TrackingTarget: {fileID: 0}
-    LookAtTarget: {fileID: 0}
-    CustomLookAtTarget: 0
-  Lens:
-    FieldOfView: 45
-    OrthographicSize: 5
-    NearClipPlane: 0.3
-    FarClipPlane: 1000
-    Dutch: 0
-    ModeOverride: 0
-    PhysicalProperties:
-      GateFit: 2
-      SensorSize: {x: 21.946, y: 16.002}
-      LensShift: {x: 0, y: 0}
-      FocusDistance: 10
-      Iso: 200
-      ShutterSpeed: 0.005
-      Aperture: 16
-      BladeCount: 5
-      Curvature: {x: 2, y: 11}
-      BarrelClipping: 0.25
-      Anamorphism: 0
-  BlendHint: 0
 --- !u!4 &983276588 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1031175127, guid: abc00000000008776157719125956545, type: 3}
@@ -34277,6 +34205,10 @@ PrefabInstance:
     - target: {fileID: 1031182304, guid: abc00000000016134398337990533818, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1993436109208918517, guid: abc00000000016134398337990533818, type: 3}
+      propertyPath: m_LODs.Array.data[0].renderers.Array.data[0].renderer
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -47298,7 +47230,7 @@ MonoBehaviour:
   currentCharge: 0
   chargeSlider: {fileID: 822211728}
   moveCamera: 1
-  customCameraPoint: {fileID: 982879122}
+  customCameraPoint: {fileID: 0}
   cameraMoveMultiplier: 1
   lance3DModel: {fileID: 999545686}
   lancePositionOffset: {x: 0, y: 0, z: 2}
@@ -47327,7 +47259,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 982879122}
   - {fileID: 8060157530838091805}
   - {fileID: 999545686}
   m_Father: {fileID: 535711537}
@@ -74161,8 +74092,8 @@ MonoBehaviour:
   shield: {fileID: 11400000, guid: 936d4d640d858d44abc9739b272c5523, type: 2}
   armor: {fileID: 11400000, guid: eb505a7282c14624f845fb64366c826d, type: 2}
   horseRenderer: {fileID: 6033511588588450454}
-  lanceAttachment: {fileID: 3783512196620953236}
-  finalLanceParent: {fileID: 6993513586321482142}
+  lanceAttachment: {fileID: 1458145658}
+  finalLanceParent: {fileID: 999545686}
   shieldAttachment: {fileID: 1396512734}
   armorAttachment: {fileID: 0}
 --- !u!4 &38260712201931250
@@ -75582,7 +75513,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3727142133152861891}
   m_Layer: 0
-  m_Name: LanzaWrapper
+  m_Name: LanzaWrapperOLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78148,7 +78079,6 @@ Transform:
   - {fileID: 2976817385681780171}
   - {fileID: 802550526781259608}
   - {fileID: 1000040456050024034}
-  - {fileID: 535711537}
   m_Father: {fileID: 7199999618145928062}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1959611471551415232
