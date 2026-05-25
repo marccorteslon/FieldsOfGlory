@@ -113,20 +113,21 @@ public class EquipmentManager : MonoBehaviour
             return;
         }
 
-        currentVisual = Instantiate(item.visualPrefab, attachment);
+        // 1. Instanciamos el prefab en la raíz de forma limpia
+        currentVisual = Instantiate(item.visualPrefab);
         
-        // Aplicamos los ajustes manuales definidos en el ScriptableObject
+        // 2. Determinamos cuál es el padre final y emparentamos directamente con 'keepWorldPosition = false'
+        // Esto hace que el objeto adopte el sistema de coordenadas local limpio del padre (posición 0, rotación 0, escala 1)
+        Transform targetParent = (finalParent != null) ? finalParent : attachment;
+        currentVisual.transform.SetParent(targetParent, false);
+        
+        // 3. Ahora aplicamos las posiciones, rotaciones y escalas locales directamente en el espacio de su padre.
+        // De esta forma, los valores en el Transform de la escena coincidirán EXACTAMENTE con los de tu ScriptableObject
         currentVisual.transform.localPosition = item.positionOffset;
         currentVisual.transform.localRotation = Quaternion.Euler(item.rotationOffset);
         currentVisual.transform.localScale = item.scaleOffset;
         
-        // Si hay un padre final, lo re-emparentamos manteniendo su posición y tamaño exactos en el mundo 3D
-        if (finalParent != null)
-        {
-            currentVisual.transform.SetParent(finalParent, true);
-        }
-        
-        Debug.Log($"[EquipmentManager] Spawneado con éxito el visual para {item.name} en {attachment.name}.");
+        Debug.Log($"[EquipmentManager] Spawneado con éxito el visual para {item.name} en {targetParent.name} con los valores exactos del ScriptableObject.");
         
         OnVisualInstantiated?.Invoke(item.slot, currentVisual);
     }
