@@ -16,6 +16,12 @@ public class CrossbowController : MonoBehaviour
     public Vector3 weaponRotationOffset = new Vector3(17.502f, -110.179f, 0f);
     public Vector3 weaponScale = new Vector3(0.3f, 0.3f, 0.3f);
 
+    [Header("Ajustes del Pivote de la Ballesta")]
+    [Tooltip("Offset de posición local de la ballesta respecto al pivote para re-alinear su punto de rotación.")]
+    public Vector3 weaponPivotOffset = Vector3.zero;
+    [Tooltip("Offset de rotación local de la ballesta respecto al pivote para corregir la orientación del prefab.")]
+    public Vector3 weaponPivotRotationOffset = Vector3.zero;
+
     [Header("Ajustes de Puntería (Físicas del Peso)")]
     public float inputSensitivity = 1.5f;
     public float baseSwayDamping = 0.08f; // Peso/retraso de la ballesta al apuntar
@@ -37,7 +43,7 @@ public class CrossbowController : MonoBehaviour
 
     [Header("Configuración del Disparo")]
     public GameObject boltPrefab;
-    public float shootForce = 85f;
+    public float shootForce = 140f; // Aumentado para un disparo tenso, rápido y preciso
     public float reloadDuration = 1.5f;
     public int maxBolts = 20;
     [HideInInspector] public int remainingBolts;
@@ -71,14 +77,24 @@ public class CrossbowController : MonoBehaviour
     private Vector3 recoilPosOffset;
     private float recoilRotOffset;
 
-    // Referencia al objeto de la ballesta instanciado
+    // Referencia al objeto de la ballesta instanciado y su contenedor de pivote
     private GameObject spawnedCrossbow;
+    private GameObject weaponPivotWrapper;
     private DisparoGameplayManager gameplayManager;
 
     void Start()
     {
         gameplayManager = FindFirstObjectByType<DisparoGameplayManager>();
         remainingBolts = maxBolts;
+
+        if (fpVirtualCamera == null)
+        {
+            fpVirtualCamera = FindFirstObjectByType<CinemachineCamera>();
+            if (fpVirtualCamera == null && playerRoot != null)
+            {
+                fpVirtualCamera = playerRoot.GetComponentInChildren<CinemachineCamera>();
+            }
+        }
 
         if (firstPersonCamera == null)
             firstPersonCamera = Camera.main;
@@ -115,10 +131,22 @@ public class CrossbowController : MonoBehaviour
 
         if (crossbowAttachPoint != null)
         {
-            spawnedCrossbow = Instantiate(crossbowPrefab, crossbowAttachPoint);
-            spawnedCrossbow.transform.localPosition = weaponPositionOffset;
-            spawnedCrossbow.transform.localRotation = Quaternion.Euler(weaponRotationOffset);
-            spawnedCrossbow.transform.localScale = weaponScale;
+            // 1. Crear el contenedor Pivot Wrapper como hijo del punto de acople (sin Animator para evitar anulaciones)
+            GameObject wrapperObj = new GameObject("WeaponPivotWrapper");
+            wrapperObj.transform.SetParent(crossbowAttachPoint, false);
+            weaponPivotWrapper = wrapperObj;
+            
+            // 2. Aplicar el offset de posición y rotación de alineación directamente en el wrapper
+            weaponPivotWrapper.transform.localPosition = weaponPivotOffset;
+            weaponPivotWrapper.transform.localRotation = Quaternion.Euler(weaponPivotRotationOffset);
+            weaponPivotWrapper.transform.localScale = Vector3.one;
+
+            // 3. Instanciar la ballesta bajo el wrapper (su transform local se mantiene limpio a 0)
+            spawnedCrossbow = Instantiate(crossbowPrefab);
+            spawnedCrossbow.transform.SetParent(weaponPivotWrapper.transform, false);
+            spawnedCrossbow.transform.localPosition = Vector3.zero;
+            spawnedCrossbow.transform.localRotation = Quaternion.identity;
+            spawnedCrossbow.transform.localScale = Vector3.one;
 
             // Remover componentes Rigidbodies o Colliders que pueda tener el prefab en sus raíces para evitar conflictos físicos
             Rigidbody rb = spawnedCrossbow.GetComponent<Rigidbody>();
@@ -263,14 +291,29 @@ public class CrossbowController : MonoBehaviour
         recoilRotOffset = -recoilUpForce;
 
         // Instanciar el proyectil virote
-        if (boltPrefab != null && firstPersonCamera != null)
+        if (boltPrefab != null)
         {
-            // Spawnear un poco enfrente de la cámara
-            Vector3 spawnPos = firstPersonCamera.transform.position + firstPersonCamera.transform.forward * 0.8f;
-            Quaternion spawnRot = firstPersonCamera.transform.rotation;
+            // Calcular la dirección de apuntado real combinando la rotación horizontal base del caballo y nuestros ángulos de mira
+            float horseYaw = playerRoot != null ? playerRoot.eulerAngles.y : 0f;
+            Quaternion aimRot = Quaternion.Euler(currentAimAngles.x, horseYaw + currentAimAngles.y + baseYawOffset, 0f);
+            Vector3 shootDir = aimRot * Vector3.forward;
+
+            // Determinar el punto de origen (la cámara principal o la virtual)
+            Transform camTransform = firstPersonCamera != null ? firstPersonCamera.transform : (fpVirtualCamera != null ? fpVirtualCamera.transform : transform);
+            Vector3 spawnPos = camTransform.position + shootDir * 1.5f;
+            
+            // Compensamos la punta de la flecha que mira hacia arriba rotándola 90 grados en X
+            Quaternion spawnRot = aimRot * Quaternion.Euler(90f, 0f, 0f);
 
             GameObject bolt = Instantiate(boltPrefab, spawnPos, spawnRot);
             
+            // Desactivar Animator en el proyectil si tuviese, para evitar que bloquee el transform físico
+            Animator anim = bolt.GetComponentInChildren<Animator>();
+            if (anim != null)
+            {
+                anim.enabled = false;
+            }
+
             // Añadir trail dinámicamente si no lo tiene para mejorar visual
             TrailRenderer trail = bolt.GetComponentInChildren<TrailRenderer>();
             if (trail == null)
@@ -284,15 +327,78 @@ public class CrossbowController : MonoBehaviour
                 trail.endColor = new Color(1f, 0.4f, 0f, 0f);
             }
 
-            // Aplicar velocidad física
+            // Obtener o añadir Rigidbody de forma dinámica para garantizar movimiento físico
             Rigidbody rb = bolt.GetComponent<Rigidbody>();
-            if (rb != null)
+            if (rb == null)
             {
-                rb.useGravity = true;
-                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                rb.linearVelocity = firstPersonCamera.transform.forward * shootForce;
+                rb = bolt.AddComponent<Rigidbody>();
             }
+
+            // Configurar Rigidbody
+            rb.useGravity = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            // Congelar la rotación física del Rigidbody para que la fricción angular de Unity no haga girar la flecha
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
             
+            // Aplicar velocidad física de forma universal en la dirección del apuntado real calculado
+            rb.linearVelocity = shootDir * shootForce;
+
+            // Asegurar que el proyectil tenga un Collider para detectar colisiones con las dianas
+            Collider boltCol = bolt.GetComponent<Collider>();
+            if (boltCol == null)
+            {
+                boltCol = bolt.GetComponentInChildren<Collider>();
+                if (boltCol == null)
+                {
+                    // Si no tiene ningún colisionador, le creamos un BoxCollider por defecto
+                    boltCol = bolt.AddComponent<BoxCollider>();
+                }
+            }
+            // Asegurar que TODOS los colisionadores en el virote y sus hijos sean triggers para evitar rebotes físicos
+            Collider[] allBoltColliders = bolt.GetComponentsInChildren<Collider>();
+            foreach (var bc in allBoltColliders)
+            {
+                if (bc != null)
+                {
+                    bc.isTrigger = true;
+                    bc.enabled = true;
+                }
+            }
+
+            // Desactivar colisiones con la propia ballesta equipada (incluyendo hijos)
+            if (spawnedCrossbow != null)
+            {
+                Collider[] weaponColliders = spawnedCrossbow.GetComponentsInChildren<Collider>();
+                Collider[] arrowColliders = bolt.GetComponentsInChildren<Collider>();
+                foreach (var wCol in weaponColliders)
+                {
+                    foreach (var aCol in arrowColliders)
+                    {
+                        if (wCol != null && aCol != null)
+                        {
+                            Physics.IgnoreCollision(aCol, wCol, true);
+                        }
+                    }
+                }
+            }
+
+            // Desactivar colisiones con el jugador/caballo para evitar self-collisions inmediatas que claven la flecha al nacer
+            if (playerRoot != null)
+            {
+                Collider[] playerColliders = playerRoot.GetComponentsInChildren<Collider>();
+                Collider[] arrowColliders = bolt.GetComponentsInChildren<Collider>();
+                foreach (var pCol in playerColliders)
+                {
+                    foreach (var aCol in arrowColliders)
+                    {
+                        if (pCol != null && aCol != null)
+                        {
+                            Physics.IgnoreCollision(aCol, pCol, true);
+                        }
+                    }
+                }
+            }
+
             // Asegurar que tenga el script de comportamiento
             CrossbowBolt boltScript = bolt.GetComponent<CrossbowBolt>();
             if (boltScript == null)
@@ -317,7 +423,7 @@ public class CrossbowController : MonoBehaviour
 
     void UpdateWeaponSway()
     {
-        if (spawnedCrossbow == null) return;
+        if (crossbowAttachPoint == null) return;
 
         // Posición base de la ballesta + retroceso posicional + oscilación del galope del caballo (efecto bobbing)
         float bobbingX = Mathf.Sin(Time.time * 8f) * 0.01f;
@@ -326,9 +432,9 @@ public class CrossbowController : MonoBehaviour
         Vector3 targetPos = weaponPositionOffset + recoilPosOffset + new Vector3(bobbingX, bobbingY, 0f);
         Quaternion targetRot = Quaternion.Euler(weaponRotationOffset.x + recoilRotOffset, weaponRotationOffset.y, weaponRotationOffset.z);
 
-        // Suavizar colocación final
-        spawnedCrossbow.transform.localPosition = Vector3.Lerp(spawnedCrossbow.transform.localPosition, targetPos, Time.deltaTime * 15f);
-        spawnedCrossbow.transform.localRotation = Quaternion.Slerp(spawnedCrossbow.transform.localRotation, targetRot, Time.deltaTime * 15f);
+        // Suavizar colocación final del crossbowAttachPoint (que actúa como el pivot directo)
+        crossbowAttachPoint.localPosition = Vector3.Lerp(crossbowAttachPoint.localPosition, targetPos, Time.deltaTime * 15f);
+        crossbowAttachPoint.localRotation = Quaternion.Slerp(crossbowAttachPoint.localRotation, targetRot, Time.deltaTime * 15f);
     }
 
     void PlaySound(AudioClip clip)
