@@ -83,6 +83,9 @@ public class DisparoGameplayManager : MonoBehaviour
 
     IEnumerator GameplaySequence()
     {
+        // Retrasar 1 frame para permitir que TextCore de Unity 6 inicialice fuentes de forma segura en el Main Thread
+        yield return null;
+
         // 1. Preparar HUD y estados
         isGameplayActive = false;
         isGameEnded = false;
@@ -242,6 +245,30 @@ public class DisparoGameplayManager : MonoBehaviour
             goldEarned = progressManager.CalculateReward(totalScore, 1);
             progressManager.AddMoney(goldEarned);
             Debug.Log($"[Disparo] ¡Ronda ganada! Sumadas {goldEarned} monedas.");
+        }
+
+        // Configurar u obtener un ScoreManager local para poblar el panel final
+        ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
+        if (scoreManager == null)
+        {
+            scoreManager = gameObject.AddComponent<ScoreManager>();
+        }
+        scoreManager.ResetScore();
+        scoreManager.horsePhaseScore = targetsHitCount;
+        scoreManager.attackPhaseScore = totalScore;
+        scoreManager.defensePhaseScore = 0;
+        scoreManager.totalScore = totalScore;
+
+        // Personalizar etiquetas de la interfaz de resultados para el modo disparo
+        if (statsPanelController != null)
+        {
+            var labels = statsPanelController.GetComponentsInChildren<TextMeshProUGUI>(true);
+            foreach (var labelText in labels)
+            {
+                if (labelText.text == "Fase Caballo:") labelText.text = "Dianas Acertadas:";
+                if (labelText.text == "Fase Ataque:") labelText.text = "Puntos de Dianas:";
+                if (labelText.text == "Fase Defensa:") labelText.text = "Penalizaciones:";
+            }
         }
 
         // Mostrar Panel de Estadísticas final

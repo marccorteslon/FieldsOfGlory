@@ -18,7 +18,16 @@ public class CrossbowBolt : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        col = GetComponent<Collider>();
+        // Asegurar que todos los colisionadores en este virote y sus hijos sean triggers al nacer
+        Collider[] allCols = GetComponentsInChildren<Collider>();
+        foreach (var c in allCols)
+        {
+            if (c != null)
+            {
+                c.isTrigger = true;
+                c.enabled = true;
+            }
+        }
     }
 
     void Start()
@@ -27,9 +36,32 @@ public class CrossbowBolt : MonoBehaviour
         Destroy(gameObject, 10f);
     }
 
-    private void OnCollisionEnter(Collision collision)
+
+
+    private void OnTriggerEnter(Collider other)
     {
         if (hasHit) return;
+
+        // Obtener la ruta de jerarquía completa para facilitar el debug
+        string path = other.gameObject.name;
+        Transform t = other.transform.parent;
+        while (t != null)
+        {
+            path = t.name + "/" + path;
+            t = t.parent;
+        }
+        Debug.Log($"[CrossbowBolt] Pasó por/Colisionó con: {path} (Tag: {other.gameObject.tag})");
+
+        // Comprobar si golpeamos una diana activa (que exista y no haya sido golpeada/abatida aún)
+        ShootingTarget target = other.gameObject.GetComponentInParent<ShootingTarget>();
+        bool isDiana = (target != null && !target.isHit);
+
+        // Si no es una diana válida o ya está abatida, la flecha sigue de largo
+        if (!isDiana)
+        {
+            return;
+        }
+
         hasHit = true;
 
         // Desactivar físicas para clavarse
@@ -40,16 +72,21 @@ public class CrossbowBolt : MonoBehaviour
             rb.isKinematic = true;
         }
 
-        if (col != null)
+        // Desactivar todos los colisionadores en hijos/raíz para evitar rebotes posteriores o llamadas repetidas
+        Collider[] allColliders = GetComponentsInChildren<Collider>();
+        foreach (var c in allColliders)
         {
-            col.enabled = false;
+            if (c != null)
+            {
+                c.enabled = false;
+                c.isTrigger = false;
+            }
         }
 
         // Anclarse al objeto golpeado para moverse con él (ej. si la diana cae)
-        transform.SetParent(collision.transform);
+        transform.SetParent(other.transform);
 
         // Detectar si golpeó un objetivo de disparo
-        ShootingTarget target = collision.gameObject.GetComponentInParent<ShootingTarget>();
         bool hitRegistered = false;
         
         if (target != null)
@@ -59,13 +96,12 @@ public class CrossbowBolt : MonoBehaviour
         }
 
         // Reproducir sonido de impacto
-        PlayHitSound(collision.gameObject.tag, hitRegistered);
+        PlayHitSound(other.gameObject.tag, hitRegistered);
 
-        // Instanciar partículas de impacto en el punto de contacto
-        if (hitParticlePrefab != null && collision.contactCount > 0)
+        // Instanciar partículas de impacto en la punta de la flecha
+        if (hitParticlePrefab != null)
         {
-            ContactPoint contact = collision.contacts[0];
-            GameObject particles = Instantiate(hitParticlePrefab, contact.point, Quaternion.LookRotation(contact.normal));
+            GameObject particles = Instantiate(hitParticlePrefab, transform.position, Quaternion.LookRotation(-transform.forward));
             Destroy(particles, 2f);
         }
 

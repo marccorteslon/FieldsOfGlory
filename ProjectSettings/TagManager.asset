@@ -11,6 +11,7 @@ TagManager:
   - Body
   - Shield
   - Horse
+  - Diana
   layers:
   - Default
   - TransparentFX

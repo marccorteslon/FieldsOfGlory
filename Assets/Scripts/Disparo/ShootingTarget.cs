@@ -31,8 +31,7 @@ public class ShootingTarget : MonoBehaviour
     public Vector3 moveDirection = Vector3.right;
 
     private bool isPoppedUp = false;
-    private bool isHit = false;
-    private float popUpTimer = 0f;
+    [HideInInspector] public bool isHit = false;
     private Vector3 initialLocalPosition;
     private Transform playerTransform;
     private DisparoGameplayManager gameplayManager;
