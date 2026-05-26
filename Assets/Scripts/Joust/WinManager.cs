@@ -153,6 +153,15 @@ public class WinManager : MonoBehaviour
 
     IEnumerator ProcessJoustEndSequence(int roundScore, bool fightWon)
     {
+        // Obtener animadores de los caballos desde HorsePart_Joust o JoustManager
+        Animator playerHorseAnim = (joustManager != null && joustManager.horsePart != null) ? joustManager.horsePart.horseAnimator : null;
+        Animator opponentHorseAnim = (joustManager != null && joustManager.horsePart != null) ? joustManager.horsePart.opponentHorseAnimator : null;
+
+        if (playerHorseAnim == null && joustManager != null)
+        {
+            playerHorseAnim = joustManager.playerHorseAnimator;
+        }
+
         if (fightWon)
         {
             // Si ganamos la justa, activamos el ragdoll del oponente
@@ -204,6 +213,12 @@ public class WinManager : MonoBehaviour
             float startSpeed = joustManager.combatPhaseSpeed;
             int speedParam = Animator.StringToHash(joustManager.horseSpeedParameter);
 
+            float startAnimVal = 0f;
+            if (joustManager.playerHorseAnimator != null)
+            {
+                startAnimVal = joustManager.playerHorseAnimator.GetFloat(speedParam);
+            }
+
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
@@ -215,7 +230,7 @@ public class WinManager : MonoBehaviour
                 // Scale horse animator speed to walk, then idle
                 if (joustManager.playerHorseAnimator != null)
                 {
-                    float animVal = Mathf.Lerp(joustManager.preJoustRunAnimSpeed, joustManager.preJoustIdleAnimSpeed, t);
+                    float animVal = Mathf.Lerp(startAnimVal, joustManager.preJoustIdleAnimSpeed, t);
                     joustManager.playerHorseAnimator.SetFloat(speedParam, animVal);
                 }
 

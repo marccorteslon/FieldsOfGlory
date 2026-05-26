@@ -42680,12 +42680,12 @@ MonoBehaviour:
   playerPreJoustWaypoints:
   - {fileID: 602948402}
   - {fileID: 1082150091}
-  playerHorseAnimator: {fileID: 752887541437566737}
+  playerHorseAnimator: {fileID: 6852482040307917789}
   horseSpeedParameter: Speed
   preJoustRunAnimSpeed: 2
   preJoustIdleAnimSpeed: 0
   snapPlayerToFirstWaypoint: 1
-  horsePhaseDuration: 0
+  horsePhaseDuration: 3
   delayBetweenHorseAndAttack: 0.5
   controlsText: {fileID: 285133252}
   tutorialManager: {fileID: 1318912935}
@@ -42694,6 +42694,12 @@ MonoBehaviour:
   initialEnemyPos: {x: 0, y: 0, z: 0}
   initialEnemyRot: {x: 0, y: 0, z: 0, w: 0}
   difficulty: 0
+  easyEnemyPrefab: {fileID: 0}
+  normalEnemyPrefab: {fileID: 0}
+  hardEnemyPrefab: {fileID: 0}
+  epicEnemyPrefab: {fileID: 0}
+  cityMaps: []
+  defaultMap: {fileID: 0}
 --- !u!4 &1318912932
 Transform:
   m_ObjectHideFlags: 0
@@ -42817,7 +42823,7 @@ MonoBehaviour:
   appliedFlatGoldReward: 0
   appliedGoldMultiplier: 1
   fogIsActive: 0
-  rainIsActive: 0
+  rainIsActive: 1
   originalFogState: 0
   fogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   fogDensity: 0.04
@@ -47815,9 +47821,9 @@ MonoBehaviour:
   counterText: {fileID: 1721324105}
   loadout: {fileID: 1582525037732221980}
   dropSpeed: 1800
-  horseAnimator: {fileID: 752887541437566737}
+  horseAnimator: {fileID: 6852482040307917789}
   gallopSmoke: {fileID: 4895161386555404411}
-  opponentHorseAnimator: {fileID: 1403406546}
+  opponentHorseAnimator: {fileID: 6852482040307917789}
   opponentGallopSmoke: {fileID: 2145018237}
   gallopSpeedThreshold: 500
   animationBlendSpeed: 5
@@ -75756,7 +75762,7 @@ Animator:
   m_GameObject: {fileID: 8518593953454751646}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 32795efbdd46c13459fbdeaeb3f4da7d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -78817,35 +78823,6 @@ Transform:
   - {fileID: 5316734153000095083}
   m_Father: {fileID: 2827402838086363279}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2454458247309794267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8518593953454751646}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78e7c9fc7afffcc46af5e729100b7d40, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  gallopSmoke: {fileID: 4895161386555404411}
-  roamArea: {fileID: 0}
-  is2D: 0
-  trotSpeed: 2
-  gallopSpeed: 4
-  rotationSpeed: 5
-  minIdleTime: 2
-  maxIdleTime: 5
-  minMoveTime: 3
-  maxMoveTime: 6
-  minEatTime: 3
-  maxEatTime: 4
-  stompAnimLength: 5
-  avoidanceRadius: 3
-  avoidanceStrength: 2
-  animationBlendSpeed: 3
 --- !u!4 &2458219317502524198
 Transform:
   m_ObjectHideFlags: 0
@@ -94548,7 +94525,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6287589783486507227}
-  - component: {fileID: 2454458247309794267}
   - component: {fileID: 752887541437566737}
   m_Layer: 0
   m_Name: Horse
