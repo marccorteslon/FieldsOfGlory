@@ -150,6 +150,14 @@ public class DisparoGameplayManager : MonoBehaviour
                 // Frenado progresivo al terminar la pista
                 currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * decelerationSpeed);
                 MovePlayer(currentSpeed);
+
+                // Reducir la velocidad de la animación progresivamente hacia 0
+                if (playerHorseAnimator != null)
+                {
+                    float currentAnim = playerHorseAnimator.GetFloat(horseSpeedParameter);
+                    float blendedAnim = Mathf.Lerp(currentAnim, preJoustIdleAnimSpeed, Time.deltaTime * decelerationSpeed);
+                    playerHorseAnimator.SetFloat(horseSpeedParameter, blendedAnim);
+                }
             }
             return;
         }
@@ -160,6 +168,15 @@ public class DisparoGameplayManager : MonoBehaviour
 
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 3f);
         MovePlayer(currentSpeed);
+
+        // Actualizar animación del caballo dinámicamente: 2f para galope en sprint, 1f para trote normal
+        if (playerHorseAnimator != null)
+        {
+            float targetAnimVal = holdingSprint ? 2f : 1f;
+            float currentAnimVal = playerHorseAnimator.GetFloat(horseSpeedParameter);
+            float blendedAnimVal = Mathf.Lerp(currentAnimVal, targetAnimVal, Time.deltaTime * 5f);
+            playerHorseAnimator.SetFloat(horseSpeedParameter, blendedAnimVal);
+        }
 
         // Actualizar barra de progreso
         if (player != null && progressBar != null)

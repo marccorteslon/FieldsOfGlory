@@ -501,7 +501,7 @@ MonoBehaviour:
   horseRenderer: {fileID: 1205825637}
   lanceAttachment: {fileID: 0}
   finalLanceParent: {fileID: 0}
-  shieldAttachment: {fileID: 1131995843}
+  shieldAttachment: {fileID: 0}
   armorAttachment: {fileID: 0}
 --- !u!4 &13782963
 Transform:
@@ -31448,11 +31448,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abc00000000007519983799507710361, type: 3}
---- !u!4 &1131995843 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7655810399137249133, guid: adb5a2fce25d95743853e1a81fb612f7, type: 3}
-  m_PrefabInstance: {fileID: 1423827355124609023}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1132434266
 GameObject:
   m_ObjectHideFlags: 0

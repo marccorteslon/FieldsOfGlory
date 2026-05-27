@@ -1,7 +1,15 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+
+[System.Serializable]
+public struct CityMapMapping
+{
+    public string cityId;
+    public GameObject mapGameObject;
+}
 
 public class JoustManager : MonoBehaviour
 {
@@ -69,7 +77,7 @@ public class JoustManager : MonoBehaviour
     [Header("Pre Joust Horse Animation")]
     public Animator playerHorseAnimator;
     public string horseSpeedParameter = "Speed";
-    public float preJoustRunAnimSpeed = 1f;
+    public float preJoustRunAnimSpeed = 0.5f;
     public float preJoustIdleAnimSpeed = 0f;
 
     public bool snapPlayerToFirstWaypoint = true;
@@ -108,8 +116,139 @@ public class JoustManager : MonoBehaviour
     [Header("Difficulty Settings")]
     public JoustDifficulty difficulty = JoustDifficulty.Normal;
 
+    [Header("Spawners (Dynamic Customization)")]
+    public GameObject easyEnemyPrefab;
+    public GameObject normalEnemyPrefab;
+    public GameObject hardEnemyPrefab;
+    public GameObject epicEnemyPrefab;
+
+    public List<CityMapMapping> cityMaps = new();
+    public GameObject defaultMap;
+
     void Start()
     {
+        // 1. Resolver dificultad y ciudad actual dinámicamente
+        ProgressManager progressManager = FindFirstObjectByType<ProgressManager>();
+        TournamentManager tournamentManager = FindFirstObjectByType<TournamentManager>();
+        string activeCityId = "";
+
+        if (progressManager != null)
+        {
+            activeCityId = progressManager.CurrentCityId;
+
+            if (tournamentManager != null)
+            {
+                var todayTournament = tournamentManager.GetTournamentForCityAndDate(
+                    progressManager.CurrentCityId,
+                    progressManager.CurrentDay,
+                    progressManager.CurrentMonth
+                );
+
+                if (todayTournament != null)
+                {
+                    difficulty = todayTournament.difficulty;
+                    Debug.Log($"[JoustManager] Dificultad del torneo de hoy detectada: {difficulty}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[JoustManager] No hay torneo hoy en {progressManager.CurrentCityId}. Se mantiene dificultad: {difficulty}");
+                }
+            }
+        }
+
+        // 2. Activar/Desactivar escenarios locales basados en la ciudad actual
+        if (!string.IsNullOrEmpty(activeCityId))
+        {
+            bool mapFound = false;
+            foreach (var mapping in cityMaps)
+            {
+                if (mapping.mapGameObject != null)
+                {
+                    bool isCurrentCityMap = string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase);
+                    mapping.mapGameObject.SetActive(isCurrentCityMap);
+                    if (isCurrentCityMap)
+                    {
+                        mapFound = true;
+                        Debug.Log($"[JoustManager] Escenario activado para la ciudad: {activeCityId}");
+                    }
+                }
+            }
+
+            // Si no se encontró un mapa específico en la lista, activamos el mapa por defecto
+            if (defaultMap != null)
+            {
+                defaultMap.SetActive(!mapFound);
+                if (!mapFound)
+                {
+                    Debug.Log($"[JoustManager] Ciudad {activeCityId} sin mapa asignado en la lista. Activado mapa por defecto.");
+                }
+            }
+        }
+        else
+        {
+            // Fallback si no hay ProgressManager
+            if (defaultMap != null)
+            {
+                defaultMap.SetActive(true);
+            }
+            foreach (var mapping in cityMaps)
+            {
+                if (mapping.mapGameObject != null)
+                {
+                    mapping.mapGameObject.SetActive(false);
+                }
+            }
+        }
+
+        // 3. Spawnear al caballero correspondiente a la dificultad actual
+        GameObject chosenPrefab = difficulty switch
+        {
+            JoustDifficulty.Easy => easyEnemyPrefab,
+            JoustDifficulty.Normal => normalEnemyPrefab,
+            JoustDifficulty.Hard => hardEnemyPrefab,
+            JoustDifficulty.Epic => epicEnemyPrefab,
+            _ => normalEnemyPrefab
+        };
+
+        if (chosenPrefab != null)
+        {
+            Vector3 spawnPos = Vector3.zero;
+            Quaternion spawnRot = Quaternion.identity;
+            Transform oldEnemy = enemy;
+
+            if (oldEnemy != null)
+            {
+                spawnPos = oldEnemy.position;
+                spawnRot = oldEnemy.rotation;
+            }
+
+            GameObject spawnedEnemyObj = Instantiate(chosenPrefab, spawnPos, spawnRot);
+            enemy = spawnedEnemyObj.transform;
+            Debug.Log($"[JoustManager] Caballero '{chosenPrefab.name}' instanciado para dificultad {difficulty}");
+
+            // Asignar el animador del caballo del oponente en HorsePart_Joust
+            if (horsePart != null)
+            {
+                Animator enemyHorseAnim = spawnedEnemyObj.GetComponentInChildren<Animator>();
+                if (enemyHorseAnim != null)
+                {
+                    horsePart.opponentHorseAnimator = enemyHorseAnim;
+                    Debug.Log("[JoustManager] opponentHorseAnimator reasignado con éxito en HorsePart_Joust");
+                }
+            }
+
+            // Actualizar de forma dinámica todas las cámaras de Cinemachine y referencias de la escena al nuevo enemigo
+            if (oldEnemy != null)
+            {
+                UpdateSceneReferencesToNewEnemy(oldEnemy, enemy);
+                Destroy(oldEnemy.gameObject); // Destruir el placeholder anterior
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[JoustManager] No se ha asignado ningún prefab de caballero para la dificultad {difficulty}. Se usará el enemigo por defecto de la escena.");
+        }
+
         ApplyDifficulty();
 
         if (player != null)
@@ -383,10 +522,19 @@ public class JoustManager : MonoBehaviour
 
     void SetPreJoustHorseRunning(bool isRunning)
     {
-        if (playerHorseAnimator == null) return;
-
         int speedParam = Animator.StringToHash(horseSpeedParameter);
-        playerHorseAnimator.SetFloat(speedParam, isRunning ? preJoustRunAnimSpeed : preJoustIdleAnimSpeed);
+
+        if (playerHorseAnimator != null)
+        {
+            playerHorseAnimator.SetFloat(speedParam, isRunning ? preJoustRunAnimSpeed : preJoustIdleAnimSpeed);
+        }
+
+        // Sincronizar el caballo del oponente durante la cinemática pre-justa
+        Animator opponentHorseAnim = (horsePart != null) ? horsePart.opponentHorseAnimator : null;
+        if (opponentHorseAnim != null)
+        {
+            opponentHorseAnim.SetFloat(speedParam, isRunning ? preJoustRunAnimSpeed : preJoustIdleAnimSpeed);
+        }
     }
 
     Transform[] GetValidPreJoustWaypoints()
@@ -752,5 +900,46 @@ public class JoustManager : MonoBehaviour
         {
             winManager.UpdateBestOf3UI();
         }
+    }
+
+    void UpdateSceneReferencesToNewEnemy(Transform oldEnemy, Transform newEnemy)
+    {
+        if (oldEnemy == null || newEnemy == null) return;
+
+        // 1. Actualizar cámaras de Cinemachine
+        var cinemachineCameras = FindObjectsByType<Unity.Cinemachine.CinemachineCamera>(FindObjectsSortMode.None);
+        foreach (var vcam in cinemachineCameras)
+        {
+            if (vcam == null) continue;
+
+            // Si la cámara seguía al viejo enemigo o a alguno de sus hijos
+            if (vcam.Follow != null && (vcam.Follow == oldEnemy || vcam.Follow.IsChildOf(oldEnemy)))
+            {
+                Transform newTarget = FindChildRecursive(newEnemy, vcam.Follow.name);
+                vcam.Follow = (newTarget != null) ? newTarget : newEnemy;
+                Debug.Log($"[JoustManager] Cinemachine '{vcam.name}' Follow reasignado a: {vcam.Follow.name}");
+            }
+
+            // Si la cámara miraba al viejo enemigo o a alguno de sus hijos
+            if (vcam.LookAt != null && (vcam.LookAt == oldEnemy || vcam.LookAt.IsChildOf(oldEnemy)))
+            {
+                Transform newTarget = FindChildRecursive(newEnemy, vcam.LookAt.name);
+                vcam.LookAt = (newTarget != null) ? newTarget : newEnemy;
+                Debug.Log($"[JoustManager] Cinemachine '{vcam.name}' LookAt reasignado a: {vcam.LookAt.name}");
+            }
+        }
+    }
+
+    Transform FindChildRecursive(Transform parent, string childName)
+    {
+        if (parent == null) return null;
+        if (parent.name == childName) return parent;
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform found = FindChildRecursive(parent.GetChild(i), childName);
+            if (found != null) return found;
+        }
+        return null;
     }
 }
