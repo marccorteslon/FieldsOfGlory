@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: dca4757f91dbeef449c613a689cda9ea
+AssetOrigin:
+  serializedVersion: 1
+  productId: 174520
+  packageName: Stylized Horse
+  packageVersion: 1.0
+  assetPath: Assets/StylizedHorse/Anims/Equipment/@StylizedHorseEQ_Walk.fbx
+  uploadId: 577419
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -69,6 +74,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -135,10 +141,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 174520
-  packageName: Stylized Horse
-  packageVersion: 1.0
-  assetPath: Assets/StylizedHorse/Anims/Equipment/@StylizedHorseEQ_Walk.fbx
-  uploadId: 577419

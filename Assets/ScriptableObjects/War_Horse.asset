@@ -18,7 +18,7 @@ MonoBehaviour:
   description: "Un caballo de guerra norte\xF1o."
   price: 25
   visualPrefab: {fileID: 919132149155446097, guid: 55f95a310dc2560489b10866629af5ca, type: 3}
-  visualMaterial: {fileID: 2100000, guid: 73ddd70e28513904dbfc99ef6b785d2f, type: 2}
+  visualMaterial: {fileID: 2100000, guid: 54fa30fd4e0711e4d80b60cace53c06c, type: 2}
   positionOffset: {x: 0, y: 0, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
   scaleOffset: {x: 1, y: 1, z: 1}

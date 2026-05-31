@@ -18,7 +18,14 @@ public class EquipmentManager : MonoBehaviour
     public Transform shieldAttachment;
     public Transform armorAttachment;
 
+    [Header("Armor Mesh Swapping")]
+    [Tooltip("SkinnedMeshRenderer de la armor del player. Si se asigna, se usará para el mesh swap.")]
+    public SkinnedMeshRenderer armorSkinnedMeshRenderer;
+    [Tooltip("MeshFilter de la armor del player (alternativa si no usa SkinnedMeshRenderer).")]
+    public MeshFilter armorMeshFilter;
+
     private Material originalHorseMaterial;
+    private Mesh originalArmorMesh;
     private GameObject currentLanceVisual;
     private GameObject currentShieldVisual;
     private GameObject currentArmorVisual;
@@ -60,9 +67,33 @@ public class EquipmentManager : MonoBehaviour
                 shield = item; 
                 UpdateVisual(item, shieldAttachment, ref currentShieldVisual);
                 break;
-            case EquipmentSlot.Armor: 
-                armor = item; 
-                UpdateVisual(item, armorAttachment, ref currentArmorVisual);
+            case EquipmentSlot.Armor:
+                armor = item;
+                if (item is ArmorDefinition armorDef && armorDef.armorMesh != null)
+                {
+                    // Mesh swap directo: sin instanciar prefab
+                    if (armorSkinnedMeshRenderer != null)
+                    {
+                        if (originalArmorMesh == null) originalArmorMesh = armorSkinnedMeshRenderer.sharedMesh;
+                        armorSkinnedMeshRenderer.sharedMesh = armorDef.armorMesh;
+                        Debug.Log($"[EquipmentManager] Armor mesh swapped (SkinnedMeshRenderer): {armorDef.armorMesh.name}");
+                    }
+                    else if (armorMeshFilter != null)
+                    {
+                        if (originalArmorMesh == null) originalArmorMesh = armorMeshFilter.sharedMesh;
+                        armorMeshFilter.sharedMesh = armorDef.armorMesh;
+                        Debug.Log($"[EquipmentManager] Armor mesh swapped (MeshFilter): {armorDef.armorMesh.name}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[EquipmentManager] armorMesh definida pero no hay SkinnedMeshRenderer ni MeshFilter asignados.");
+                        UpdateVisual(item, armorAttachment, ref currentArmorVisual);
+                    }
+                }
+                else
+                {
+                    UpdateVisual(item, armorAttachment, ref currentArmorVisual);
+                }
                 break;
         }
 
@@ -88,9 +119,19 @@ public class EquipmentManager : MonoBehaviour
                 shield = null; 
                 ClearVisual(ref currentShieldVisual);
                 break;
-            case EquipmentSlot.Armor: 
-                armor = null; 
+            case EquipmentSlot.Armor:
+                // Restaurar mesh original si se hizo swap
+                if (originalArmorMesh != null)
+                {
+                    if (armorSkinnedMeshRenderer != null)
+                        armorSkinnedMeshRenderer.sharedMesh = originalArmorMesh;
+                    else if (armorMeshFilter != null)
+                        armorMeshFilter.sharedMesh = originalArmorMesh;
+                    originalArmorMesh = null;
+                    Debug.Log("[EquipmentManager] Armor mesh restaurada al original.");
+                }
                 ClearVisual(ref currentArmorVisual);
+                armor = null;
                 break;
         }
 

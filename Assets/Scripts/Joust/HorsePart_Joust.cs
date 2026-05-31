@@ -170,10 +170,15 @@ public class HorsePart_Joust : MonoBehaviour
     {
         float targetAnimSpeed = 0f;
 
-        if (joustManager != null && joustManager.horsePartIsOn && isActive)
+        if (joustManager != null)
         {
-            // 1f = Trote, 2f = Galope
-            targetAnimSpeed = currentMoveSpeed >= gallopSpeedThreshold ? 2f : 1f;
+            if ((joustManager.horsePartIsOn && isActive) || joustManager.attackPartIsOn || joustManager.defensePartIsOn)
+            {
+                // Mapeamos de forma dinámica la velocidad física [300, 900] a tu BlendTree [1.0, 3.0]
+                float speedPercentage = Mathf.InverseLerp(moveSpeed, maxMoveSpeed, currentMoveSpeed);
+                targetAnimSpeed = Mathf.Lerp(1.0f, 3.0f, speedPercentage);
+            }
+            // Si no está en ninguna fase activa, targetAnimSpeed = 0f (se lerpea suave a Idle)
         }
 
         currentAnimSpeed = Mathf.Lerp(currentAnimSpeed, targetAnimSpeed, animationBlendSpeed * Time.deltaTime);
