@@ -896,6 +896,194 @@ public class JoustUIEditorGenerator : EditorWindow
         );
     }
 
+    [MenuItem("Tools/Fields of Glory/5. Setup Tutorial Scene UI")]
+    public static void SetupTutorialSceneUI()
+    {
+        // ─────────────────────────────────────────────────
+        // 1. LOCALIZAR MANAGERS
+        // ─────────────────────────────────────────────────
+        JoustManager joustManager = FindFirstObjectByType<JoustManager>();
+        if (joustManager == null)
+        {
+            EditorUtility.DisplayDialog("Falta JoustManager",
+                "No se encontró un JoustManager en la escena. Abre la escena NewTutorial (copia de Justa) primero.",
+                "Entendido");
+            return;
+        }
+
+        Undo.RegisterCompleteObjectUndo(joustManager, "Setup Tutorial Scene");
+
+        WinManager winManager = joustManager.winManager;
+        if (winManager == null)
+            winManager = FindFirstObjectByType<WinManager>();
+
+        ScoreManager scoreManager = FindFirstObjectByType<ScoreManager>();
+        HorsePart_Joust horsePart = joustManager.horsePart;
+        if (horsePart == null) horsePart = FindFirstObjectByType<HorsePart_Joust>();
+        AttackPart_Joust attackPart = joustManager.attackPart;
+        if (attackPart == null) attackPart = FindFirstObjectByType<AttackPart_Joust>();
+        DefensePart_Joust defensePart = joustManager.defensePart;
+        if (defensePart == null) defensePart = FindFirstObjectByType<DefensePart_Joust>();
+
+        // ─────────────────────────────────────────────────
+        // 2. CREAR O ENCONTRAR JoustTutorialManager
+        // ─────────────────────────────────────────────────
+        JoustTutorialManager tutorialManager = joustManager.tutorialManager;
+        if (tutorialManager == null)
+            tutorialManager = FindFirstObjectByType<JoustTutorialManager>();
+
+        if (tutorialManager == null)
+        {
+            // Crearlo en el mismo GameObject que el JoustManager
+            tutorialManager = Undo.AddComponent<JoustTutorialManager>(joustManager.gameObject);
+            Debug.Log($"[Tutorial UI] Creado componente JoustTutorialManager en '{joustManager.gameObject.name}'.");
+        }
+        else
+        {
+            Undo.RegisterCompleteObjectUndo(tutorialManager, "Setup Tutorial Scene - TutorialManager");
+        }
+
+        // ─────────────────────────────────────────────────
+        // 3. CONFIGURAR FLAGS DE TUTORIAL
+        // ─────────────────────────────────────────────────
+        joustManager.isTutorialMode = true;
+        joustManager.usePreJoustIntro = false;
+        joustManager.useEffectChoiceButtons = false;
+        joustManager.tutorialManager = tutorialManager;
+
+        tutorialManager.isTutorialScene = true;
+
+        // ─────────────────────────────────────────────────
+        // 4. ASIGNAR CROSS-REFERENCES ENTRE MANAGERS
+        // ─────────────────────────────────────────────────
+        if (horsePart != null)
+        {
+            joustManager.horsePart = horsePart;
+            if (horsePart.joustManager == null) horsePart.joustManager = joustManager;
+            if (horsePart.scoreManager == null && scoreManager != null) horsePart.scoreManager = scoreManager;
+            EditorUtility.SetDirty(horsePart);
+        }
+
+        if (attackPart != null)
+        {
+            joustManager.attackPart = attackPart;
+            if (attackPart.joustManager == null) attackPart.joustManager = joustManager;
+            if (attackPart.scoreManager == null && scoreManager != null) attackPart.scoreManager = scoreManager;
+            EditorUtility.SetDirty(attackPart);
+        }
+
+        if (defensePart != null)
+        {
+            joustManager.defensePart = defensePart;
+            if (defensePart.joustManager == null) defensePart.joustManager = joustManager;
+            if (defensePart.scoreManager == null && scoreManager != null) defensePart.scoreManager = scoreManager;
+            EditorUtility.SetDirty(defensePart);
+        }
+
+        if (winManager != null)
+        {
+            Undo.RegisterCompleteObjectUndo(winManager, "Setup Tutorial Scene - WinManager");
+            joustManager.winManager = winManager;
+            winManager.joustManager = joustManager;
+            winManager.scoreManager = scoreManager;
+            winManager.nextSceneName = "MainMenu";
+            EditorUtility.SetDirty(winManager);
+        }
+
+        // ─────────────────────────────────────────────────
+        // 5. DESACTIVAR UI NO NECESARIA EN TUTORIAL
+        // ─────────────────────────────────────────────────
+
+        // Desactivar panel de cartas si existe
+        EffectManager effectManager = joustManager.effectManager;
+        if (effectManager == null) effectManager = FindFirstObjectByType<EffectManager>();
+        if (effectManager != null && effectManager.choicePanel != null)
+        {
+            effectManager.choicePanel.SetActive(false);
+            Debug.Log("[Tutorial UI] Panel de cartas desactivado.");
+        }
+
+        // Desactivar HUD Best-of-3 si existe
+        if (winManager != null)
+        {
+            if (winManager.hudRoundTitleText != null)
+                winManager.hudRoundTitleText.gameObject.SetActive(false);
+
+            if (winManager.playerWinIndicators != null)
+            {
+                foreach (var img in winManager.playerWinIndicators)
+                    if (img != null) img.gameObject.SetActive(false);
+            }
+            if (winManager.enemyWinIndicators != null)
+            {
+                foreach (var img in winManager.enemyWinIndicators)
+                    if (img != null) img.gameObject.SetActive(false);
+            }
+
+            // Buscar y desactivar el panel HUD de rondas por nombre
+            GameObject roundsHUD = GameObject.Find("HUD_RoundsPanelBorder");
+            if (roundsHUD != null)
+            {
+                roundsHUD.SetActive(false);
+                Debug.Log("[Tutorial UI] HUD de Rondas desactivado.");
+            }
+        }
+
+        // ─────────────────────────────────────────────────
+        // 6. GENERAR STATS PANEL SI NO EXISTE
+        // ─────────────────────────────────────────────────
+        if (winManager != null && winManager.statsPanelController == null)
+        {
+            // Buscar si ya existe uno en la escena
+            JoustStatsPanelController existingPanel = FindFirstObjectByType<JoustStatsPanelController>(FindObjectsInactive.Include);
+            if (existingPanel != null)
+            {
+                winManager.statsPanelController = existingPanel;
+                Debug.Log("[Tutorial UI] Panel de estadísticas existente reasignado al WinManager.");
+            }
+            else
+            {
+                // Generarlo usando el método existente
+                Debug.Log("[Tutorial UI] Generando Panel de Estadísticas...");
+                GenerateStatsPanelUIInternal(false);
+
+                // Reasignar nextSceneName a MainMenu tras la generación
+                if (winManager.statsPanelController != null)
+                    winManager.statsPanelController.nextSceneName = "MainMenu";
+            }
+        }
+        else if (winManager != null && winManager.statsPanelController != null)
+        {
+            winManager.statsPanelController.nextSceneName = "MainMenu";
+        }
+
+        // ─────────────────────────────────────────────────
+        // 7. ASEGURAR EventSystem
+        // ─────────────────────────────────────────────────
+        EnsureEventSystemExists();
+
+        // ─────────────────────────────────────────────────
+        // 8. MARCAR TODO COMO DIRTY
+        // ─────────────────────────────────────────────────
+        EditorUtility.SetDirty(joustManager);
+        EditorUtility.SetDirty(tutorialManager);
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+
+        EditorUtility.DisplayDialog(
+            "Tutorial Scene — Setup Completado",
+            "✓ JoustTutorialManager creado/configurado\n" +
+            "✓ isTutorialMode = true\n" +
+            "✓ isTutorialScene = true\n" +
+            "✓ Cross-references asignadas\n" +
+            "✓ UI de cartas/rondas desactivada\n" +
+            "✓ Panel de estadísticas listo\n" +
+            "✓ nextScene → MainMenu\n\n" +
+            "Próximo paso: arrastra tu Dummy a la escena y asígnalo en JoustManager → Enemy.",
+            "Excelente"
+        );
+    }
+
     private static void EnsureEventSystemExists()
     {
         UnityEngine.EventSystems.EventSystem eventSystem = FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>();
