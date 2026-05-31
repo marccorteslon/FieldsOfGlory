@@ -110,6 +110,8 @@ public class JoustManager : MonoBehaviour
 
     [Header("Tutorial")]
     public JoustTutorialManager tutorialManager;
+    [Tooltip("Activar en la escena NewTutorial. El enemigo no se mueve y se salta la intro/torneo.")]
+    public bool isTutorialMode = false;
 
     [HideInInspector] public Vector3 initialPlayerPos;
     [HideInInspector] public Quaternion initialPlayerRot;
@@ -139,109 +141,138 @@ public class JoustManager : MonoBehaviour
 
     void Start()
     {
-        // 1. Resolver dificultad y ciudad actual dinámicamente
-        ProgressManager progressManager = FindFirstObjectByType<ProgressManager>();
-        TournamentManager tournamentManager = FindFirstObjectByType<TournamentManager>();
-        string activeCityId = "";
-
-        if (progressManager != null)
+        if (isTutorialMode)
         {
-            activeCityId = progressManager.CurrentCityId;
+            // --- TUTORIAL MODE: saltar torneo/dificultad, usar valores fáciles ---
+            difficulty = JoustDifficulty.Easy;
+            usePreJoustIntro = false;
+            useEffectChoiceButtons = false;
 
-            if (tournamentManager != null)
-            {
-                var todayTournament = tournamentManager.GetTournamentForCityAndDate(
-                    progressManager.CurrentCityId,
-                    progressManager.CurrentDay,
-                    progressManager.CurrentMonth
-                );
-
-                if (todayTournament != null)
-                {
-                    difficulty = todayTournament.difficulty;
-                    Debug.Log($"[JoustManager] Dificultad del torneo de hoy detectada: {difficulty}");
-                }
-                else
-                {
-                    Debug.LogWarning($"[JoustManager] No hay torneo hoy en {progressManager.CurrentCityId}. Se mantiene dificultad: {difficulty}");
-                }
-            }
-        }
-
-        // 2. Activar/Desactivar escenarios locales basados en la ciudad actual
-        if (!string.IsNullOrEmpty(activeCityId))
-        {
-            bool mapFound = false;
+            // Activar solo el mapa por defecto
+            if (defaultMap != null) defaultMap.SetActive(true);
             foreach (var mapping in cityMaps)
             {
                 if (mapping.mapGameObject != null)
+                    mapping.mapGameObject.SetActive(false);
+            }
+
+            // Desactivar el Animator del Dummy para que no reproduzca "pushed" al inicio
+            if (enemy != null)
+            {
+                Animator dummyAnimator = enemy.GetComponentInChildren<Animator>();
+                if (dummyAnimator != null)
                 {
-                    bool isCurrentCityMap = string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase);
-                    mapping.mapGameObject.SetActive(isCurrentCityMap);
-                    if (isCurrentCityMap)
+                    dummyAnimator.enabled = false;
+                    Debug.Log("[JoustManager] Animator del Dummy desactivado hasta que reciba un impacto.");
+                }
+            }
+
+            Debug.Log("[JoustManager] Tutorial Mode activado. Dificultad: Easy, sin intro, sin cartas.");
+        }
+        else
+        {
+            // 1. Resolver dificultad y ciudad actual dinámicamente
+            ProgressManager progressManager = FindFirstObjectByType<ProgressManager>();
+            TournamentManager tournamentManager = FindFirstObjectByType<TournamentManager>();
+            string activeCityId = "";
+
+            if (progressManager != null)
+            {
+                activeCityId = progressManager.CurrentCityId;
+
+                if (tournamentManager != null)
+                {
+                    var todayTournament = tournamentManager.GetTournamentForCityAndDate(
+                        progressManager.CurrentCityId,
+                        progressManager.CurrentDay,
+                        progressManager.CurrentMonth
+                    );
+
+                    if (todayTournament != null)
                     {
-                        mapFound = true;
-                        Debug.Log($"[JoustManager] Escenario activado para la ciudad: {activeCityId}");
+                        difficulty = todayTournament.difficulty;
+                        Debug.Log($"[JoustManager] Dificultad del torneo de hoy detectada: {difficulty}");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[JoustManager] No hay torneo hoy en {progressManager.CurrentCityId}. Se mantiene dificultad: {difficulty}");
                     }
                 }
             }
 
-            // Si no se encontró un mapa específico en la lista, activamos el mapa por defecto
-            if (defaultMap != null)
+            // 2. Activar/Desactivar escenarios locales basados en la ciudad actual
+            if (!string.IsNullOrEmpty(activeCityId))
             {
-                defaultMap.SetActive(!mapFound);
-                if (!mapFound)
+                bool mapFound = false;
+                foreach (var mapping in cityMaps)
                 {
-                    Debug.Log($"[JoustManager] Ciudad {activeCityId} sin mapa asignado en la lista. Activado mapa por defecto.");
+                    if (mapping.mapGameObject != null)
+                    {
+                        bool isCurrentCityMap = string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase);
+                        mapping.mapGameObject.SetActive(isCurrentCityMap);
+                        if (isCurrentCityMap)
+                        {
+                            mapFound = true;
+                            Debug.Log($"[JoustManager] Escenario activado para la ciudad: {activeCityId}");
+                        }
+                    }
                 }
-            }
-        }
-        else
-        {
-            // Fallback si no hay ProgressManager
-            if (defaultMap != null)
-            {
-                defaultMap.SetActive(true);
-            }
-            foreach (var mapping in cityMaps)
-            {
-                if (mapping.mapGameObject != null)
+
+                if (defaultMap != null)
                 {
-                    mapping.mapGameObject.SetActive(false);
+                    defaultMap.SetActive(!mapFound);
+                    if (!mapFound)
+                    {
+                        Debug.Log($"[JoustManager] Ciudad {activeCityId} sin mapa asignado en la lista. Activado mapa por defecto.");
+                    }
                 }
-            }
-        }
-
-        // 3. Cambiar la malla del caballero oponente correspondiente a la dificultad (Mesh Swapping)
-        Mesh chosenMesh = difficulty switch
-        {
-            JoustDifficulty.Easy => easyEnemyMesh,
-            JoustDifficulty.Normal => normalEnemyMesh,
-            JoustDifficulty.Hard => hardEnemyMesh,
-            JoustDifficulty.Epic => epicEnemyMesh,
-            _ => normalEnemyMesh
-        };
-
-        if (chosenMesh != null)
-        {
-            if (enemyArmorRenderer != null)
-            {
-                enemyArmorRenderer.sharedMesh = chosenMesh;
-                Debug.Log($"[JoustManager] Malla '{chosenMesh.name}' aplicada al SkinnedMeshRenderer del enemigo para dificultad {difficulty}");
-            }
-            else if (enemyArmorMeshFilter != null)
-            {
-                enemyArmorMeshFilter.sharedMesh = chosenMesh;
-                Debug.Log($"[JoustManager] Malla '{chosenMesh.name}' aplicada al MeshFilter del enemigo para dificultad {difficulty}");
             }
             else
             {
-                Debug.LogWarning("[JoustManager] No se pudo cambiar la malla del enemigo: 'enemyArmorRenderer' y 'enemyArmorMeshFilter' son null.");
+                if (defaultMap != null)
+                {
+                    defaultMap.SetActive(true);
+                }
+                foreach (var mapping in cityMaps)
+                {
+                    if (mapping.mapGameObject != null)
+                    {
+                        mapping.mapGameObject.SetActive(false);
+                    }
+                }
             }
-        }
-        else
-        {
-            Debug.LogWarning($"[JoustManager] No se ha asignado ningún Mesh de caballero para la dificultad {difficulty}. Se usará la malla por defecto de la escena.");
+
+            // 3. Cambiar la malla del caballero oponente correspondiente a la dificultad (Mesh Swapping)
+            Mesh chosenMesh = difficulty switch
+            {
+                JoustDifficulty.Easy => easyEnemyMesh,
+                JoustDifficulty.Normal => normalEnemyMesh,
+                JoustDifficulty.Hard => hardEnemyMesh,
+                JoustDifficulty.Epic => epicEnemyMesh,
+                _ => normalEnemyMesh
+            };
+
+            if (chosenMesh != null)
+            {
+                if (enemyArmorRenderer != null)
+                {
+                    enemyArmorRenderer.sharedMesh = chosenMesh;
+                    Debug.Log($"[JoustManager] Malla '{chosenMesh.name}' aplicada al SkinnedMeshRenderer del enemigo para dificultad {difficulty}");
+                }
+                else if (enemyArmorMeshFilter != null)
+                {
+                    enemyArmorMeshFilter.sharedMesh = chosenMesh;
+                    Debug.Log($"[JoustManager] Malla '{chosenMesh.name}' aplicada al MeshFilter del enemigo para dificultad {difficulty}");
+                }
+                else
+                {
+                    Debug.LogWarning("[JoustManager] No se pudo cambiar la malla del enemigo: 'enemyArmorRenderer' y 'enemyArmorMeshFilter' son null.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[JoustManager] No se ha asignado ningún Mesh de caballero para la dificultad {difficulty}. Se usará la malla por defecto de la escena.");
+            }
         }
 
         ApplyDifficulty();
@@ -650,7 +681,8 @@ public class JoustManager : MonoBehaviour
         if (player != null)
             player.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
 
-        if (enemy != null)
+        // En modo tutorial el Dummy se queda quieto
+        if (enemy != null && !isTutorialMode)
             enemy.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
     }
 

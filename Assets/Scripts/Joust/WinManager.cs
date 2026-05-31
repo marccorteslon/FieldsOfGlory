@@ -122,7 +122,9 @@ public class WinManager : MonoBehaviour
         if (scoreUIManager != null)
             scoreUIManager.ConsolidateRound();
 
-        DisableTutorialAfterThisJoust();
+        // No desactivar el tutorial en modo tutorial (para que sea rejugable)
+        if (joustManager == null || !joustManager.isTutorialMode)
+            DisableTutorialAfterThisJoust();
 
         bool hasEnoughPoints = roundScore >= winPoints;
         bool fightWon = hasEnoughPoints && scoreManager.hasLandedAttack;
@@ -162,43 +164,62 @@ public class WinManager : MonoBehaviour
             playerHorseAnim = joustManager.playerHorseAnimator;
         }
 
-        if (fightWon)
+        if (joustManager != null && joustManager.isTutorialMode)
         {
-            // Si ganamos la justa, activamos el ragdoll del oponente
-            EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
-            if (enemyRagdoll != null)
+            // --- TUTORIAL MODE: usar animación "pushed" del Dummy en vez de ragdoll ---
+            if (fightWon && joustManager.enemy != null)
             {
-                if (hasCachedImpact)
+                Animator dummyAnimator = joustManager.enemy.GetComponentInChildren<Animator>();
+                if (dummyAnimator != null)
                 {
-                    enemyRagdoll.PlayImpact(cachedHitPoint, cachedHitDirection, cachedForceScore, true, cachedHitTag);
-                }
-                else
-                {
-                    // Fallback si no hay impacto registrado
-                    Vector3 direction = Vector3.back;
-                    Vector3 point = enemyRagdoll.transform.position + Vector3.up;
-                    enemyRagdoll.PlayImpact(point, direction, winPoints, true);
+                    dummyAnimator.enabled = true;
+                    dummyAnimator.Play("pushed", 0, 0f);
+                    dummyAnimator.SetFloat("Blend", 1f);
+                    Debug.Log("[Tutorial] Dummy recibe impacto → animación 'pushed' + Blend=1.");
                 }
             }
+            // En tutorial el dummy no ataca, así que el jugador nunca recibe ragdoll
         }
         else
         {
-            // Si perdimos la justa, nos aseguramos de que el oponente NO esté en ragdoll
-            EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
-            if (enemyRagdoll != null)
+            if (fightWon)
             {
-                enemyRagdoll.ResetRagdoll();
+                // Si ganamos la justa, activamos el ragdoll del oponente
+                EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
+                if (enemyRagdoll != null)
+                {
+                    if (hasCachedImpact)
+                    {
+                        enemyRagdoll.PlayImpact(cachedHitPoint, cachedHitDirection, cachedForceScore, true, cachedHitTag);
+                    }
+                    else
+                    {
+                        // Fallback si no hay impacto registrado
+                        Vector3 direction = Vector3.back;
+                        Vector3 point = enemyRagdoll.transform.position + Vector3.up;
+                        enemyRagdoll.PlayImpact(point, direction, winPoints, true);
+                    }
+                }
             }
-
-            // Activamos el ragdoll del propio jugador para que salga volando!
-            EnemyRagdollController playerRagdoll = GetPlayerRagdoll();
-            if (playerRagdoll != null)
+            else
             {
-                // El impacto viene en dirección frontal (hacia atrás para el jugador)
-                Vector3 direction = Vector3.forward;
-                Vector3 point = playerRagdoll.transform.position + Vector3.up;
-                int force = winPoints; // Fuerza del golpe proporcional a los puntos mínimos requeridos
-                playerRagdoll.PlayImpact(point, direction, force, true);
+                // Si perdimos la justa, nos aseguramos de que el oponente NO esté en ragdoll
+                EnemyRagdollController enemyRagdoll = GetEnemyRagdoll();
+                if (enemyRagdoll != null)
+                {
+                    enemyRagdoll.ResetRagdoll();
+                }
+
+                // Activamos el ragdoll del propio jugador para que salga volando!
+                EnemyRagdollController playerRagdoll = GetPlayerRagdoll();
+                if (playerRagdoll != null)
+                {
+                    // El impacto viene en dirección frontal (hacia atrás para el jugador)
+                    Vector3 direction = Vector3.forward;
+                    Vector3 point = playerRagdoll.transform.position + Vector3.up;
+                    int force = winPoints;
+                    playerRagdoll.PlayImpact(point, direction, force, true);
+                }
             }
         }
 
@@ -244,12 +265,27 @@ public class WinManager : MonoBehaviour
             }
         }
 
-        // Check if the match is decided (best of 3: first to 2 wins)
-        bool matchDecided = (playerRoundWins >= 2 || enemyRoundWins >= 2);
+        // Check if the match is decided
+        bool matchDecided;
+        if (joustManager != null && joustManager.isTutorialMode)
+        {
+            // En modo tutorial, siempre termina tras 1 ronda
+            matchDecided = true;
+        }
+        else
+        {
+            // best of 3: first to 2 wins
+            matchDecided = (playerRoundWins >= 2 || enemyRoundWins >= 2);
+        }
 
         if (matchDecided)
         {
-            if (playerRoundWins >= 2)
+            if (joustManager != null && joustManager.isTutorialMode)
+            {
+                // En modo tutorial, siempre mostramos el panel de "Tutorial Completado"
+                StartCoroutine(ShowTutorialCompletePanel());
+            }
+            else if (playerRoundWins >= 2)
                 StartCoroutine(ShowGameWinPanel());
             else
                 StartCoroutine(ShowRoundLosePanel());
@@ -449,6 +485,26 @@ public class WinManager : MonoBehaviour
                 SceneManager.LoadScene(nextSceneName);
             else
                 Debug.LogWarning("WinManager: nextSceneName no asignado.");
+        }
+    }
+
+    IEnumerator ShowTutorialCompletePanel()
+    {
+        gameEnded = true;
+
+        Debug.Log("[Tutorial] ¡Tutorial completado!");
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Mostrar el panel de estadísticas sin recompensas
+        if (statsPanelController != null)
+        {
+            statsPanelController.PopulateAndShow(true, 0, "");
+        }
+        else
+        {
+            // Fallback: volver al menú principal
+            SceneManager.LoadScene("MainMenu");
         }
     }
 
