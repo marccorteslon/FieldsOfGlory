@@ -17,6 +17,11 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 99e3d521fe130674ab9b266c1381f42b, type: 3}
   description: Una coraza libre de impedimentos
   price: 30
+  visualPrefab: {fileID: 0}
+  visualMaterial: {fileID: 0}
+  positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}
+  scaleOffset: {x: 1, y: 1, z: 1}
   slot: 3
   modifiers:
   - stat: 0
@@ -37,3 +42,4 @@ MonoBehaviour:
   - stat: 4
     type: 0
     value: 2
+  armorMesh: {fileID: 6373907742975684963, guid: 35bbd0acffd3eb64cb58d222bb55e78f, type: 3}

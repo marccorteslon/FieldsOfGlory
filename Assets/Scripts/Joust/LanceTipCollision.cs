@@ -20,6 +20,8 @@ public class LanceTipCollision : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"[DEBUG JOUST] LanceTipCollision OnTriggerEnter con '{other.gameObject.name}', tag: '{other.tag}'");
+
         // Ignorar nuestro propio escudo o cuerpo
         if (other.CompareTag("Player") ) return;
 
@@ -28,10 +30,15 @@ public class LanceTipCollision : MonoBehaviour
         // Comprobar si golpeamos alguna parte válida del enemigo
         if (hitTag == "Head" || hitTag == "Body" || hitTag == "Shield" || hitTag == "Horse")
         {
+            Debug.Log($"[DEBUG JOUST] ¡¡IMPACTO VÁLIDO REGISTRADO en LanceTipCollision!! Tag: {hitTag}, objeto: '{other.gameObject.name}'");
             if (lanceController != null && lanceController.joustManager != null)
             {
                 // Solo procesamos el golpe si estamos activamente en la fase de ataque
-                if (!lanceController.joustManager.attackPartIsOn) return;
+                if (!lanceController.joustManager.attackPartIsOn)
+                {
+                    Debug.Log($"[DEBUG JOUST] Colisión ignorada porque attackPartIsOn es FALSE.");
+                    return;
+                }
 
                 int BF = lanceController.GetBF();
                 int BL = lanceController.GetBL();

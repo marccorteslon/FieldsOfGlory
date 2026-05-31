@@ -44,6 +44,9 @@ public class JoustManager : MonoBehaviour
     public Transform player;
     public Transform enemy;
 
+    [Header("Horse Customization")]
+    public string horseChildName = "Horse";
+
     public float horsePhaseSpeed = 10f;
     public float combatPhaseSpeed = 4f;
     [HideInInspector] public float currentSpeed;
@@ -113,14 +116,23 @@ public class JoustManager : MonoBehaviour
     [HideInInspector] public Vector3 initialEnemyPos;
     [HideInInspector] public Quaternion initialEnemyRot;
 
+    private Transform playerVisualHorse;
+    private Transform enemyVisualHorse;
+
     [Header("Difficulty Settings")]
     public JoustDifficulty difficulty = JoustDifficulty.Normal;
 
-    [Header("Spawners (Dynamic Customization)")]
-    public GameObject easyEnemyPrefab;
-    public GameObject normalEnemyPrefab;
-    public GameObject hardEnemyPrefab;
-    public GameObject epicEnemyPrefab;
+    [Header("Enemy Meshes by Difficulty")]
+    public Mesh easyEnemyMesh;
+    public Mesh normalEnemyMesh;
+    public Mesh hardEnemyMesh;
+    public Mesh epicEnemyMesh;
+
+    [Header("Enemy Mesh Customization References")]
+    [Tooltip("El SkinnedMeshRenderer del oponente al que se le cambiará la malla.")]
+    public SkinnedMeshRenderer enemyArmorRenderer;
+    [Tooltip("Alternativa si el enemigo usa MeshFilter tradicional.")]
+    public MeshFilter enemyArmorMeshFilter;
 
     public List<CityMapMapping> cityMaps = new();
     public GameObject defaultMap;
@@ -200,53 +212,36 @@ public class JoustManager : MonoBehaviour
             }
         }
 
-        // 3. Spawnear al caballero correspondiente a la dificultad actual
-        GameObject chosenPrefab = difficulty switch
+        // 3. Cambiar la malla del caballero oponente correspondiente a la dificultad (Mesh Swapping)
+        Mesh chosenMesh = difficulty switch
         {
-            JoustDifficulty.Easy => easyEnemyPrefab,
-            JoustDifficulty.Normal => normalEnemyPrefab,
-            JoustDifficulty.Hard => hardEnemyPrefab,
-            JoustDifficulty.Epic => epicEnemyPrefab,
-            _ => normalEnemyPrefab
+            JoustDifficulty.Easy => easyEnemyMesh,
+            JoustDifficulty.Normal => normalEnemyMesh,
+            JoustDifficulty.Hard => hardEnemyMesh,
+            JoustDifficulty.Epic => epicEnemyMesh,
+            _ => normalEnemyMesh
         };
 
-        if (chosenPrefab != null)
+        if (chosenMesh != null)
         {
-            Vector3 spawnPos = Vector3.zero;
-            Quaternion spawnRot = Quaternion.identity;
-            Transform oldEnemy = enemy;
-
-            if (oldEnemy != null)
+            if (enemyArmorRenderer != null)
             {
-                spawnPos = oldEnemy.position;
-                spawnRot = oldEnemy.rotation;
+                enemyArmorRenderer.sharedMesh = chosenMesh;
+                Debug.Log($"[JoustManager] Malla '{chosenMesh.name}' aplicada al SkinnedMeshRenderer del enemigo para dificultad {difficulty}");
             }
-
-            GameObject spawnedEnemyObj = Instantiate(chosenPrefab, spawnPos, spawnRot);
-            enemy = spawnedEnemyObj.transform;
-            Debug.Log($"[JoustManager] Caballero '{chosenPrefab.name}' instanciado para dificultad {difficulty}");
-
-            // Asignar el animador del caballo del oponente en HorsePart_Joust
-            if (horsePart != null)
+            else if (enemyArmorMeshFilter != null)
             {
-                Animator enemyHorseAnim = spawnedEnemyObj.GetComponentInChildren<Animator>();
-                if (enemyHorseAnim != null)
-                {
-                    horsePart.opponentHorseAnimator = enemyHorseAnim;
-                    Debug.Log("[JoustManager] opponentHorseAnimator reasignado con éxito en HorsePart_Joust");
-                }
+                enemyArmorMeshFilter.sharedMesh = chosenMesh;
+                Debug.Log($"[JoustManager] Malla '{chosenMesh.name}' aplicada al MeshFilter del enemigo para dificultad {difficulty}");
             }
-
-            // Actualizar de forma dinámica todas las cámaras de Cinemachine y referencias de la escena al nuevo enemigo
-            if (oldEnemy != null)
+            else
             {
-                UpdateSceneReferencesToNewEnemy(oldEnemy, enemy);
-                Destroy(oldEnemy.gameObject); // Destruir el placeholder anterior
+                Debug.LogWarning("[JoustManager] No se pudo cambiar la malla del enemigo: 'enemyArmorRenderer' y 'enemyArmorMeshFilter' son null.");
             }
         }
         else
         {
-            Debug.LogWarning($"[JoustManager] No se ha asignado ningún prefab de caballero para la dificultad {difficulty}. Se usará el enemigo por defecto de la escena.");
+            Debug.LogWarning($"[JoustManager] No se ha asignado ningún Mesh de caballero para la dificultad {difficulty}. Se usará la malla por defecto de la escena.");
         }
 
         ApplyDifficulty();
@@ -255,12 +250,16 @@ public class JoustManager : MonoBehaviour
         {
             initialPlayerPos = player.position;
             initialPlayerRot = player.rotation;
+            playerVisualHorse = FindChildRecursive(player, horseChildName);
+            if (playerVisualHorse == null) playerVisualHorse = player;
         }
 
         if (enemy != null)
         {
             initialEnemyPos = enemy.position;
             initialEnemyRot = enemy.rotation;
+            enemyVisualHorse = FindChildRecursive(enemy, horseChildName);
+            if (enemyVisualHorse == null) enemyVisualHorse = enemy;
         }
 
         if (playerHorseAnimator == null && player != null)
@@ -595,6 +594,18 @@ public class JoustManager : MonoBehaviour
     {
         SetPreJoustHorseRunning(false);
 
+        if (player != null)
+        {
+            playerVisualHorse = FindChildRecursive(player, horseChildName);
+            if (playerVisualHorse == null) playerVisualHorse = player;
+        }
+
+        if (enemy != null)
+        {
+            enemyVisualHorse = FindChildRecursive(enemy, horseChildName);
+            if (enemyVisualHorse == null) enemyVisualHorse = enemy;
+        }
+
         // Volver a aplicar la dificultad base para asegurar consistencia
         ApplyDifficulty();
 
@@ -640,7 +651,7 @@ public class JoustManager : MonoBehaviour
             player.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
 
         if (enemy != null)
-            enemy.Translate(Vector3.back * currentSpeed * Time.deltaTime);
+            enemy.Translate(Vector3.forward * currentSpeed * Time.deltaTime);
     }
 
     void HandleHorseTimer()
@@ -675,7 +686,10 @@ public class JoustManager : MonoBehaviour
 
         if (player != null && enemy != null)
         {
-            Vector3 dirToEnemy = (enemy.position - player.position).normalized;
+            Transform pTrans = playerVisualHorse != null ? playerVisualHorse : player;
+            Transform eTrans = enemyVisualHorse != null ? enemyVisualHorse : enemy;
+
+            Vector3 dirToEnemy = (eTrans.position - pTrans.position).normalized;
             float dot = Vector3.Dot(player.forward, dirToEnemy);
 
             // Si el dot product es muy negativo, el enemigo está firmemente detrás nuestro.

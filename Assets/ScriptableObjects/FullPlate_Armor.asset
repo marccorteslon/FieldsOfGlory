@@ -17,6 +17,11 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 99e3d521fe130674ab9b266c1381f42b, type: 3}
   description: Una segunda piel de placas de acero
   price: 50
+  visualPrefab: {fileID: 0}
+  visualMaterial: {fileID: 0}
+  positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}
+  scaleOffset: {x: 1, y: 1, z: 1}
   slot: 3
   modifiers:
   - stat: 0
@@ -37,3 +42,4 @@ MonoBehaviour:
   - stat: 4
     type: 0
     value: 6
+  armorMesh: {fileID: 4048197389207173390, guid: adf88a18c2361a34d9aa570c2afcf73b, type: 3}

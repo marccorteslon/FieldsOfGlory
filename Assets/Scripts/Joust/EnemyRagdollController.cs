@@ -223,6 +223,9 @@ public class EnemyRagdollController : MonoBehaviour
 
         for (int i = 0; i < cachedTransforms.Length; i++)
         {
+            // Omitir el transform raíz para evitar que el enemigo completo se teletransporte hacia atrás
+            if (cachedTransforms[i] == transform) continue;
+
             cachedTransforms[i].localPosition = startPositions[i];
             cachedTransforms[i].localRotation = startRotations[i];
         }
