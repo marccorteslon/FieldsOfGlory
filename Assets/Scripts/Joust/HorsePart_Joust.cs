@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Unity.Cinemachine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class HorsePart_Joust : MonoBehaviour
 {
@@ -60,6 +62,38 @@ public class HorsePart_Joust : MonoBehaviour
     private bool hasOriginalFOV = false;
     private bool fovWasModified = false;
     private bool waitingForCameraChangeToRestoreFOV = false;
+
+    [Header("Post Processing")]
+    [Tooltip("Intensidad máxima del Motion Blur al acertar.")]
+    [Range(0f, 1f)] public float maxBlurIntensity = 0.65f;
+    [Tooltip("Intensidad máxima del Vignette al acertar.")]
+    [Range(0f, 1f)] public float maxVignetteIntensity = 0.45f;
+    [Tooltip("Velocidad a la que el efecto se desvanece después de acertar (más alto = más rápido).")]
+    [Range(0.1f, 5f)] public float ppFadeSpeed = 1f;
+
+    // Auto-creados en runtime
+    private Volume horseEffectVolume;
+    private MotionBlur motionBlur;
+    private Vignette vignette;
+    private float ppIntensity = 0f; // 0 = sin efecto, 1 = máximo
+
+    [Header("Speed Lines")]
+    [Tooltip("Se crea automáticamente si no se asigna.")]
+    public HorseSpeedLinesEffect speedLinesEffect;
+    [Tooltip("Número máximo de líneas (Verde). Amarillo usa la mitad.")]
+    public int speedLineCount = 24;
+    [Tooltip("Radio interior — dónde empieza cada línea (0…0.49 del ancho de pantalla).")]
+    [Range(0f, 0.49f)] public float speedLineInnerRadius = 0.12f;
+    [Tooltip("Radio exterior — dónde termina cada línea (0…0.49 del ancho de pantalla).")]
+    [Range(0f, 0.49f)] public float speedLineOuterRadius = 0.46f;
+    [Tooltip("Grosor de cada línea (0…0.05 del ancho de pantalla).")]
+    [Range(0.001f, 0.05f)] public float speedLineWidth = 0.012f;
+    [Tooltip("Tiempo de desvanecimiento en segundos.")]
+    public float speedLineFadeDuration = 0.3f;
+    [Tooltip("Color de las líneas al acertar en zona Verde.")]
+    public Color speedLineGreenColor = new Color(0.45f, 1f, 0.45f, 1f);
+    [Tooltip("Color de las líneas al acertar en zona Amarilla.")]
+    public Color speedLineYellowColor = new Color(1f, 0.85f, 0.15f, 1f);
 
     [Header("Colors")]
     public Color redColor = Color.red;
@@ -123,6 +157,28 @@ public class HorsePart_Joust : MonoBehaviour
 
         if (virtualCamera == null)
             virtualCamera = FindFirstObjectByType<CinemachineCamera>();
+
+        // Crear el efecto de speed lines automáticamente si no se asignó en el Inspector
+        if (speedLinesEffect == null)
+        {
+            speedLinesEffect = gameObject.AddComponent<HorseSpeedLinesEffect>();
+
+            var brain = FindFirstObjectByType<CinemachineBrain>();
+            if (brain != null)
+                speedLinesEffect.targetCamera = brain.GetComponent<Camera>();
+
+            if (speedLinesEffect.targetCamera == null)
+                speedLinesEffect.targetCamera = Camera.main;
+        }
+
+        // Pasar parámetros del Inspector al efecto
+        speedLinesEffect.maxLines     = speedLineCount;
+        speedLinesEffect.innerRadius  = speedLineInnerRadius;
+        speedLinesEffect.outerRadius  = speedLineOuterRadius;
+        speedLinesEffect.lineWidth    = speedLineWidth;
+        speedLinesEffect.fadeDuration = speedLineFadeDuration;
+        speedLinesEffect.greenColor   = speedLineGreenColor;
+        speedLinesEffect.yellowColor  = speedLineYellowColor;
     }
 
     void Start()
@@ -131,6 +187,7 @@ public class HorsePart_Joust : MonoBehaviour
         currentMoveSpeed = moveSpeed;
 
         SaveOriginalFOV();
+        InitPostProcessing();
 
         CalculateZones();
         DrawZones();
@@ -141,6 +198,7 @@ public class HorsePart_Joust : MonoBehaviour
     void Update()
     {
         UpdateCameraFOV();
+        UpdatePostProcessing();
 
         if (joustManager == null) return;
 
@@ -278,6 +336,84 @@ public class HorsePart_Joust : MonoBehaviour
         targetFOV = originalFOV;
         fovWasModified = false;
         waitingForCameraChangeToRestoreFOV = false;
+        ResetPostProcessing();
+    }
+
+    // ---------------------------------------------------------------
+    // POST PROCESSING
+    // ---------------------------------------------------------------
+
+    void InitPostProcessing()
+    {
+        // Buscar un Volume existente llamado "HorseEffectVolume" o crear uno nuevo
+        var existingGO = GameObject.Find("HorseEffectVolume");
+        if (existingGO != null)
+            horseEffectVolume = existingGO.GetComponent<Volume>();
+
+        if (horseEffectVolume == null)
+        {
+            var go = new GameObject("HorseEffectVolume");
+            horseEffectVolume = go.AddComponent<Volume>();
+            horseEffectVolume.isGlobal = true;
+            horseEffectVolume.weight = 1f;
+            horseEffectVolume.priority = 100f;
+            horseEffectVolume.profile = ScriptableObject.CreateInstance<VolumeProfile>();
+        }
+
+        var profile = horseEffectVolume.profile;
+
+        // Motion Blur
+        if (!profile.TryGet(out motionBlur))
+        {
+            motionBlur = profile.Add<MotionBlur>();
+            motionBlur.intensity.overrideState = true;
+            motionBlur.quality.overrideState = true;
+            motionBlur.quality.value = MotionBlurQuality.Low;
+        }
+        motionBlur.intensity.value = 0f;
+
+        // Vignette
+        if (!profile.TryGet(out vignette))
+        {
+            vignette = profile.Add<Vignette>();
+            vignette.intensity.overrideState = true;
+            vignette.smoothness.overrideState = true;
+            vignette.smoothness.value = 0.4f;
+        }
+        vignette.intensity.value = 0f;
+    }
+
+    void UpdatePostProcessing()
+    {
+        if (motionBlur == null || vignette == null) return;
+
+        // Fade out gradual
+        if (ppIntensity > 0f)
+        {
+            ppIntensity -= Time.deltaTime * ppFadeSpeed;
+            ppIntensity = Mathf.Max(ppIntensity, 0f);
+        }
+
+        motionBlur.intensity.value = maxBlurIntensity * ppIntensity;
+        vignette.intensity.value   = maxVignetteIntensity * ppIntensity;
+    }
+
+    /// <summary>Sube el efecto al máximo. Llamar al acertar.</summary>
+    void PulsePostProcessing(string zone)
+    {
+        switch (zone)
+        {
+            case "Verde":    ppIntensity = 1f;   break;
+            case "Amarillo": ppIntensity = 0.6f; break;
+            default: return;
+        }
+    }
+
+    void ResetPostProcessing()
+    {
+        ppIntensity = 0f;
+        if (motionBlur != null) motionBlur.intensity.value = 0f;
+        if (vignette != null)   vignette.intensity.value   = 0f;
     }
 
     void CalculateZones()
@@ -440,6 +576,8 @@ public class HorsePart_Joust : MonoBehaviour
             lastScoredZone = zone;
 
             IncreaseCameraFOV(zone);
+            speedLinesEffect?.PlayBurst(zone);
+            PulsePostProcessing(zone);
 
             if (scoreManager != null)
             {
@@ -579,6 +717,7 @@ public class HorsePart_Joust : MonoBehaviour
     {
         EvaluateZone();
         RestoreOriginalFOVWhenCameraChanged();
+        ResetPostProcessing();
         HideUI();
 
         if (objectToDisableOnEnd != null)
