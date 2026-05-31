@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 3f718208bfa36084db0ab8879b497d11, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 358a4c8831fbaf34a9234db9c8ba47b9, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -332,6 +332,8 @@ MonoBehaviour:
   finalLanceParent: {fileID: 144825805}
   shieldAttachment: {fileID: 1131995843}
   armorAttachment: {fileID: 0}
+  armorSkinnedMeshRenderer: {fileID: 0}
+  armorMeshFilter: {fileID: 0}
 --- !u!4 &13782963
 Transform:
   m_ObjectHideFlags: 0
@@ -51021,6 +51023,7 @@ MonoBehaviour:
   winManager: {fileID: 792966344}
   player: {fileID: 1315639666}
   enemy: {fileID: 7262366332247331364}
+  horseChildName: Horse
   horsePhaseSpeed: 24
   combatPhaseSpeed: 24
   currentSpeed: 0
@@ -51044,15 +51047,18 @@ MonoBehaviour:
   delayBetweenHorseAndAttack: 0.5
   controlsText: {fileID: 285133252}
   tutorialManager: {fileID: 1318912935}
+  isTutorialMode: 0
   initialPlayerPos: {x: 0, y: 0, z: 0}
   initialPlayerRot: {x: 0, y: 0, z: 0, w: 0}
   initialEnemyPos: {x: 0, y: 0, z: 0}
   initialEnemyRot: {x: 0, y: 0, z: 0, w: 0}
   difficulty: 3
-  easyEnemyPrefab: {fileID: 0}
-  normalEnemyPrefab: {fileID: 0}
-  hardEnemyPrefab: {fileID: 0}
-  epicEnemyPrefab: {fileID: 0}
+  easyEnemyMesh: {fileID: 0}
+  normalEnemyMesh: {fileID: 0}
+  hardEnemyMesh: {fileID: 0}
+  epicEnemyMesh: {fileID: 0}
+  enemyArmorRenderer: {fileID: 0}
+  enemyArmorMeshFilter: {fileID: 0}
   cityMaps: []
   defaultMap: {fileID: 0}
 --- !u!4 &1318912932
@@ -51119,6 +51125,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be9a741167e4f346bf36ec8ae2cdc99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTutorialScene: 0
+  horseTutorialClip: {fileID: 0}
+  attackTutorialClip: {fileID: 0}
+  defenseTutorialClip: {fileID: 0}
+  horseTutorialTitle: 'FASE 1: CABALLO'
+  horseTutorialDesc: "Pulsa X (Mando) o Click Izquierdo cuando el indicador est\xE9
+    en la zona verde para cargar tu caballo al m\xE1ximo."
+  attackTutorialTitle: 'FASE 2: ATAQUE'
+  attackTutorialDesc: "Apunta con el rat\xF3n o el stick derecho hacia el enemigo.
+    Mant\xE9n R2/Click Izquierdo para cargar tu lanza y suelta para atacar."
+  defenseTutorialTitle: 'FASE 3: DEFENSA'
+  defenseTutorialDesc: Usa el stick izquierdo o las teclas WASD para mover tu escudo
+    y bloquear el ataque enemigo siguiendo el indicador rojo.
   horseTutorialPanel: {fileID: 1958874251}
   attackTutorialPanel: {fileID: 2012305466}
   defenseTutorialPanel: {fileID: 1737996515}
@@ -56725,6 +56744,17 @@ MonoBehaviour:
   yellowFovIncrease: 3
   greenFovIncrease: 6
   fovSmoothSpeed: 6
+  maxBlurIntensity: 0.65
+  maxVignetteIntensity: 0.45
+  ppFadeSpeed: 1
+  speedLinesEffect: {fileID: 0}
+  speedLineCount: 24
+  speedLineInnerRadius: 0.12
+  speedLineOuterRadius: 0.46
+  speedLineWidth: 0.012
+  speedLineFadeDuration: 0.3
+  speedLineGreenColor: {r: 0.45, g: 1, b: 0.45, a: 1}
+  speedLineYellowColor: {r: 1, g: 0.85, b: 0.15, a: 1}
   redColor: {r: 0.7924528, g: 0.12335351, b: 0.12335351, a: 1}
   yellowColor: {r: 0.9433962, g: 0.74168086, b: 0.048949808, a: 1}
   greenColor: {r: 0.19207366, g: 0.8679245, b: 0.08597365, a: 1}
