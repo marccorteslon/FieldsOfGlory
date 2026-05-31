@@ -19,6 +19,11 @@ public class TownNode : MonoBehaviour
     private ShopDefinition currentShop;
     private TavernDefinition currentTavern;
 
+    [Header("Town Objects")]
+    public GameObject townObjectsRoot;
+
+    public PlayerMovement playerMovement;
+
     public void EnterTown()
     {
         if (progressManager == null)
@@ -49,6 +54,12 @@ public class TownNode : MonoBehaviour
 
     public void EnterShop()
     {
+        if (playerMovement != null)
+            playerMovement.canMove = false;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (currentShop == null)
         {
             Debug.LogError("TownNode: no hay tienda cargada para este pueblo.");
@@ -61,7 +72,8 @@ public class TownNode : MonoBehaviour
             return;
         }
 
-        shopPanel.SetOriginTownPanel(townPanelObject);
+        //shopPanel.SetOriginTownPanel(townPanelObject);
+        shopPanel.SetOriginTownPanel(townObjectsRoot != null ? townObjectsRoot : townPanelObject);
 
         if (shopPanel.shopTitleText != null && currentCity != null)
         {
@@ -71,6 +83,8 @@ public class TownNode : MonoBehaviour
         if (townPanelObject != null)
             townPanelObject.SetActive(false);
 
+        if (townObjectsRoot != null)
+            townObjectsRoot.SetActive(false);
 
         if (shopPanelObject != null)
             shopPanelObject.SetActive(true);
@@ -100,6 +114,9 @@ public class TownNode : MonoBehaviour
         if (townPanelObject != null)
             townPanelObject.SetActive(false);
 
+        if (townObjectsRoot != null)
+            townObjectsRoot.SetActive(false);
+
         if (shopPanelObject != null)
             shopPanelObject.SetActive(false);
 
@@ -120,12 +137,21 @@ public class TownNode : MonoBehaviour
         if (townPanelObject != null)
             townPanelObject.SetActive(false);
 
+        if (townObjectsRoot != null)
+            townObjectsRoot.SetActive(false);
+
         if (mapButtonsObject != null)
             mapButtonsObject.SetActive(true);
 
         currentCity = null;
         currentShop = null;
         currentTavern = null;
+
+        if (playerMovement != null)
+            playerMovement.canMove = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void OnCityLoaded(CityDefinition city)
@@ -152,8 +178,14 @@ public class TownNode : MonoBehaviour
             OnError
         );
 
+        //if (townPanelObject != null)
+        //    townPanelObject.SetActive(true);
+
         if (townPanelObject != null)
-            townPanelObject.SetActive(true);
+            townPanelObject.SetActive(false);
+
+        if (townObjectsRoot != null)
+            townObjectsRoot.SetActive(true);
 
         if (shopPanelObject != null)
             shopPanelObject.SetActive(false);
@@ -163,6 +195,24 @@ public class TownNode : MonoBehaviour
 
         if (travelUI != null)
             travelUI.RefreshTravelOptions(city.cityId);
+    }
+
+    public void ExitShop()
+    {
+        if (shopPanelObject != null)
+            shopPanelObject.SetActive(false);
+
+        if (townObjectsRoot != null)
+            townObjectsRoot.SetActive(true);
+
+        if (townPanelObject != null)
+            townPanelObject.SetActive(true);
+
+        if (playerMovement != null)
+            playerMovement.canMove = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void OnError(Exception ex)

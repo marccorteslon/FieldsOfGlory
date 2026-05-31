@@ -22,6 +22,9 @@ public class ShopPanelController : MonoBehaviour
     [Header("Shop Items (4) - IDs")]
     public string[] itemIds = new string[4];
 
+    [Header("Player")]
+    public PlayerMovement playerMovement;
+
     [System.Serializable]
     public class ShopSlotUI
     {
@@ -63,6 +66,12 @@ public class ShopPanelController : MonoBehaviour
 
         if (currentTownPanel != null)
             currentTownPanel.SetActive(true);
+
+        if (playerMovement != null)
+            playerMovement.canMove = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     public void RefreshMoneyUI()
