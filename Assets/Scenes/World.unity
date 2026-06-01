@@ -509,7 +509,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1138131689}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: ExitTown
         m_Mode: 1
@@ -7702,99 +7702,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abc00000000008776157719125956545, type: 3}
---- !u!1 &134534736
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 134534737}
-  - component: {fileID: 134534740}
-  - component: {fileID: 134534739}
-  - component: {fileID: 134534741}
-  m_Layer: 5
-  m_Name: Button_Valdoren
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &134534737
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 134534736}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 363786129}
-  m_Father: {fileID: 1982604937}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.059407406}
-  m_AnchorMax: {x: 0.08247917, y: 0.089}
-  m_AnchoredPosition: {x: 420, y: 833}
-  m_SizeDelta: {x: 158.2325, y: 80.8443}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &134534739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 134534736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 756868dce8640f04493fef758423eec3, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &134534740
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 134534736}
-  m_CullTransparentMesh: 1
---- !u!114 &134534741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 134534736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
-  clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
-  useHoverSound: 1
-  useClickSound: 1
 --- !u!1001 &135908382
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24138,7 +24045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 134534736}
+  m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &324276518
@@ -27028,143 +26935,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &363786128
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 363786129}
-  - component: {fileID: 363786131}
-  - component: {fileID: 363786130}
-  m_Layer: 5
-  m_Name: Text (TMP)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &363786129
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 363786128}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 134534737}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 23}
-  m_SizeDelta: {x: -148.6839, y: -64.1114}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &363786130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 363786128}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: Valdoren
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3d235d69a5c47484e87cd6b193a1aa91, type: 2}
-  m_sharedMaterial: {fileID: -1149059850413302750, guid: 3d235d69a5c47484e87cd6b193a1aa91, type: 2}
-  m_fontSharedMaterials:
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 48.65
-  m_fontSizeBase: 24
-  m_fontWeight: 400
-  m_enableAutoSizing: 1
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &363786131
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 363786128}
-  m_CullTransparentMesh: 1
 --- !u!4 &364054692 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1031182304, guid: abc00000000016134398337990533818, type: 3}
@@ -46758,7 +46528,6 @@ GameObject:
   - component: {fileID: 693157237}
   - component: {fileID: 693157241}
   - component: {fileID: 693157240}
-  - component: {fileID: 693157238}
   m_Layer: 5
   m_Name: Button_Teberis
   m_TagString: Untagged
@@ -46781,27 +46550,11 @@ RectTransform:
   - {fileID: 1054330868}
   m_Father: {fileID: 1982604937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.36037508, y: 0.32670373}
-  m_AnchorMax: {x: 0.49427086, y: 0.41400003}
-  m_AnchoredPosition: {x: -0.5, y: -1}
-  m_SizeDelta: {x: 58.232544, y: 18.8443}
+  m_AnchorMin: {x: 0.73760414, y: 0.5}
+  m_AnchorMax: {x: 0.87279177, y: 0.59925926}
+  m_AnchoredPosition: {x: -2, y: 1.5}
+  m_SizeDelta: {x: 56.232544, y: 5.8442993}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &693157238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693157236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
-  clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
-  useHoverSound: 1
-  useClickSound: 1
 --- !u!114 &693157240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52472,7 +52225,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1940434005}
+      - m_Target: {fileID: 18175358}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: EnterShop
         m_Mode: 1
@@ -53045,7 +52798,7 @@ MonoBehaviour:
   travelManager: {fileID: 1838615564}
   progressManager: {fileID: 1696376387}
   destinationDropdown: {fileID: 0}
-  townNode: {fileID: 1940434005}
+  townNode: {fileID: 0}
 --- !u!1 &793678953
 GameObject:
   m_ObjectHideFlags: 0
@@ -59443,7 +59196,6 @@ GameObject:
   - component: {fileID: 897160345}
   - component: {fileID: 897160349}
   - component: {fileID: 897160348}
-  - component: {fileID: 897160346}
   m_Layer: 5
   m_Name: Button_Davronne
   m_TagString: Untagged
@@ -59466,27 +59218,11 @@ RectTransform:
   - {fileID: 1301085033}
   m_Father: {fileID: 1982604937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.669, y: 0.099148154}
-  m_AnchorMax: {x: 0.8037087, y: 0.17755556}
-  m_AnchoredPosition: {x: 1, y: -0.5}
-  m_SizeDelta: {x: 57.232544, y: 27.8443}
+  m_AnchorMin: {x: 0.5388124, y: 0.5226296}
+  m_AnchorMax: {x: 0.679, y: 0.59925926}
+  m_AnchoredPosition: {x: 1, y: -1.5}
+  m_SizeDelta: {x: 47.232544, y: 28.8443}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &897160346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 897160344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
-  clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
-  useHoverSound: 1
-  useClickSound: 1
 --- !u!114 &897160348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61591,7 +61327,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1303115070}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: ExitTown
         m_Mode: 1
@@ -70517,7 +70253,6 @@ GameObject:
   - component: {fileID: 1050058899}
   - component: {fileID: 1050058903}
   - component: {fileID: 1050058902}
-  - component: {fileID: 1050058900}
   m_Layer: 5
   m_Name: Button_PuertoAlondra
   m_TagString: Untagged
@@ -70540,27 +70275,11 @@ RectTransform:
   - {fileID: 1790945775}
   m_Father: {fileID: 1982604937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.135625, y: 0.6244075}
-  m_AnchorMax: {x: 0.268, y: 0.7103704}
-  m_AnchoredPosition: {x: 0, y: -2.5}
-  m_SizeDelta: {x: 61.232544, y: 19.8443}
+  m_AnchorMin: {x: 0.11800001, y: 0.5226296}
+  m_AnchorMax: {x: 0.25039583, y: 0.6224074}
+  m_AnchoredPosition: {x: -5, y: -0.5}
+  m_SizeDelta: {x: 61.232544, y: 4.8442993}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1050058900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1050058898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
-  clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
-  useHoverSound: 1
-  useClickSound: 1
 --- !u!114 &1050058902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70879,7 +70598,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 49
+  m_fontSize: 48.9
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -73483,7 +73202,6 @@ GameObject:
   - component: {fileID: 1093087678}
   - component: {fileID: 1093087682}
   - component: {fileID: 1093087681}
-  - component: {fileID: 1093087679}
   m_Layer: 5
   m_Name: Button_Montelirio
   m_TagString: Untagged
@@ -73506,27 +73224,11 @@ RectTransform:
   - {fileID: 2079956615}
   m_Father: {fileID: 1982604937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.059407406}
-  m_AnchorMax: {x: 0.08247917, y: 0.089}
-  m_AnchoredPosition: {x: 1192, y: 937}
-  m_SizeDelta: {x: 158.2325, y: 80.8443}
+  m_AnchorMin: {x: 0.22179167, y: 0.28440744}
+  m_AnchorMax: {x: 0.3551667, y: 0.37211117}
+  m_AnchoredPosition: {x: 5, y: -1.5}
+  m_SizeDelta: {x: 59.232483, y: 17.8443}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1093087679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1093087677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
-  clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
-  useHoverSound: 1
-  useClickSound: 1
 --- !u!114 &1093087681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75733,7 +75435,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1688896449}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: EnterShop
         m_Mode: 1
@@ -83340,7 +83042,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1109538884}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: ExitTown
         m_Mode: 1
@@ -85947,7 +85649,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 47.75
+  m_fontSize: 47.45
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -100585,7 +100287,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1303115070}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: EnterShop
         m_Mode: 1
@@ -117630,14 +117332,13 @@ GameObject:
   - component: {fileID: 1764304328}
   - component: {fileID: 1764304327}
   - component: {fileID: 1764304326}
-  - component: {fileID: 1764304325}
   m_Layer: 5
   m_Name: Button_Skoldtia
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1764304324
 RectTransform:
   m_ObjectHideFlags: 0
@@ -117653,27 +117354,11 @@ RectTransform:
   - {fileID: 2107142123}
   m_Father: {fileID: 1982604937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.011125001, y: 0.7483704}
-  m_AnchorMax: {x: 0.17183334, y: 0.8508519}
-  m_AnchoredPosition: {x: 4.5, y: -5.5}
-  m_SizeDelta: {x: 6.232544, y: 1.8442993}
+  m_AnchorMin: {x: 0.5388124, y: 0.31748152}
+  m_AnchorMax: {x: 0.679, y: 0.4064815}
+  m_AnchoredPosition: {x: 4, y: -0.5}
+  m_SizeDelta: {x: 46.232544, y: 16.8443}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1764304325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1764304323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f90f003ca7839e94090c25e5d562b099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hoverClip: {fileID: 8300000, guid: 4ad459d7a5fb2d243a1da67dfccf30ba, type: 3}
-  clickClip: {fileID: 8300000, guid: e341901950164c74f83ac064a1c7f73e, type: 3}
-  useHoverSound: 1
-  useClickSound: 1
 --- !u!114 &1764304326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117718,7 +117403,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1940434005}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: EnterTown
         m_Mode: 1
@@ -123427,7 +123112,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1688896449}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: ExitTown
         m_Mode: 1
@@ -127333,7 +127018,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1138131689}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: EnterShop
         m_Mode: 1
@@ -129022,60 +128707,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f6822c83a8c52042b38c1dde8b0ab65, type: 3}
---- !u!1 &1940434004
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1940434006}
-  - component: {fileID: 1940434005}
-  m_Layer: 0
-  m_Name: City_Skoldtia
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1940434005
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1940434004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9ebfd4772353954d9d1f281b09434fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cityId: city_skoldtia
-  shopPanel: {fileID: 8674111240959750275}
-  progressManager: {fileID: 1696376387}
-  travelUI: {fileID: 106500887}
-  mapButtonsObject: {fileID: 1982604936}
-  townPanelObject: {fileID: 354152280}
-  shopPanelObject: {fileID: 8674111240959750273}
-  tavernPanelObject: {fileID: 0}
-  townObjectsRoot: {fileID: 0}
-  playerMovement: {fileID: 0}
---- !u!4 &1940434006
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1940434004}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.7844722, y: -0.37418604, z: -6.902233}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1941011501
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -130730,7 +130361,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1940434005}
+      - m_Target: {fileID: 18175358}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: ExitTown
         m_Mode: 1
@@ -131709,7 +131340,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 481234883}
-  - {fileID: 134534737}
   - {fileID: 1093087678}
   - {fileID: 897160345}
   - {fileID: 1050058899}
@@ -134415,7 +134045,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1109538884}
         m_TargetAssemblyTypeName: TownNode, Assembly-CSharp
         m_MethodName: EnterShop
         m_Mode: 1
@@ -137809,7 +137439,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.3
+  m_fontSize: 41
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -139919,7 +139549,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48.4
+  m_fontSize: 48.85
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -141049,6 +140679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapDatabase: {fileID: 11400000, guid: e942c37249083a7408ad399a97c93204, type: 2}
+  defaultSceneNodeId: node_puertoalondra
   progressManager: {fileID: 1696376387}
   calendarPanelController: {fileID: 706068380}
   randomEncounterManager: {fileID: 156616204}
@@ -151793,7 +151424,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1616170615}
   - {fileID: 264744429}
-  - {fileID: 1940434006}
   - {fileID: 1552738434}
   - {fileID: 324276518}
   - {fileID: 1696376389}
