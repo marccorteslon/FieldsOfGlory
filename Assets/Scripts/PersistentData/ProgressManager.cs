@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class ProgressManager : MonoBehaviour
 {
@@ -52,13 +52,13 @@ public class ProgressManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(data.currentCityId))
         {
-            data.currentCityId = "city_valdoren";
+            data.currentCityId = "city_puertoalondra";
             changed = true;
         }
 
         if (string.IsNullOrWhiteSpace(data.currentNodeId))
         {
-            data.currentNodeId = "node_valdoren";
+            data.currentNodeId = "node_puertoalondra";
             changed = true;
         }
 
