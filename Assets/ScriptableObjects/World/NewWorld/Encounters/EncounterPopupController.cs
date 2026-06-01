@@ -74,22 +74,42 @@ public class EncounterPopupController : MonoBehaviour
 
     void RefreshOptions()
     {
-        for (int i = 0; i < optionButtons.Length; i++)
+        if (progressManager == null)
+            progressManager = FindFirstObjectByType<ProgressManager>();
+
+        int buttonIndex = 0;
+
+        if (currentEncounter != null && currentEncounter.options != null)
         {
-            bool hasOption = currentEncounter != null && i < currentEncounter.options.Count;
+            for (int i = 0; i < currentEncounter.options.Count; i++)
+            {
+                EncounterOptionDefinition option = currentEncounter.options[i];
+                
+                if (!string.IsNullOrWhiteSpace(option.requiredFlag) && progressManager != null && !progressManager.HasFlag(option.requiredFlag))
+                    continue;
 
-            optionButtons[i].gameObject.SetActive(hasOption);
+                if (!string.IsNullOrWhiteSpace(option.forbiddenFlag) && progressManager != null && progressManager.HasFlag(option.forbiddenFlag))
+                    continue;
 
-            if (!hasOption) continue;
+                if (buttonIndex < optionButtons.Length)
+                {
+                    optionButtons[buttonIndex].gameObject.SetActive(true);
+                    
+                    if (optionButtonTexts != null && buttonIndex < optionButtonTexts.Length)
+                        optionButtonTexts[buttonIndex].text = option.optionText;
 
-            int index = i;
-            EncounterOptionDefinition option = currentEncounter.options[i];
+                    int capturedIndex = i;
+                    optionButtons[buttonIndex].onClick.RemoveAllListeners();
+                    optionButtons[buttonIndex].onClick.AddListener(() => ChooseOption(capturedIndex));
+                    
+                    buttonIndex++;
+                }
+            }
+        }
 
-            if (optionButtonTexts != null && i < optionButtonTexts.Length)
-                optionButtonTexts[i].text = option.optionText;
-
-            optionButtons[i].onClick.RemoveAllListeners();
-            optionButtons[i].onClick.AddListener(() => ChooseOption(index));
+        for (int i = buttonIndex; i < optionButtons.Length; i++)
+        {
+            optionButtons[i].gameObject.SetActive(false);
         }
     }
 
@@ -170,6 +190,29 @@ public class EncounterPopupController : MonoBehaviour
                         equipmentManager.Equip(effect.itemReward);
                         progressManager.SaveEquipped();
                         Debug.Log($"[Encounter] Acquired and equipped item: {effect.itemReward.displayName}");
+                    }
+                    break;
+                
+                case EncounterEffectType.SetFlag:
+                    if (progressManager != null && !string.IsNullOrWhiteSpace(effect.flagName))
+                    {
+                        progressManager.SetFlag(effect.flagName);
+                        Debug.Log($"[Encounter] Story Flag set: {effect.flagName}");
+                    }
+                    break;
+
+                case EncounterEffectType.RemoveFlag:
+                    if (progressManager != null && !string.IsNullOrWhiteSpace(effect.flagName))
+                    {
+                        progressManager.RemoveFlag(effect.flagName);
+                        Debug.Log($"[Encounter] Story Flag removed: {effect.flagName}");
+                    }
+                    break;
+
+                case EncounterEffectType.AddPermanentStat:
+                    if (progressManager != null)
+                    {
+                        progressManager.AddPermanentBoost(effect.statToBoost, effect.statBoostValue, StatModType.Flat);
                     }
                     break;
             }

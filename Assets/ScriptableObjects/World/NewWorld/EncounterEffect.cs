@@ -14,4 +14,11 @@ public class EncounterEffect
 
     [Header("Only for AddItem")]
     public EquipmentDefinition itemReward;
+
+    [Header("Only for SetFlag/RemoveFlag")]
+    public string flagName;
+
+    [Header("Only for AddPermanentStat")]
+    public StatType statToBoost;
+    public float statBoostValue;
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -41,6 +42,10 @@ public class DisparoGameplayManager : MonoBehaviour
     public ProgressManager progressManager;
     public CrossbowController crossbowController;
 
+    [Header("Mapas y Entornos")]
+    public List<CityMapMapping> cityMaps = new();
+    public GameObject defaultMap;
+
     [Header("Estado de Partida")]
     public bool isGameplayActive = false;
     public bool isGameEnded = false;
@@ -72,6 +77,41 @@ public class DisparoGameplayManager : MonoBehaviour
 
         if (statsPanelController == null)
             statsPanelController = FindFirstObjectByType<JoustStatsPanelController>();
+
+        // Activar el mapa correspondiente a la ciudad
+        if (progressManager != null)
+        {
+            string activeCityId = progressManager.CurrentCityId;
+            if (!string.IsNullOrEmpty(activeCityId))
+            {
+                bool mapFound = false;
+                foreach (var mapping in cityMaps)
+                {
+                    if (mapping.mapGameObject != null)
+                    {
+                        bool isCurrentCityMap = string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase);
+                        mapping.mapGameObject.SetActive(isCurrentCityMap);
+                        if (isCurrentCityMap)
+                        {
+                            mapFound = true;
+                        }
+                    }
+                }
+                
+                if (defaultMap != null)
+                {
+                    defaultMap.SetActive(!mapFound);
+                }
+            }
+            else
+            {
+                if (defaultMap != null) defaultMap.SetActive(true);
+                foreach (var mapping in cityMaps)
+                {
+                    if (mapping.mapGameObject != null) mapping.mapGameObject.SetActive(false);
+                }
+            }
+        }
 
         // Desactivar panel final si estuviera activo
         if (statsPanelController != null && statsPanelController.panelObject != null)

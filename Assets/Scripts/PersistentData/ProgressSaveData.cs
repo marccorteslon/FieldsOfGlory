@@ -17,4 +17,6 @@ public class ProgressSaveData
     public int currentMonth = 1;
 
     public System.Collections.Generic.List<string> completedEncounters = new System.Collections.Generic.List<string>();
+    public System.Collections.Generic.List<string> storyFlags = new System.Collections.Generic.List<string>();
+    public System.Collections.Generic.List<StatModifier> permanentBoosts = new System.Collections.Generic.List<StatModifier>();
 }

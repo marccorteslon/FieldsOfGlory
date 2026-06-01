@@ -16,3 +16,7 @@ MonoBehaviour:
   nodeBId: node_bahiapulcritud
   directionFromA: 3
   directionFromB: 1
+  dangerIndex: 0
+  possibleEncounters:
+  - encounterId: enc_tutorial_emboscada
+    weight: 1

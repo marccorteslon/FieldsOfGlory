@@ -22,4 +22,11 @@ public class EncounterOptionDefinition
     [Header("Branching Narrative (Optional)")]
     public RandomEncounterDefinition nextEncounterOnSuccess;
     public RandomEncounterDefinition nextEncounterOnFailure;
+
+    [Header("Story Flags")]
+    [Tooltip("If set, this option will only appear if the player has this flag.")]
+    public string requiredFlag;
+    
+    [Tooltip("If set, this option will NOT appear if the player has this flag.")]
+    public string forbiddenFlag;
 }

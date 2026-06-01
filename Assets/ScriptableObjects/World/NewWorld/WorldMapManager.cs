@@ -280,8 +280,8 @@ public class WorldMapManager : MonoBehaviour
         if (calendarPanelController != null)
             calendarPanelController.RefreshCalendar();
 
-        if (randomEncounterManager != null && !destinationNode.isCrossroad)
-            randomEncounterManager.TryTriggerEncounter(destinationNode);
+        if (randomEncounterManager != null)
+            randomEncounterManager.TryTriggerEncounter(selectedConnection, destinationNode);
 
         selectedConnection = null;
 

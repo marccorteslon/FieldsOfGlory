@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: Tutorial_Emboscada
+  m_EditorClassIdentifier: 
+  encounterId: enc_tutorial_emboscada
+  title: "Emboscada en la Quebrada"
+  encounterImage: {fileID: 0}
+  description: "¡Peligro! Mientras cruzas un estrecho desfiladero, un grupo de bandoleros corta el paso. Están fuertemente armados y no parecen dispuestos a negociar. ¡Es hora de poner a prueba tus estadísticas!"
+  options:
+  - optionText: "¡Cargar contra ellos a toda velocidad!"
+    statToCheck: 2
+    difficulty: 15
+    successText: "Tu montura es tan veloz que rompes sus líneas antes de que puedan reaccionar. Escapan aterrorizados y en su huida dejan caer algunas monedas."
+    failureText: "Tu caballo duda un segundo, tiempo suficiente para que te derriben de una pedrada. Pierdes dinero y tiempo recuperándote."
+    successEffects:
+    - type: 0
+      value: 15
+      targetNodeId: 
+      itemReward: {fileID: 0}
+    failureEffects:
+    - type: 1
+      value: 10
+      targetNodeId: 
+      itemReward: {fileID: 0}
+    - type: 2
+      value: 1
+      targetNodeId: 
+      itemReward: {fileID: 0}
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+  - optionText: "Mantener la guardia alta y avanzar como un muro."
+    statToCheck: 6
+    difficulty: 15
+    successText: "Su lluvia de golpes rebota inofensivamente contra tu armadura. Pierden la moral al ver que eres imparable y huyen."
+    failureText: "Un golpe certero encuentra una fisura en tu armadura y caes dolorido. Te roban algunas monedas mientras te recuperas."
+    successEffects:
+    - type: 0
+      value: 15
+      targetNodeId: 
+      itemReward: {fileID: 0}
+    failureEffects:
+    - type: 1
+      value: 10
+      targetNodeId: 
+      itemReward: {fileID: 0}
+    - type: 2
+      value: 1
+      targetNodeId: 
+      itemReward: {fileID: 0}
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}

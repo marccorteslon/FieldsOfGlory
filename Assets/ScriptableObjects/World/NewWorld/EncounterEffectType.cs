@@ -4,5 +4,8 @@ public enum EncounterEffectType
     LoseMoney,
     AddDays,
     MoveToNode,
-    AddItem
+    AddItem,
+    SetFlag,
+    RemoveFlag,
+    AddPermanentStat
 }

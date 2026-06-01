@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class LoadoutStatsComponent : MonoBehaviour
 {
-    // Componente que recalcula automáticamente las stats finales cuando cambia el equipo.
+    // Componente que recalcula automaticamente las stats finales cuando cambia el equipo.
     public EquipmentManager equipment;
     public LoadoutStats stats = new LoadoutStats();
 
@@ -21,6 +21,15 @@ public class LoadoutStatsComponent : MonoBehaviour
     public void Refresh()
     {
         if (equipment == null) return;
-        stats.Recalculate(equipment.GetAllModifiers());
+        
+        System.Collections.Generic.List<StatModifier> allMods = new System.Collections.Generic.List<StatModifier>(equipment.GetAllModifiers());
+        
+        ProgressManager progress = FindFirstObjectByType<ProgressManager>();
+        if (progress != null && progress.data != null && progress.data.permanentBoosts != null)
+        {
+            allMods.AddRange(progress.data.permanentBoosts);
+        }
+
+        stats.Recalculate(allMods);
     }
 }

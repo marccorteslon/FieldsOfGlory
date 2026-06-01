@@ -236,5 +236,54 @@ public class ProgressManager : MonoBehaviour
             SaveProgress();
         }
     }
+
+    public bool HasFlag(string flagName)
+    {
+        if (data.storyFlags == null) return false;
+        return data.storyFlags.Contains(flagName);
+    }
+
+    public void SetFlag(string flagName)
+    {
+        if (string.IsNullOrWhiteSpace(flagName)) return;
+
+        if (data.storyFlags == null)
+            data.storyFlags = new System.Collections.Generic.List<string>();
+
+        if (!data.storyFlags.Contains(flagName))
+        {
+            data.storyFlags.Add(flagName);
+            SaveProgress();
+        }
+    }
+
+    public void RemoveFlag(string flagName)
+    {
+        if (string.IsNullOrWhiteSpace(flagName)) return;
+
+        if (data.storyFlags != null && data.storyFlags.Contains(flagName))
+        {
+            data.storyFlags.Remove(flagName);
+            SaveProgress();
+        }
+    }
+
+    public void AddPermanentBoost(StatType stat, float value, StatModType modType = StatModType.Flat)
+    {
+        if (data.permanentBoosts == null)
+            data.permanentBoosts = new System.Collections.Generic.List<StatModifier>();
+
+        data.permanentBoosts.Add(new StatModifier { stat = stat, value = value, type = modType });
+        SaveProgress();
+
+        if (equipment != null)
+        {
+            var loadout = equipment.GetComponent<LoadoutStatsComponent>();
+            if (loadout != null)
+                loadout.Refresh();
+        }
+        
+        Debug.Log($"[Progress] Permanent Boost Added: {stat} +{value} ({modType})");
+    }
 }
 
