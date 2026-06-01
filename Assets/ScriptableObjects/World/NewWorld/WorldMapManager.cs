@@ -6,6 +6,8 @@ public class WorldMapManager : MonoBehaviour
 {
     [Header("Data")]
     public MapDatabase mapDatabase;
+    [Tooltip("El ID del nodo donde aparecerá el jugador por defecto si entra a este mapa y su nodo guardado no existe en esta escena.")]
+    public string defaultSceneNodeId = "";
 
     [Header("Refs")]
     public ProgressManager progressManager;
@@ -318,8 +320,28 @@ public class WorldMapManager : MonoBehaviour
 
         if (nodeView == null)
         {
-            Debug.LogWarning("No se encontrÃƒÂ³ MapNodeView para " + progressManager.CurrentNodeId);
-            return;
+            Debug.LogWarning("No se encontró MapNodeView para " + progressManager.CurrentNodeId + " en esta escena.");
+            
+            if (!string.IsNullOrEmpty(defaultSceneNodeId))
+            {
+                Debug.Log($"Intentando usar el nodo por defecto de la escena: {defaultSceneNodeId}");
+                nodeView = GetNodeView(defaultSceneNodeId);
+                
+                if (nodeView != null)
+                {
+                    progressManager.SetCurrentNode(defaultSceneNodeId);
+                    
+                    if (mapDatabase != null)
+                    {
+                        MapNodeDefinition def = mapDatabase.GetNodeById(defaultSceneNodeId);
+                        if (def != null && def.isTown)
+                            progressManager.SetCurrentCity(def.cityId);
+                    }
+                }
+            }
+
+            if (nodeView == null)
+                return;
         }
 
         Transform stopPoint = nodeView.playerStopPoint != null

@@ -52,13 +52,13 @@ public class ProgressManager : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(data.currentCityId))
         {
-            data.currentCityId = "city_puertoalondra";
+            data.currentCityId = "city_senderopomar";
             changed = true;
         }
 
         if (string.IsNullOrWhiteSpace(data.currentNodeId))
         {
-            data.currentNodeId = "node_puertoalondra";
+            data.currentNodeId = "node_chozapapa";
             changed = true;
         }
 
