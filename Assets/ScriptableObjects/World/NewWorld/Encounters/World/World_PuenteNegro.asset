@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_PuenteNegro
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_puentenegro
+  title: El Desafio del Puente
+  encounterImage: {fileID: 0}
+  description: Un imponente Caballero Negro bloquea el puente de piedra. 'Ningun
+    mortal cruza este puente sin derramar sangre... o probar su valia en la liza'.
+  options:
+  - optionText: Aceptar el desafio.
+    statToCheck: 0
+    difficulty: 0
+    successText: El caballero asiente lentamente. Abres la marcha hacia el campo
+      del honor. Prepara tus armas para la justa mas dura de tu vida.
+    failureText: 
+    successEffects:
+    - type: 3
+      value: 0
+      targetNodeId: node_justa_negra
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
+  - optionText: Huir y buscar otro camino a campo traviesa.
+    statToCheck: 0
+    difficulty: 0
+    successText: El caballero rie a carcajadas bajo su yelmo mientras te alejas por
+      el barro, perdiendo tiempo valioso.
+    failureText: 
+    successEffects:
+    - type: 2
+      value: 1
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 

@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_Tumulos
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_tumulos
+  title: Los Antiguos Tumulos
+  encounterImage: {fileID: 0}
+  description: Las tumbas de los primeros reyes emanan una magia resonante, identica
+    a la de la Puerta del Dragon. Sientes que podrias canalizarla.
+  options:
+  - optionText: Intentar canalizar la magia para abrir una falla de retorno.
+    statToCheck: 3
+    difficulty: 20
+    successText: Logras concentrar la energia dispersa. El aire se rasga y cruzas
+      al instante hacia Las Puertas del Dragon.
+    failureText: La magia nigromantica rechaza tu control. Te drena la energia vital
+      y duermes durante dias.
+    successEffects:
+    - type: 3
+      value: 0
+      targetNodeId: node_puertasdragon
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects:
+    - type: 2
+      value: 3
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
+  - optionText: Dejar los espiritus en paz.
+    statToCheck: 0
+    difficulty: 0
+    successText: Has venido a justar, no a profanar tumbas.
+    failureText: 
+    successEffects: []
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 

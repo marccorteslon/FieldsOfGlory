@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_TribuCielo
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_tribucielo
+  title: El Puente de las Nubes
+  encounterImage: {fileID: 0}
+  description: El temible Caudillo Alado bloquea el puente levadizo que da acceso
+    a las montanas mas altas. 'Solo los Senores del Viento pueden pasar', ruge, cruzando
+    las lanzas de sus guerreros.
+  options:
+  - optionText: Elevar orgullosamente el Emblema del Viento del Valle de los Reyes.
+    statToCheck: 0
+    difficulty: 0
+    successText: Las lanzas se apartan de inmediato. El Caudillo se arrodilla ante
+      ti. Un chaman se acerca y te imbuye con la vision del aguila y la precision
+      del halcon (+5 Balance de Lanza).
+    failureText: 
+    successEffects:
+    - type: 6
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: flag_emblemaviento
+      statToBoost: 0
+      statBoostValue: 0
+    - type: 7
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 2
+      statBoostValue: 5
+    - type: 5
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: flag_done_tribucielo
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: flag_emblemaviento
+    forbiddenFlag: 
+  - optionText: Me retirare a buscar la forma de probar que soy un Senor del Viento.
+    statToCheck: 0
+    difficulty: 0
+    successText: El caudillo asiente. 'Busca en los laberintos enterrados de los
+      valles del sur'.
+    failureText: 
+    successEffects: []
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: flag_emblemaviento

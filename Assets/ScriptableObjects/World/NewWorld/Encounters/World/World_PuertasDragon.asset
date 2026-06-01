@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_PuertasDragon
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_puertasdragon
+  title: Las Puertas del Dragon
+  encounterImage: {fileID: 0}
+  description: Un antiguo portal magico hecho de obsidiana ruge de energia arcana.
+    El vortice parece conectar con el sur.
+  options:
+  - optionText: Cruzar el portal a ciegas.
+    statToCheck: 0
+    difficulty: 0
+    successText: El espacio se pliega a tu alrededor y apareces de golpe en Los Tumulos.
+    failureText: 
+    successEffects:
+    - type: 3
+      value: 0
+      targetNodeId: node_tumulos
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
+  - optionText: Dar media vuelta.
+    statToCheck: 0
+    difficulty: 0
+    successText: Prefieres que tus pies toquen tierra firme.
+    failureText: 
+    successEffects: []
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 

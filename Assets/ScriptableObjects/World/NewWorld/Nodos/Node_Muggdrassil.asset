@@ -16,6 +16,9 @@ MonoBehaviour:
   displayName: Muggdrassil
   travelDaysCost: 1
   dangerIndex: 0
+  isCrossroad: 0
   isTown: 0
   cityId: 
-  possibleEncounters: []
+  possibleEncounters:
+  - encounterId: enc_world_muggdrassil
+    weight: 100

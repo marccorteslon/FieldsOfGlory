@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_Muggdrassil
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_muggdrassil
+  title: El Arbol de la Vida
+  encounterImage: {fileID: 0}
+  description: 'Llegas a las inmensas raices de Muggdrassil. El anciano druida te
+    mira con desden: ''El arbol sangra desde que profanaron el Mitonar. No otorgare
+    la fuerza de la bestia a quien no traiga de vuelta la Corteza Primigenia''.'
+  options:
+  - optionText: Entregar la Corteza Sagrada del Mitonar.
+    statToCheck: 0
+    difficulty: 0
+    successText: Las lagrimas brotan de los ojos del druida al recolocar la corteza
+      en el tronco. Agradecido, traza una runa verde en tu frente. Sientes como una
+      fuerza animal primigenia invade tus musculos (+5 Fuerza Bruta).
+    failureText: 
+    successEffects:
+    - type: 6
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: flag_corteza
+      statToBoost: 0
+      statBoostValue: 0
+    - type: 7
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 1
+      statBoostValue: 5
+    - type: 5
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: flag_done_muggdrassil
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: flag_corteza
+    forbiddenFlag: 
+  - optionText: No tengo la corteza. Regresare cuando la encuentre.
+    statToCheck: 0
+    difficulty: 0
+    successText: El druida asiente en silencio. Debes buscar en las ruinas del Mitonar.
+    failureText: 
+    successEffects: []
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: flag_corteza

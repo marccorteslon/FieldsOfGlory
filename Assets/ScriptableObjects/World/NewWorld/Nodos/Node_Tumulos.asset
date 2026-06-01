@@ -16,6 +16,9 @@ MonoBehaviour:
   displayName: "Los T\xFAmulos"
   travelDaysCost: 1
   dangerIndex: 0
+  isCrossroad: 0
   isTown: 0
   cityId: 
-  possibleEncounters: []
+  possibleEncounters:
+  - encounterId: enc_world_tumulos
+    weight: 100

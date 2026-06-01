@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_Thurich
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_thurich
+  title: El Constructor Solitario
+  encounterImage: {fileID: 0}
+  description: Un anciano solitario carga enormes bloques de piedra, intentando reconstruir
+    la antigua Thurich, arrasada por los dragones.
+  options:
+  - optionText: Ayudarle a cargar los bloques pesados.
+    statToCheck: 1
+    difficulty: 18
+    successText: 'Trabajas duro durante dias. El anciano resulta ser el guardian
+      de una orden caida y, en agradecimiento, te entrega la reliquia de su orden:
+      la ''Piedra del Guardian''.'
+    failureText: Te excedes intentando mover una losa colosal y te lesionas gravemente
+      la espalda.
+    successEffects:
+    - type: 2
+      value: 2
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    - type: 0
+      value: 50
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    - type: 5
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: flag_piedraguardian
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects:
+    - type: 2
+      value: 3
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
+  - optionText: Seguir mi camino.
+    statToCheck: 0
+    difficulty: 0
+    successText: Un solo hombre jamas reconstruira una ciudad.
+    failureText: 
+    successEffects: []
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 

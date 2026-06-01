@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: World_Mitonar
+  m_EditorClassIdentifier: 
+  encounterId: enc_world_mitonar
+  title: Las Ruinas de Mitonar
+  encounterImage: {fileID: 0}
+  description: Te adentras en la neblina de la ciudad destruida. Entre los escombros
+    del antiguo templo, algo palpita con magia antigua.
+  options:
+  - optionText: Usar mi precision para desenterrar el objeto sin derrumbar el templo.
+    statToCheck: 3
+    difficulty: 15
+    successText: Logras apartar las pesadas losas de marmol. En el centro de un relicario
+      polvoriento encuentras la 'Corteza del Arbol Primigenio'. Notas que la madera
+      esta extranamente caliente.
+    failureText: Das un mal paso y una columna entera se derrumba sobre ti. Pasas
+      dias curando tus fracturas.
+    successEffects:
+    - type: 0
+      value: 50
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    - type: 5
+      value: 0
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: flag_corteza
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects:
+    - type: 2
+      value: 3
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
