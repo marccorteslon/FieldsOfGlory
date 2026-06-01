@@ -159,6 +159,82 @@ MonoBehaviour:
     m_Key: menu_exit
     m_Metadata:
       m_Items: []
+  - m_Id: 12108893240688640
+    m_Key: effect_fog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109137219158016
+    m_Key: effect_rain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109184245694464
+    m_Key: effect_points
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109195394154496
+    m_Key: effect_defense
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109225182101504
+    m_Key: effect_goldFlat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109267066421248
+    m_Key: effect_goldMultip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109292819447808
+    m_Key: effect_random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109324889096192
+    m_Key: effect_noMods
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109355801116672
+    m_Key: joust_challenge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109377963819008
+    m_Key: joust_round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109400243961856
+    m_Key: endPanel_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109421391642624
+    m_Key: endPanel_equip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109441364918272
+    m_Key: endPanel_stats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109461933785088
+    m_Key: endPanel_result
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109586789826560
+    m_Key: endPanel_score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109614006665216
+    m_Key: endPanel_next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109664074072064
+    m_Key: map_resume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109689747406848
+    m_Key: map_Calendar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109710093975552
+    m_Key: map_menu
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

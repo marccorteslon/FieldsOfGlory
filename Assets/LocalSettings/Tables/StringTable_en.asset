@@ -197,6 +197,112 @@ MonoBehaviour:
     m_Localized: Exit
     m_Metadata:
       m_Items: []
+  - m_Id: 12108893240688640
+    m_Localized: 'Fog on the Battlefield
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109137219158016
+    m_Localized: 'Fog on the Battlefield
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109184245694464
+    m_Localized: 'Fog on the Battlefield
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109195394154496
+    m_Localized: '+{choiceButton.flatGoldReward} Gold on Win
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109225182101504
+    m_Localized: '+50% Gold Earned (x1.5)
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109267066421248
+    m_Localized: 'Free Equipment Item
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109292819447808
+    m_Localized: 'No Active Modifiers (Standard Round)
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109324889096192
+    m_Localized: 'SELECT YOUR CHALLENGE
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109355801116672
+    m_Localized: 'ROUND
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109377963819008
+    m_Localized: ROUND
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109400243961856
+    m_Localized: 'BATTLE STATISTICS
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109421391642624
+    m_Localized: 'YOUR EQUIPMENT
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109441364918272
+    m_Localized: 'FINAL STATISTICS
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109461933785088
+    m_Localized: RESULTS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109586789826560
+    m_Localized: 'TOTAL SCORE:
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109614006665216
+    m_Localized: 'NEXT
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109664074072064
+    m_Localized: 'Resume Game
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109689747406848
+    m_Localized: Calendar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109710093975552
+    m_Localized: Return to Main Menu
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

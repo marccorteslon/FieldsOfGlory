@@ -341,7 +341,7 @@ public class EffectManager : MonoBehaviour
     IEnumerator EffectTextRoutine(string negName, string rewName)
     {
         effectText.gameObject.SetActive(true);
-        effectText.text = $"Reto: <color=red>{negName}</color>\nPremio: <color=green>{rewName}</color>";
+        effectText.text = $"Challenge: <color=red>{negName}</color>\nPrice: <color=green>{rewName}</color>";
 
         yield return new WaitForSeconds(textDuration);
 

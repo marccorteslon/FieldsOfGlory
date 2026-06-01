@@ -186,6 +186,94 @@ MonoBehaviour:
     m_Localized: Sortir
     m_Metadata:
       m_Items: []
+  - m_Id: 12108893240688640
+    m_Localized: 'Boira al Camp
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109137219158016
+    m_Localized: "Pluja i Vent Tempestu\xF3s\n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109184245694464
+    m_Localized: '+{choiceButton.extraWinPoints} Punts Requerits:
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109195394154496
+    m_Localized: +50% Velocitat d'Atac Rival
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109225182101504
+    m_Localized: '+{choiceButton.flatGoldReward} Or en guanyar
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109267066421248
+    m_Localized: '+50% Or Guanyat (x1.5)
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109292819447808
+    m_Localized: Objecte d'Equip Gratis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109324889096192
+    m_Localized: "Sense modificadors actius (Ronda Est\xE0ndard)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109355801116672
+    m_Localized: SELECCIONA EL TEU REPTE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109377963819008
+    m_Localized: 'RONDA
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109400243961856
+    m_Localized: "ESTAD\xCDSTIQUES DEL COMBAT"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109421391642624
+    m_Localized: 'EL TEU EQUIPAMENT
+
+'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109441364918272
+    m_Localized: "ESTAD\xCDSTIQUES FINALS\n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109461933785088
+    m_Localized: RESULTATS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109586789826560
+    m_Localized: "PUNTUACI\xD3 TOTAL:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109614006665216
+    m_Localized: "SEG\xDCENT"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109664074072064
+    m_Localized: "SEG\xDCENT RONDA\n"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109689747406848
+    m_Localized: Calendari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12109710093975552
+    m_Localized: "Tornar al Men\xFA Principal"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
