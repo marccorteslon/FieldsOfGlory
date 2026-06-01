@@ -27,7 +27,7 @@ public class DebugSavePath : MonoBehaviour
                               "  \"equippedLanceId\": \"Training_Lance\",\n" +
                               "  \"equippedShieldId\": \"Training_Shield\",\n" +
                               "  \"equippedArmorId\": \"Training_Armor\",\n" +
-                              "  \"currentCityId\": \"city_valdoren\",\n" +
+                              "  \"currentCityId\": \"city_puertoalondra\",\n" +
                               "  \"currentDay\": 1,\n" +
                               "  \"currentMonth\": 1\n" +
                               "}";

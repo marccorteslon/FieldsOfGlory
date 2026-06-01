@@ -27,8 +27,8 @@ public static class ProgressSaveSystem
             equippedShieldId = "Training_Shield",
             equippedArmorId = "Training_Armor",
 
-            currentCityId = "city_valdoren",
-            currentNodeId = "node_valdoren",
+            currentCityId = "city_puertoalondra",
+            currentNodeId = "node_puertoalondra",
 
             currentDay = 1,
             currentMonth = 1
