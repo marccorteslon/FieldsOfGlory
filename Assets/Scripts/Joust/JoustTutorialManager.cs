@@ -5,20 +5,23 @@ using TMPro;
 
 public class JoustTutorialManager : MonoBehaviour
 {
-    // ---------------------------------------------------------------
-    // TUTORIAL SCENE MODE (VideoPlayer + UI auto-generada)
-    // ---------------------------------------------------------------
+    // TUTORIAL SCENE MODE
 
     [Header("Tutorial Scene Mode")]
-    [Tooltip("Activar en la escena NewTutorial. Usa VideoPlayer y UI auto-generada en lugar de paneles manuales.")]
+    [Tooltip("Activar en la escena NewTutorial. Usa un panel ya creado en la escena.")]
     public bool isTutorialScene = false;
 
-    [Header("Video Clips (Solo Tutorial Scene)")]
-    [Tooltip("Clip en loop que muestra cómo jugar la fase del Caballo.")]
+    [Header("Manual Tutorial Panel")]
+    public GameObject tutorialPanel;
+    public RawImage videoRawImage;
+    public TextMeshProUGUI titleLabel;
+    public TextMeshProUGUI descLabel;
+    public TextMeshProUGUI buttonLabel;
+    public Button nextButton;
+
+    [Header("Video Clips")]
     public VideoClip horseTutorialClip;
-    [Tooltip("Clip en loop que muestra cómo jugar la fase de Ataque.")]
     public VideoClip attackTutorialClip;
-    [Tooltip("Clip en loop que muestra cómo jugar la fase de Defensa.")]
     public VideoClip defenseTutorialClip;
 
     [Header("Tutorial Texts")]
@@ -31,46 +34,34 @@ public class JoustTutorialManager : MonoBehaviour
     [TextArea(2, 4)] public string defenseTutorialTitle = "FASE 3: DEFENSA";
     [TextArea(2, 4)] public string defenseTutorialDesc = "Usa el stick izquierdo o las teclas WASD para mover tu escudo y bloquear el ataque enemigo siguiendo el indicador rojo.";
 
-    // ---------------------------------------------------------------
-    // LEGACY PANEL MODE (Escena Justa normal)
-    // ---------------------------------------------------------------
+    // LEGACY PANEL MODE
 
-    [Header("Legacy Tutorial Panels (Escena Justa normal)")]
+    [Header("Legacy Tutorial Panels")]
     public GameObject horseTutorialPanel;
     public GameObject attackTutorialPanel;
     public GameObject defenseTutorialPanel;
 
-    // ---------------------------------------------------------------
-    // RUNTIME STATE
-    // ---------------------------------------------------------------
+    // RUNTIME
 
-    private GameObject currentPanel; // legacy mode
+    private GameObject currentPanel;
 
-    // Video tutorial UI (auto-generated)
-    private GameObject tutorialOverlay;
-    private RawImage videoRawImage;
-    private TextMeshProUGUI titleLabel;
-    private TextMeshProUGUI descLabel;
-    private TextMeshProUGUI buttonLabel;
     private VideoPlayer videoPlayer;
     private RenderTexture videoRenderTexture;
 
     private float timeScaleBeforeTutorial = 1f;
     private bool tutorialPausedTime = false;
     private bool isShowingTutorial = false;
-    private string currentPhase = ""; // "horse", "attack", "defense"
+    private string currentPhase = "";
 
     private const string TutorialEnabledKey = "JoustTutorialEnabled";
 
-    // ---------------------------------------------------------------
     // LIFECYCLE
-    // ---------------------------------------------------------------
 
     void Awake()
     {
         if (isTutorialScene)
         {
-            BuildTutorialUI();
+            SetupTutorialPanel();
             HideTutorialUI();
         }
         else
@@ -83,6 +74,9 @@ public class JoustTutorialManager : MonoBehaviour
 
     void OnDestroy()
     {
+        if (videoPlayer != null)
+            videoPlayer.Stop();
+
         if (videoRenderTexture != null)
         {
             videoRenderTexture.Release();
@@ -94,8 +88,7 @@ public class JoustTutorialManager : MonoBehaviour
     {
         if (!IsTutorialOpen()) return;
 
-        // Input para cerrar tutorial (funciona con Time.timeScale = 0)
-        bool closeWithController = Input.GetKeyDown(KeyCode.JoystickButton1); // B en Xbox
+        bool closeWithController = Input.GetKeyDown(KeyCode.JoystickButton1);
         bool closeWithKeyboard = Input.GetKeyDown(KeyCode.X);
         bool closeWithSpace = Input.GetKeyDown(KeyCode.Space);
 
@@ -103,9 +96,7 @@ public class JoustTutorialManager : MonoBehaviour
             CloseTutorial();
     }
 
-    // ---------------------------------------------------------------
-    // PUBLIC API (usada por JoustManager y otros)
-    // ---------------------------------------------------------------
+    // PUBLIC API
 
     public bool ShouldShowTutorial()
     {
@@ -117,6 +108,7 @@ public class JoustTutorialManager : MonoBehaviour
     {
         if (isTutorialScene)
             return isShowingTutorial;
+
         return currentPanel != null && currentPanel.activeSelf;
     }
 
@@ -170,65 +162,93 @@ public class JoustTutorialManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // ---------------------------------------------------------------
-    // VIDEO TUTORIAL SYSTEM (isTutorialScene = true)
-    // ---------------------------------------------------------------
+    // TUTORIAL SCENE
+
+    void SetupTutorialPanel()
+    {
+        if (tutorialPanel == null)
+            return;
+
+        videoRenderTexture = new RenderTexture(1280, 720, 0);
+        videoRenderTexture.Create();
+
+        videoPlayer = gameObject.AddComponent<VideoPlayer>();
+        videoPlayer.playOnAwake = false;
+        videoPlayer.renderMode = VideoRenderMode.RenderTexture;
+        videoPlayer.targetTexture = videoRenderTexture;
+        videoPlayer.isLooping = true;
+        videoPlayer.timeUpdateMode = VideoTimeUpdateMode.UnscaledGameTime;
+        videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
+
+        if (videoRawImage != null)
+            videoRawImage.texture = videoRenderTexture;
+
+        if (nextButton != null)
+        {
+            nextButton.onClick.RemoveAllListeners();
+            nextButton.onClick.AddListener(CloseTutorial);
+        }
+
+        if (buttonLabel != null)
+            buttonLabel.text = "CONTINUAR";
+    }
 
     void ShowTutorialVideo(string phase, VideoClip clip, string title, string description)
     {
-        if (tutorialOverlay == null) return;
+        if (tutorialPanel == null) return;
 
-        // Pausar el juego
         if (!tutorialPausedTime)
         {
             timeScaleBeforeTutorial = Time.timeScale;
             tutorialPausedTime = true;
         }
+
         Time.timeScale = 0f;
+
         isShowingTutorial = true;
         currentPhase = phase;
 
-        // Textos
-        if (titleLabel != null) titleLabel.text = title;
-        if (descLabel != null) descLabel.text = description;
+        if (titleLabel != null)
+            titleLabel.text = title;
 
-        // Reproducir vídeo en loop
-        if (videoPlayer != null && clip != null)
+        if (descLabel != null)
+            descLabel.text = description;
+
+        if (videoPlayer != null)
         {
-            videoPlayer.clip = clip;
-            videoPlayer.isLooping = true;
-            videoPlayer.Play();
+            videoPlayer.Stop();
+
+            if (clip != null)
+            {
+                videoPlayer.clip = clip;
+                videoPlayer.Play();
+            }
         }
 
-        // Mostrar si no hay clip (con placeholder negro)
         if (videoRawImage != null)
-        {
             videoRawImage.color = clip != null ? Color.white : new Color(0.1f, 0.1f, 0.1f, 1f);
-        }
 
-        tutorialOverlay.SetActive(true);
+        tutorialPanel.SetActive(true);
     }
 
     void CloseTutorialVideo()
     {
-        bool wasShowingAttack = (currentPhase == "attack");
+        bool wasShowingAttack = currentPhase == "attack";
 
-        // Parar vídeo
         if (videoPlayer != null)
             videoPlayer.Stop();
 
         HideTutorialUI();
+
         isShowingTutorial = false;
         currentPhase = "";
 
-        // Encadenar: después del tutorial de ataque → mostrar tutorial de defensa
         if (wasShowingAttack && ShouldShowTutorial())
         {
             ShowTutorialVideo("defense", defenseTutorialClip, defenseTutorialTitle, defenseTutorialDesc);
             return;
         }
 
-        // Restaurar tiempo
         if (tutorialPausedTime)
         {
             Time.timeScale = timeScaleBeforeTutorial;
@@ -238,13 +258,11 @@ public class JoustTutorialManager : MonoBehaviour
 
     void HideTutorialUI()
     {
-        if (tutorialOverlay != null)
-            tutorialOverlay.SetActive(false);
+        if (tutorialPanel != null)
+            tutorialPanel.SetActive(false);
     }
 
-    // ---------------------------------------------------------------
-    // LEGACY PANEL SYSTEM (isTutorialScene = false)
-    // ---------------------------------------------------------------
+    // LEGACY PANEL SYSTEM
 
     void ShowLegacyPanel(GameObject panel)
     {
@@ -300,170 +318,5 @@ public class JoustTutorialManager : MonoBehaviour
             defenseTutorialPanel.SetActive(false);
 
         currentPanel = null;
-    }
-
-    // ---------------------------------------------------------------
-    // UI BUILDER — Crea la UI del tutorial en runtime
-    // ---------------------------------------------------------------
-
-    void BuildTutorialUI()
-    {
-        // Buscar Canvas existente en la escena
-        Canvas canvas = FindFirstObjectByType<Canvas>();
-        if (canvas == null)
-        {
-            GameObject canvasGO = new GameObject("TutorialCanvas");
-            canvas = canvasGO.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 100;
-
-            var scaler = canvasGO.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080);
-
-            canvasGO.AddComponent<GraphicRaycaster>();
-        }
-
-        // RenderTexture para el VideoPlayer
-        videoRenderTexture = new RenderTexture(1280, 720, 0);
-        videoRenderTexture.Create();
-
-        // VideoPlayer en este GameObject
-        videoPlayer = gameObject.AddComponent<VideoPlayer>();
-        videoPlayer.playOnAwake = false;
-        videoPlayer.renderMode = VideoRenderMode.RenderTexture;
-        videoPlayer.targetTexture = videoRenderTexture;
-        videoPlayer.isLooping = true;
-        videoPlayer.timeUpdateMode = VideoTimeUpdateMode.UnscaledGameTime;
-        videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
-
-        // ─── OVERLAY (fondo oscuro pantalla completa) ───
-        tutorialOverlay = CreateUIElement("TutorialOverlay", canvas.transform);
-        StretchFull(tutorialOverlay.GetComponent<RectTransform>());
-        var overlayImg = tutorialOverlay.AddComponent<Image>();
-        overlayImg.color = new Color(0f, 0f, 0f, 0.88f);
-
-        // Canvas propio para asegurar que se renderiza encima de todo
-        var overlayCanvas = tutorialOverlay.AddComponent<Canvas>();
-        overlayCanvas.overrideSorting = true;
-        overlayCanvas.sortingOrder = 200;
-        tutorialOverlay.AddComponent<GraphicRaycaster>();
-
-        // ─── CONTENT PANEL (centrado) ───
-        GameObject contentPanel = CreateUIElement("TutorialContentPanel", tutorialOverlay.transform);
-        var contentRT = contentPanel.GetComponent<RectTransform>();
-        contentRT.anchorMin = new Vector2(0.5f, 0.5f);
-        contentRT.anchorMax = new Vector2(0.5f, 0.5f);
-        contentRT.pivot = new Vector2(0.5f, 0.5f);
-        contentRT.sizeDelta = new Vector2(920, 650);
-
-        var contentImg = contentPanel.AddComponent<Image>();
-        contentImg.color = new Color(0.06f, 0.06f, 0.1f, 0.96f);
-
-        // Layout vertical
-        var vlg = contentPanel.AddComponent<VerticalLayoutGroup>();
-        vlg.padding = new RectOffset(40, 40, 30, 25);
-        vlg.spacing = 12;
-        vlg.childAlignment = TextAnchor.UpperCenter;
-        vlg.childControlWidth = true;
-        vlg.childControlHeight = false;
-        vlg.childForceExpandWidth = true;
-        vlg.childForceExpandHeight = false;
-
-        // ─── TÍTULO ───
-        GameObject titleGO = CreateUIElement("TitleText", contentPanel.transform);
-        titleLabel = titleGO.AddComponent<TextMeshProUGUI>();
-        titleLabel.text = "TUTORIAL";
-        titleLabel.fontSize = 38;
-        titleLabel.fontStyle = FontStyles.Bold;
-        titleLabel.color = new Color(1f, 0.84f, 0.25f, 1f); // Dorado
-        titleLabel.alignment = TextAlignmentOptions.Center;
-        var titleLE = titleGO.AddComponent<LayoutElement>();
-        titleLE.preferredHeight = 55;
-
-        // ─── SEPARADOR SUPERIOR ───
-        CreateSeparator(contentPanel.transform, new Color(1f, 0.84f, 0.25f, 0.4f));
-
-        // ─── VIDEO (RawImage) ───
-        GameObject videoGO = CreateUIElement("VideoImage", contentPanel.transform);
-        videoRawImage = videoGO.AddComponent<RawImage>();
-        videoRawImage.texture = videoRenderTexture;
-        videoRawImage.color = Color.white;
-        var videoLE = videoGO.AddComponent<LayoutElement>();
-        videoLE.preferredHeight = 340;
-
-        // Borde del vídeo
-        var videoOutline = videoGO.AddComponent<Outline>();
-        videoOutline.effectColor = new Color(1f, 0.84f, 0.25f, 0.5f);
-        videoOutline.effectDistance = new Vector2(2, 2);
-
-        // ─── DESCRIPCIÓN ───
-        GameObject descGO = CreateUIElement("DescText", contentPanel.transform);
-        descLabel = descGO.AddComponent<TextMeshProUGUI>();
-        descLabel.text = "";
-        descLabel.fontSize = 22;
-        descLabel.color = new Color(0.85f, 0.85f, 0.9f, 1f);
-        descLabel.alignment = TextAlignmentOptions.Center;
-        descLabel.enableWordWrapping = true;
-        var descLE = descGO.AddComponent<LayoutElement>();
-        descLE.preferredHeight = 65;
-
-        // ─── SEPARADOR INFERIOR ───
-        CreateSeparator(contentPanel.transform, new Color(0.4f, 0.4f, 0.5f, 0.3f));
-
-        // ─── BOTÓN CONTINUAR ───
-        GameObject btnGO = CreateUIElement("ContinueButton", contentPanel.transform);
-        var btnImg = btnGO.AddComponent<Image>();
-        btnImg.color = new Color(0.18f, 0.55f, 0.34f, 1f); // Verde elegante
-
-        var btn = btnGO.AddComponent<Button>();
-        btn.targetGraphic = btnImg;
-
-        // Hover color
-        var colors = btn.colors;
-        colors.highlightedColor = new Color(0.22f, 0.65f, 0.4f, 1f);
-        colors.pressedColor = new Color(0.14f, 0.45f, 0.28f, 1f);
-        btn.colors = colors;
-
-        var btnLE = btnGO.AddComponent<LayoutElement>();
-        btnLE.preferredHeight = 55;
-
-        // Texto del botón
-        GameObject btnTextGO = CreateUIElement("ButtonText", btnGO.transform);
-        StretchFull(btnTextGO.GetComponent<RectTransform>());
-        buttonLabel = btnTextGO.AddComponent<TextMeshProUGUI>();
-        buttonLabel.text = "CONTINUAR  [ X ]";
-        buttonLabel.fontSize = 26;
-        buttonLabel.fontStyle = FontStyles.Bold;
-        buttonLabel.color = Color.white;
-        buttonLabel.alignment = TextAlignmentOptions.Center;
-
-        btn.onClick.AddListener(CloseTutorial);
-
-        tutorialOverlay.SetActive(false);
-    }
-
-    void CreateSeparator(Transform parent, Color color)
-    {
-        GameObject sep = CreateUIElement("Separator", parent);
-        var sepImg = sep.AddComponent<Image>();
-        sepImg.color = color;
-        var sepLE = sep.AddComponent<LayoutElement>();
-        sepLE.preferredHeight = 2;
-    }
-
-    GameObject CreateUIElement(string name, Transform parent)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        return go;
-    }
-
-    void StretchFull(RectTransform rt)
-    {
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
     }
 }
