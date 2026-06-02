@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: Tutorial_Lecciones3
+  m_EditorClassIdentifier: 
+  encounterId: enc_tutorial_lecciones3
+  title: " Las Ense\xF1anzas de Papa 2"
+  encounterImage: {fileID: 0}
+  description: "Y sobre tu armadura y tu escudo... poco m\xE1s puedo decirte que
+    no sepas ya. Es tu \xFAltima l\xEDnea de defensa. Busca siempre el equilibrio:
+    necesitas una protecci\xF3n f\xE9rrea para que no te rompan las costillas (BB),
+    pero si te cargas con demasiado peso, apenas podr\xE1s levantar el brazo cuando
+    llegue el impacto (M).\n\n"
+  options:
+  - optionText: "Hasta m\xE1s ver, padre"
+    statToCheck: 0
+    difficulty: 0
+    successText: "Que los dioses te guarden, hijo m\xEDo.\" Con l\xE1grimas asomando
+      en sus ojos, saca una peque\xF1a y pesada bolsa de cuero de su cinto y te la
+      entrega. Son los ahorros de toda una vida."
+    failureText: 
+    successEffects:
+    - type: 0
+      value: 25
+      targetNodeId: 
+      itemReward: {fileID: 0}
+      flagName: 
+      statToBoost: 0
+      statBoostValue: 0
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 11400000, guid: 67e487daae199294c9ab045dc0e1a061, type: 2}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
