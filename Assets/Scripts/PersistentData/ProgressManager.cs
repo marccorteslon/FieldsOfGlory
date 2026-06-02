@@ -97,6 +97,7 @@ public class ProgressManager : MonoBehaviour
     public int CurrentMonth => data.currentMonth;
 
     public static JoustDifficulty? PracticeDifficultyOverride { get; set; }
+    public static string ReturnSceneName { get; set; } = "";
 
     /// <summary>
     /// Cuando es true, al cargar la escena World/TutorialWorld el juego arranca

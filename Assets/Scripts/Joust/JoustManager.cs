@@ -141,6 +141,10 @@ public class JoustManager : MonoBehaviour
 
     void Start()
     {
+        // Asegurar que el cursor esté visible y desbloqueado en la escena de la justa/tutorial
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (isTutorialMode)
         {
             // --- TUTORIAL MODE: saltar torneo/dificultad, usar valores fáciles ---
@@ -149,11 +153,23 @@ public class JoustManager : MonoBehaviour
             useEffectChoiceButtons = false;
 
             // Activar solo el mapa por defecto
-            if (defaultMap != null) defaultMap.SetActive(true);
-            foreach (var mapping in cityMaps)
             {
-                if (mapping.mapGameObject != null)
-                    mapping.mapGameObject.SetActive(false);
+                GameObject activeMapObject = defaultMap;
+                HashSet<GameObject> processedMaps = new HashSet<GameObject>();
+
+                foreach (var mapping in cityMaps)
+                {
+                    if (mapping.mapGameObject == null) continue;
+                    if (processedMaps.Contains(mapping.mapGameObject)) continue;
+                    processedMaps.Add(mapping.mapGameObject);
+
+                    mapping.mapGameObject.SetActive(mapping.mapGameObject == activeMapObject);
+                }
+
+                if (defaultMap != null && !processedMaps.Contains(defaultMap))
+                {
+                    defaultMap.SetActive(defaultMap == activeMapObject);
+                }
             }
 
             // Desactivar el Animator del Dummy para que no reproduzca "pushed" al inicio
@@ -215,47 +231,53 @@ public class JoustManager : MonoBehaviour
                 Debug.Log($"[JoustManager]   [{i}] cityId='{m.cityId}' | GameObject={(m.mapGameObject != null ? m.mapGameObject.name : "NULL")}");
             }
 
-            if (!string.IsNullOrEmpty(activeCityId))
             {
                 // Primero encontramos qué GameObject debe activarse
                 GameObject activeMapObject = null;
-                foreach (var mapping in cityMaps)
+                if (!string.IsNullOrEmpty(activeCityId))
                 {
-                    if (mapping.mapGameObject != null &&
-                        string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase))
+                    foreach (var mapping in cityMaps)
                     {
-                        activeMapObject = mapping.mapGameObject;
-                        Debug.Log($"[JoustManager] ✓ Escenario encontrado para '{activeCityId}' → '{activeMapObject.name}'");
-                        break;
+                        if (mapping.mapGameObject != null &&
+                            string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            activeMapObject = mapping.mapGameObject;
+                            Debug.Log($"[JoustManager] ✓ Escenario encontrado para '{activeCityId}' → '{activeMapObject.name}'");
+                            break;
+                        }
                     }
                 }
 
-                // Luego hacemos UN SOLO pase para activar/desactivar
-                // (evita que dos entradas con el mismo GameObject se pisen entre sí)
-                HashSet<GameObject> seen = new();
+                // Si no se encontró (o no hay ciudad), usar el mapa por defecto
+                if (activeMapObject == null)
+                {
+                    activeMapObject = defaultMap;
+                    if (activeMapObject != null)
+                    {
+                        if (!string.IsNullOrEmpty(activeCityId))
+                            Debug.LogWarning($"[JoustManager] ⚠ No se encontró mapa para '{activeCityId}' en la lista cityMaps. Activado mapa por defecto: '{activeMapObject.name}'");
+                        else
+                            Debug.Log($"[JoustManager] No hay ciudad activa. Activado mapa por defecto: '{activeMapObject.name}'");
+                    }
+                }
+
+                // Activar únicamente el mapa seleccionado y desactivar todos los demás
+                HashSet<GameObject> processedMaps = new HashSet<GameObject>();
+
+                // Procesar todos los mapas de la lista
                 foreach (var mapping in cityMaps)
                 {
                     if (mapping.mapGameObject == null) continue;
-                    if (seen.Contains(mapping.mapGameObject)) continue;
-                    seen.Add(mapping.mapGameObject);
+                    if (processedMaps.Contains(mapping.mapGameObject)) continue;
+                    processedMaps.Add(mapping.mapGameObject);
 
                     mapping.mapGameObject.SetActive(mapping.mapGameObject == activeMapObject);
                 }
 
-                bool mapFound = activeMapObject != null;
-                if (defaultMap != null)
+                // Procesar el mapa por defecto si no estaba en la lista
+                if (defaultMap != null && !processedMaps.Contains(defaultMap))
                 {
-                    if (defaultMap == activeMapObject)
-                    {
-                        defaultMap.SetActive(true);
-                    }
-                    else
-                    {
-                        defaultMap.SetActive(!mapFound);
-                    }
-
-                    if (!mapFound)
-                        Debug.LogWarning($"[JoustManager] ⚠ No se encontró mapa para '{activeCityId}' en la lista cityMaps. Activado mapa por defecto.");
+                    defaultMap.SetActive(defaultMap == activeMapObject);
                 }
             }
 
@@ -392,8 +414,49 @@ public class JoustManager : MonoBehaviour
         }
     }
 
+    void UpdateCursorState()
+    {
+        // El cursor debe estar libre (desbloqueado y visible) si:
+        // - Estamos eligiendo efectos/cartas antes de la justa
+        // - El tutorial está abierto
+        // - El juego está en pausa
+        bool needFreeCursor = waitingForEffectChoice || 
+                              (tutorialManager != null && tutorialManager.IsTutorialOpen()) ||
+                              PauseMenuController.IsPaused;
+
+        if (!needFreeCursor)
+        {
+            WinManager win = FindFirstObjectByType<WinManager>();
+            if (win != null && win.statsPanelController != null && win.statsPanelController.panelObject != null && win.statsPanelController.panelObject.activeInHierarchy)
+            {
+                needFreeCursor = true;
+            }
+        }
+
+        if (needFreeCursor)
+        {
+            if (Cursor.lockState != CursorLockMode.None)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+        else
+        {
+            // Durante el gameplay activo (incluyendo cinemática pre-justa y las fases de carrera/combate)
+            // bloqueamos y ocultamos el cursor para que no estorbe en pantalla y funcione correctamente en builds.
+            if (Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+    }
+
     void Update()
     {
+        UpdateCursorState();
+
         if (!joustStarted || preJoustIntroRunning || waitingForEffectChoice)
             return;
 

@@ -15,8 +15,10 @@ MonoBehaviour:
   nodeId: node_bahiapulcritud
   displayName: Bahia Pulcritud
   travelDaysCost: 1
-  dangerIndex: 0
+  dangerIndex: 100
   isCrossroad: 0
   isTown: 1
   cityId: city_bahiapulcritud
-  possibleEncounters: []
+  possibleEncounters:
+  - encounterId: enc_tutorial_emboscada
+    weight: 100

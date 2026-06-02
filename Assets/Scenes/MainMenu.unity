@@ -107403,7 +107403,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1754105970}
         m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
-        m_MethodName: QuitGame
+        m_MethodName: DeleteSaveData
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

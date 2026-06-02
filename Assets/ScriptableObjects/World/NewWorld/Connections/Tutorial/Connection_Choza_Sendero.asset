@@ -16,7 +16,7 @@ MonoBehaviour:
   nodeBId: node_senderopomar
   directionFromA: 1
   directionFromB: 2
-  dangerIndex: 0
+  dangerIndex: 100
   possibleEncounters:
   - encounterId: enc_tutorial_lecciones
     weight: 1

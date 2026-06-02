@@ -62,6 +62,26 @@ public class WinManager : MonoBehaviour
 
     void Start()
     {
+        if (joustManager == null)
+            joustManager = FindFirstObjectByType<JoustManager>();
+
+        if (statsPanelController == null)
+        {
+            statsPanelController = FindFirstObjectByType<JoustStatsPanelController>();
+            if (statsPanelController == null)
+            {
+                JoustStatsPanelController[] panels = Resources.FindObjectsOfTypeAll<JoustStatsPanelController>();
+                foreach (var panel in panels)
+                {
+                    if (panel.gameObject.scene.isLoaded)
+                    {
+                        statsPanelController = panel;
+                        break;
+                    }
+                }
+            }
+        }
+
         playerRoundWins = 0;
         enemyRoundWins = 0;
         playerWonRoundsScores.Clear();
@@ -464,6 +484,32 @@ public class WinManager : MonoBehaviour
         }
     }
 
+    void LoadFallbackReturnScene()
+    {
+        if (!string.IsNullOrEmpty(ProgressManager.ReturnSceneName))
+        {
+            ProgressManager.ReturnToTownFirstPerson = true;
+            SceneManager.LoadScene(ProgressManager.ReturnSceneName);
+            return;
+        }
+
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        bool isTutorial = (joustManager != null && joustManager.isTutorialMode) || currentScene.ToLower().Contains("tutorial");
+
+        if (isTutorial)
+        {
+            ProgressManager.ReturnToTownFirstPerson = true;
+            SceneManager.LoadScene("TutorialWorld");
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(nextSceneName))
+                SceneManager.LoadScene(nextSceneName);
+            else
+                SceneManager.LoadScene("World");
+        }
+    }
+
     IEnumerator ShowRoundLosePanel()
     {
         gameEnded = true;
@@ -481,10 +527,7 @@ public class WinManager : MonoBehaviour
         else
         {
             // Fallback si no está asignado
-            if (!string.IsNullOrEmpty(nextSceneName))
-                SceneManager.LoadScene(nextSceneName);
-            else
-                Debug.LogWarning("WinManager: nextSceneName no asignado.");
+            LoadFallbackReturnScene();
         }
     }
 
@@ -504,7 +547,7 @@ public class WinManager : MonoBehaviour
         else
         {
             // Fallback: volver al menú principal
-            SceneManager.LoadScene("MainMenu");
+            LoadFallbackReturnScene();
         }
     }
 
@@ -530,10 +573,7 @@ public class WinManager : MonoBehaviour
         else
         {
             // Fallback si no está asignado
-            if (!string.IsNullOrEmpty(nextSceneName))
-                SceneManager.LoadScene(nextSceneName);
-            else
-                Debug.LogWarning("WinManager: nextSceneName no asignado.");
+            LoadFallbackReturnScene();
         }
     }
 

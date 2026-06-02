@@ -15,6 +15,6 @@ MonoBehaviour:
   shopId: shop_puertoalondra
   itemIds:
   - Training_Armor
-  - Barrel_Armor
+  - Soldier_Armor
   - Breastplate_Armor
   - FullPlate_Armor

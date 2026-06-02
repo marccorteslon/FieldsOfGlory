@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
@@ -169,5 +169,31 @@ public class MainMenuController : MonoBehaviour
     {
         Debug.Log("Quitting Game...");
         Application.Quit();
+    }
+
+    public void DeleteSaveData()
+    {
+        ProgressSaveSystem.DeleteMainSave();
+        
+        // Si hay un ProgressManager en esta escena, lo reiniciamos
+        ProgressManager progress = FindFirstObjectByType<ProgressManager>();
+        if (progress != null)
+        {
+            progress.data = new ProgressSaveData
+            {
+                money = 0,
+                equippedHorseId = "Farm_Horse",
+                equippedLanceId = "Training_Lance",
+                equippedShieldId = "Training_Shield",
+                equippedArmorId = "Training_Armor",
+                currentCityId = "city_senderopomar",
+                currentNodeId = "node_chozapapa",
+                currentDay = 1,
+                currentMonth = 1
+            };
+            progress.SaveProgress();
+        }
+        
+        Debug.Log("[MainMenuController] Progreso borrado satisfactoriamente.");
     }
 }

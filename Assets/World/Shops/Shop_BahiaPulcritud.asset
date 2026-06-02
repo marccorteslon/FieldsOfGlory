@@ -13,4 +13,8 @@ MonoBehaviour:
   m_Name: Shop_BahiaPulcritud
   m_EditorClassIdentifier: 
   shopId: shop_bahiapulcritud
-  itemIds: []
+  itemIds:
+  - Soldier_Armor
+  - Pine_Lance
+  - Fast_Horse
+  - Lion_Shield

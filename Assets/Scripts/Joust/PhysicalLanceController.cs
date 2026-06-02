@@ -151,16 +151,30 @@ public class PhysicalLanceController : MonoBehaviour
 
     void HandleInput()
     {
-        float mouseX = Input.mousePosition.x;
-        float mouseY = Input.mousePosition.y;
+        Vector2 inputDelta = Vector2.zero;
 
-        // Escalamos la sensibilidad para que valores como "2" en el Inspector sean suaves
-        // y no giren la lanza 100 grados en un solo frame.
-        float effectiveSensitivity = inputSensitivity * 0.05f;
-        Vector2 inputDelta = new Vector2(mouseX - mousePreviousX, mouseY - mousePreviousY) * effectiveSensitivity;
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            // En build o cuando el cursor está bloqueado y oculto en el centro de la pantalla,
+            // usamos GetAxisRaw de Unity para leer los deltas de movimiento directamente.
+            // Multiplicamos por 20f para simular la velocidad/desplazamiento en píxeles.
+            float axisX = Input.GetAxisRaw("Mouse X") * 20f;
+            float axisY = Input.GetAxisRaw("Mouse Y") * 20f;
+            float effectiveSensitivity = inputSensitivity * 0.05f;
+            inputDelta = new Vector2(axisX, axisY) * effectiveSensitivity;
+        }
+        else
+        {
+            // Fallback si por alguna razón el cursor estuviera desbloqueado
+            float mouseX = Input.mousePosition.x;
+            float mouseY = Input.mousePosition.y;
 
-        mousePreviousX = mouseX;
-        mousePreviousY = mouseY;
+            float effectiveSensitivity = inputSensitivity * 0.05f;
+            inputDelta = new Vector2(mouseX - mousePreviousX, mouseY - mousePreviousY) * effectiveSensitivity;
+
+            mousePreviousX = mouseX;
+            mousePreviousY = mouseY;
+        }
 
         // Sumamos el movimiento del ratón a la rotación OBJETIVO
         targetAimAngles += new Vector3(-inputDelta.y, inputDelta.x, 0f);

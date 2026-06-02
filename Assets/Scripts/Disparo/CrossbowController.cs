@@ -171,6 +171,26 @@ public class CrossbowController : MonoBehaviour
             return;
         }
 
+        // Si está en pausa, no hacer nada y desbloquear cursor
+        if (PauseMenuController.IsPaused)
+        {
+            if (Cursor.lockState != CursorLockMode.None)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            return;
+        }
+        else
+        {
+            // Si el gameplay está activo y NO está pausado, asegurar que el cursor esté bloqueado y oculto
+            if (Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+
         HandleAimInput();
         HandleShooting();
         ApplyAimRotation();

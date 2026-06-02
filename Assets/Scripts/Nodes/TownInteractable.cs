@@ -12,7 +12,8 @@ public class TownInteractable : MonoBehaviour
         ExitTown,
         TogglePanel,
         PracticeJoust,
-        Disparo
+        Disparo,
+        MainMenu
     }
 
     [Header("Interaction")]
@@ -122,17 +123,20 @@ public class TownInteractable : MonoBehaviour
                         Debug.Log($"[TownInteractable] Dificultad del torneo de hoy '{todayTournament.difficulty}' asignada como override estático.");
                     }
                 }
+                ProgressManager.ReturnSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
                 if (sceneChanger != null)
                     sceneChanger.ChangeScene();
                 break;
 
             case TownInteractionType.PracticeJoust:
                 ProgressManager.PracticeDifficultyOverride = practiceDifficulty;
+                ProgressManager.ReturnSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
                 if (sceneChanger != null)
                     sceneChanger.ChangeScene();
                 break;
 
             case TownInteractionType.Disparo:
+                ProgressManager.ReturnSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
                 if (sceneChanger != null)
                     sceneChanger.ChangeScene();
                 break;
@@ -150,6 +154,13 @@ public class TownInteractable : MonoBehaviour
             case TownInteractionType.TogglePanel:
                 if (panelController != null)
                     panelController.TogglePanel();
+                break;
+
+            case TownInteractionType.MainMenu:
+                Time.timeScale = 1f;
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
                 break;
         }
     }
