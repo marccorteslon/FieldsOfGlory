@@ -367,6 +367,15 @@ MonoBehaviour:
     m_Localized: Object Obtained
     m_Metadata:
       m_Items: []
+  - m_Id: 12417610322542592
+    m_Localized: 'AIM: Mouse / Joystick Right
+
+      SHOOT: Click left / R2
+
+      SPRINT:
+      Shift left / Button A'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
