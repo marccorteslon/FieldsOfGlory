@@ -96,6 +96,8 @@ public class ProgressManager : MonoBehaviour
     public int CurrentDay => data.currentDay;
     public int CurrentMonth => data.currentMonth;
 
+    public JoustDifficulty? PracticeDifficultyOverride { get; set; }
+
     public void AddMoney(int amount)
     {
         data.money += Mathf.Max(0, amount);

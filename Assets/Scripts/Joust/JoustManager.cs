@@ -180,7 +180,13 @@ public class JoustManager : MonoBehaviour
             {
                 activeCityId = progressManager.CurrentCityId;
 
-                if (tournamentManager != null)
+                if (progressManager.PracticeDifficultyOverride.HasValue)
+                {
+                    difficulty = progressManager.PracticeDifficultyOverride.Value;
+                    progressManager.PracticeDifficultyOverride = null;
+                    Debug.Log($"[JoustManager] Practice difficulty detected: {difficulty}");
+                }
+                else if (tournamentManager != null)
                 {
                     var todayTournament = tournamentManager.GetTournamentForCityAndDate(
                         progressManager.CurrentCityId,

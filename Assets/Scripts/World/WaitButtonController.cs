@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class WaitButtonController : MonoBehaviour
 {
@@ -32,6 +32,12 @@ public class WaitButtonController : MonoBehaviour
         if (tournamentAvailabilityButton != null)
             tournamentAvailabilityButton.RefreshVisibility();
 
-        Debug.Log("Has esperado 1 día.");
+        TownInteractable[] interactables = FindObjectsByType<TownInteractable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (var interactable in interactables)
+        {
+            interactable.RefreshVisibility();
+        }
+
+        Debug.Log("Has esperado 1 dia.");
     }
 }

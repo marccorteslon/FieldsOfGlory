@@ -7,16 +7,22 @@ public class TownInteractable : MonoBehaviour
         Shop,
         Tavern,
         Travel,
-        Joust,
+        TournamentJoust,
         Wait,
         ExitTown,
-        TogglePanel
+        TogglePanel,
+        PracticeJoust,
+        Disparo
     }
 
     [Header("Interaction")]
     public TownInteractionType interactionType;
     public KeyCode interactKey = KeyCode.E;
     public string playerTag = "Player";
+
+    [Header("Practice Joust Settings")]
+    [Tooltip("Only used if InteractionType is PracticeJoust")]
+    public JoustDifficulty practiceDifficulty = JoustDifficulty.Normal;
 
     [Header("Refs")]
     public TownNode townNode;
@@ -37,6 +43,23 @@ public class TownInteractable : MonoBehaviour
 
         if (waitButtonController == null)
             waitButtonController = FindFirstObjectByType<WaitButtonController>();
+    }
+
+    void OnEnable()
+    {
+        RefreshVisibility();
+    }
+
+    public void RefreshVisibility()
+    {
+        if (interactionType == TownInteractionType.TournamentJoust)
+        {
+            TournamentManager tm = FindFirstObjectByType<TournamentManager>();
+            if (tm != null)
+            {
+                gameObject.SetActive(tm.HasTournamentInCurrentCityToday());
+            }
+        }
     }
 
     void Update()
@@ -83,7 +106,20 @@ public class TownInteractable : MonoBehaviour
                     travelUI.TravelSelected();
                 break;
 
-            case TownInteractionType.Joust:
+            case TownInteractionType.TournamentJoust:
+                if (sceneChanger != null)
+                    sceneChanger.ChangeScene();
+                break;
+
+            case TownInteractionType.PracticeJoust:
+                ProgressManager pm = FindFirstObjectByType<ProgressManager>();
+                if (pm != null)
+                    pm.PracticeDifficultyOverride = practiceDifficulty;
+                if (sceneChanger != null)
+                    sceneChanger.ChangeScene();
+                break;
+
+            case TownInteractionType.Disparo:
                 if (sceneChanger != null)
                     sceneChanger.ChangeScene();
                 break;
