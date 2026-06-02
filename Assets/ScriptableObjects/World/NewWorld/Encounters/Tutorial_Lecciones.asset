@@ -13,20 +13,26 @@ MonoBehaviour:
   m_Name: Tutorial_Lecciones
   m_EditorClassIdentifier: 
   encounterId: enc_tutorial_lecciones
-  title: "La Despedida de Papá"
+  title: "La Despedida de Pap\xE1"
   encounterImage: {fileID: 0}
-  description: "Escuchas el trote apresurado de una mula a tus espaldas. Al girarte, ves a tu padre desmontando con dificultad, con la respiración entrecortada pero una sonrisa en el rostro.\n\n\"¡Eh, muchacho! ¿Acaso creías que ibas a marcharte a los torneos sin despedirte de tu viejo?\", te dice mientras se acerca y te pone una mano áspera en el hombro. Su mirada se vuelve seria, llena de orgullo y preocupación a partes iguales. \"Tu madre estaría orgullosa de verte partir hoy. Pero antes de que te enfrentes a esos caballeros engreídos, escúchame bien. El valor gana peleas de taberna, pero en las justas, conocer tu equipo es lo que te mantendrá con vida.\n\nNo todos los caballos son iguales, recuérdalo. Algunos son auténticas centellas, capaces de alcanzar picos de velocidad vertiginosos (V), mientras que otros, más robustos, destacan por su resistencia y su capacidad para mantener el ritmo a lo largo de la liza (MV). Tu montura es tu base, cuídala.\n\nEn cuanto a tu lanza... no es solo un palo afilado. Te servirá para derribar a tu oponente, sí, pero dependiendo del material del que esté forjada requerirá un trato distinto. Hay lanzas pesadas que te recompensarán si logras cargar toda tu fuerza bruta en el golpe (BF), y otras más ligeras donde el secreto residirá en tu precisión para golpear en el resquicio exacto de la armadura rival (M).\n\nY sobre tu armadura y tu escudo... poco más puedo decirte que no sepas ya. Es tu última línea de defensa. Busca siempre el equilibrio: necesitas una protección férrea para que no te rompan las costillas (BB), pero si te cargas con demasiado peso, apenas podrás levantar el brazo cuando llegue el impacto.\n\nQue los dioses te guarden, hijo mío.\" Con lágrimas asomando en sus ojos, saca una pequeña y pesada bolsa de cuero de su cinto y te la entrega. Son los ahorros de toda una vida."
+  description: "Escuchas el trote apresurado de una mula a tus espaldas. Al girarte,
+    ves a tu padre desmontando con dificultad, con la respiraci\xF3n entrecortada
+    pero una sonrisa en el rostro.\r\n\r\n\"\xA1Eh, muchacho! \xBFAcaso cre\xEDas
+    que ibas a marcharte a los torneos sin despedirte de tu viejo?\", te dice mientras
+    se acerca y te pone una mano \xE1spera en el hombro. \r\n"
   options:
-  - optionText: "\"Gracias, padre. Recordaré cada una de tus palabras. Te haré sentir orgulloso.\""
+  - optionText: '"Te escucho padre."'
     statToCheck: 0
     difficulty: 0
-    successText: "Te abrazas a tu padre una última vez antes de retomar tu camino. Sientes el peso extra de las monedas en tu bolsa, pero también el peso de la responsabilidad. Es hora de hacer que se sienta orgulloso."
-    failureText: ""
-    successEffects:
-    - type: 0
-      value: 25
-      targetNodeId: 
-      itemReward: {fileID: 0}
+    successText: "Su mirada se vuelve seria, llena de orgullo y preocupaci\xF3n a
+      partes iguales. \"Tu madre estar\xEDa orgullosa de verte partir hoy. Pero antes
+      de que te enfrentes a esos caballeros engre\xEDdos, esc\xFAchame bien. El valor
+      gana peleas de taberna, pero en las justas, conocer tu equipo es lo que te
+      mantendr\xE1 con vida."
+    failureText: 
+    successEffects: []
     failureEffects: []
-    nextEncounterOnSuccess: {fileID: 0}
+    nextEncounterOnSuccess: {fileID: 11400000, guid: 27f42678b6e6e674795e46dcd2e3604f, type: 2}
     nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 

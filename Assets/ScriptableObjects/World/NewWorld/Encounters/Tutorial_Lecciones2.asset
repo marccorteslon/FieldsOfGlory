@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b2693288f3e064c9867241537962d1, type: 3}
+  m_Name: Tutorial_Lecciones2
+  m_EditorClassIdentifier: 
+  encounterId: enc_tutorial_lecciones2
+  title: " Las Ense\xF1anzas de Papa"
+  encounterImage: {fileID: 0}
+  description: "No todos los caballos son iguales, recu\xE9rdalo. Algunos son aut\xE9nticas
+    centellas, capaces de alcanzar picos de velocidad vertiginosos (V), mientras
+    que otros, m\xE1s robustos, destacan por su resistencia y su capacidad para mantener
+    el ritmo a lo largo de la liza (MV). Tu montura es tu base, cu\xEDdala.\n\n"
+  options:
+  - optionText: "\"Ya lo s\xE9 padre, estar\xE9 atento\""
+    statToCheck: 0
+    difficulty: 0
+    successText: "En cuanto a tu lanza... no es solo un palo afilado. Te servir\xE1
+      para derribar a tu oponente, s\xED, pero dependiendo del material del que est\xE9
+      forjada requerir\xE1 un trato distinto. Hay lanzas pesadas que te recompensar\xE1n
+      si logras cargar toda tu fuerza  en el golpe (BF), y otras m\xE1s ligeras donde
+      el secreto residir\xE1 en tu precisi\xF3n para golpear en el resquicio exacto
+      de la armadura rival (BL).\n"
+    failureText: 
+    successEffects: []
+    failureEffects: []
+    nextEncounterOnSuccess: {fileID: 11400000, guid: 9e19d004edddaeb439b29934a2e80613, type: 2}
+    nextEncounterOnFailure: {fileID: 0}
+    requiredFlag: 
+    forbiddenFlag: 
