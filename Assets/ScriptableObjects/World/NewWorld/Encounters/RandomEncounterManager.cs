@@ -54,9 +54,6 @@ public class RandomEncounterManager : MonoBehaviour
             return false;
         }
 
-        if (progressManager != null)
-            progressManager.MarkEncounterCompleted(encounterId);
-
         popupController.OpenEncounter(encounter);
         return true;
     }

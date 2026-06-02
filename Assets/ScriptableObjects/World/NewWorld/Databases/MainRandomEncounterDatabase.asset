@@ -15,3 +15,15 @@ MonoBehaviour:
   encounters:
   - {fileID: 11400000, guid: 11111111111111111111111111111111, type: 2}
   - {fileID: 11400000, guid: 22222222222222222222222222222222, type: 2}
+  - {fileID: 11400000, guid: 5529a2c4c3001d840a89e4035710156a, type: 2}
+  - {fileID: 11400000, guid: 8724c6ecb6162f844bedacbca93feb90, type: 2}
+  - {fileID: 11400000, guid: f41d6fee68ac9d64bb5b1ab545e117df, type: 2}
+  - {fileID: 11400000, guid: c2d8aafe2d6fe1d46933846c07925832, type: 2}
+  - {fileID: 11400000, guid: 175c3f47e8e5711438f5c60198480f00, type: 2}
+  - {fileID: 11400000, guid: ccb6b54e1f24d534899ae4ba9497a9f3, type: 2}
+  - {fileID: 11400000, guid: b918072981a2af74da07e954f7a7ce5e, type: 2}
+  - {fileID: 11400000, guid: fc5e5943b9965b24db3a5fd3ebf543ce, type: 2}
+  - {fileID: 11400000, guid: 14d22d8b167fe7d4ea485dde18180e15, type: 2}
+  - {fileID: 11400000, guid: 43d2461fbc4cb1d4c901bff1a22b392c, type: 2}
+  - {fileID: 11400000, guid: 83c8b86c5b99e4d42ad3cfe394aa8018, type: 2}
+  - {fileID: 11400000, guid: 2c6dc937289f0e84e82fa135bc6629d6, type: 2}
