@@ -233,7 +233,7 @@ public class CrossbowController : MonoBehaviour
         if (invertAimX) horizontalInput = -horizontalInput;
         if (invertAimY) verticalInput = -verticalInput;
 
-        float effectiveSensitivity = inputSensitivity * 2f;
+        float effectiveSensitivity = inputSensitivity * 2f * PlayerPrefs.GetFloat("MouseSensitivityMultiplier", 1.0f);
 
         // Modificar los ángulos objetivo
         targetAimAngles.y += horizontalInput * effectiveSensitivity;
@@ -461,6 +461,7 @@ public class CrossbowController : MonoBehaviour
     {
         if (clip != null && audioSource != null)
         {
+            audioSource.volume = AudioManager.Instance != null ? AudioManager.Instance.SfxVolume : 1f;
             audioSource.PlayOneShot(clip);
         }
     }

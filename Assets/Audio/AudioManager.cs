@@ -23,6 +23,14 @@ public class AudioManager : MonoBehaviour
 
     private AudioClip currentMusicClip;
 
+    private float masterVolume = 1f;
+    private float musicVolume = 1f;
+    private float sfxVolume = 1f;
+
+    public float MasterVolume => masterVolume;
+    public float MusicVolume => musicVolume;
+    public float SfxVolume => sfxVolume;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -32,13 +40,20 @@ public class AudioManager : MonoBehaviour
         }
 
         Instance = this;
-       
+
+        // Load settings from PlayerPrefs
+        masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
+        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 1f);
+
+        AudioListener.volume = masterVolume;
 
         if (musicSource != null)
         {
             musicSource.loop = true;
             musicSource.playOnAwake = false;
             musicSource.pitch = 1f;
+            musicSource.volume = musicVolume;
             // Ignorar la pausa del AudioListener para que el audio de música
             // no se vea afectado por Time.timeScale = 0 (pausa de juego)
             musicSource.ignoreListenerPause = true;
@@ -52,9 +67,40 @@ public class AudioManager : MonoBehaviour
             sfxSource.loop = false;
             sfxSource.playOnAwake = false;
             sfxSource.pitch = 1f;
+            sfxSource.volume = sfxVolume;
             sfxSource.ignoreListenerPause = true;
             sfxSource.spatialBlend = 0f;
             sfxSource.dopplerLevel = 0f;
+        }
+    }
+
+    public void SetMasterVolume(float volume)
+    {
+        masterVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("MasterVolume", masterVolume);
+        PlayerPrefs.Save();
+        AudioListener.volume = masterVolume;
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        musicVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+        PlayerPrefs.Save();
+        if (musicSource != null)
+        {
+            musicSource.volume = musicVolume;
+        }
+    }
+
+    public void SetSfxVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("SfxVolume", sfxVolume);
+        PlayerPrefs.Save();
+        if (sfxSource != null)
+        {
+            sfxSource.volume = sfxVolume;
         }
     }
 
@@ -68,6 +114,7 @@ public class AudioManager : MonoBehaviour
 
         currentMusicClip = clip;
         musicSource.clip = clip;
+        musicSource.volume = musicVolume;
         musicSource.Play();
     }
 
@@ -85,7 +132,7 @@ public class AudioManager : MonoBehaviour
         if (sfxSource == null || clip == null)
             return;
 
-        sfxSource.PlayOneShot(clip);
+        sfxSource.PlayOneShot(clip, sfxVolume);
     }
 
     public void PlayWorldMapMusic()

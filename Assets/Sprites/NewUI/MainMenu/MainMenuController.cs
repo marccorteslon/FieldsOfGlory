@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 
@@ -30,6 +30,16 @@ public class MainMenuController : MonoBehaviour
 
     void Start()
     {
+        if (soundSettingsPanel != null && soundSettingsPanel.GetComponent<AudioSettingsController>() == null)
+        {
+            soundSettingsPanel.AddComponent<AudioSettingsController>();
+        }
+
+        if (gameSettingsPanel != null && gameSettingsPanel.GetComponent<SensitivitySettingsController>() == null)
+        {
+            gameSettingsPanel.AddComponent<SensitivitySettingsController>();
+        }
+
         CloseAllRightPanels();
         
         SetSelected(firstSelectedMainMenu);

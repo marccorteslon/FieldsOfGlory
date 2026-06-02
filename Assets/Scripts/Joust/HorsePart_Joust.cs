@@ -685,6 +685,7 @@ public class HorsePart_Joust : MonoBehaviour
         pitch = Mathf.Clamp(pitch, 1f, maxPitch);
 
         audioSource.pitch = pitch;
+        audioSource.volume = AudioManager.Instance != null ? AudioManager.Instance.SfxVolume : 1f;
         audioSource.PlayOneShot(clip);
     }
 

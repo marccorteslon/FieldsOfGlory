@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class PanelController : MonoBehaviour
 {
-    // Panel asociado a este botón
+    // Panel asociado a este botÃ³n
     public GameObject panel;
 
     // Lista de todos los otros paneles que deben cerrarse
     public GameObject[] otrosPaneles;
 
     // Audio
-    public AudioSource audioSource;      // El componente que reproducirá el sonido
+    public AudioSource audioSource;      // El componente que reproducirÃ¡ el sonido
     public AudioClip[] sonidos;          // Array con los 2 sonidos
 
-    // Este método se asigna al botón que abre/cierra el panel
+    // Este mÃ©todo se asigna al botÃ³n que abre/cierra el panel
     public void TogglePanel()
     {
         if (panel != null)
@@ -34,7 +34,7 @@ public class PanelController : MonoBehaviour
         }
     }
 
-    // Este método se asigna al botón dentro del panel para cerrarlo
+    // Este mÃ©todo se asigna al botÃ³n dentro del panel para cerrarlo
     public void ClosePanel()
     {
         if (panel != null)
@@ -45,12 +45,13 @@ public class PanelController : MonoBehaviour
         }
     }
 
-    // Método auxiliar para reproducir un sonido aleatorio
+    // MÃ©todo auxiliar para reproducir un sonido aleatorio
     private void PlayRandomSound()
     {
         if (audioSource != null && sonidos != null && sonidos.Length > 0)
         {
             int index = Random.Range(0, sonidos.Length);
+            audioSource.volume = AudioManager.Instance != null ? AudioManager.Instance.SfxVolume : 1f;
             audioSource.PlayOneShot(sonidos[index]);
         }
     }

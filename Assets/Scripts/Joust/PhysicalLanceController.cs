@@ -160,7 +160,7 @@ public class PhysicalLanceController : MonoBehaviour
             // Multiplicamos por 20f para simular la velocidad/desplazamiento en píxeles.
             float axisX = Input.GetAxisRaw("Mouse X") * 20f;
             float axisY = Input.GetAxisRaw("Mouse Y") * 20f;
-            float effectiveSensitivity = inputSensitivity * 0.05f;
+            float effectiveSensitivity = inputSensitivity * 0.05f * PlayerPrefs.GetFloat("MouseSensitivityMultiplier", 1.0f);
             inputDelta = new Vector2(axisX, axisY) * effectiveSensitivity;
         }
         else
@@ -169,7 +169,7 @@ public class PhysicalLanceController : MonoBehaviour
             float mouseX = Input.mousePosition.x;
             float mouseY = Input.mousePosition.y;
 
-            float effectiveSensitivity = inputSensitivity * 0.05f;
+            float effectiveSensitivity = inputSensitivity * 0.05f * PlayerPrefs.GetFloat("MouseSensitivityMultiplier", 1.0f);
             inputDelta = new Vector2(mouseX - mousePreviousX, mouseY - mousePreviousY) * effectiveSensitivity;
 
             mousePreviousX = mouseX;

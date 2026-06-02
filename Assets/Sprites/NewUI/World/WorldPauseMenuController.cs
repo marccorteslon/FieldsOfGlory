@@ -42,6 +42,19 @@ public class WorldPauseMenuController : MonoBehaviour
     [Header("Scenes")]
     public string mainMenuSceneName = "MainMenu"; 
 
+    private void Start()
+    {
+        if (soundSettingsPanel != null && soundSettingsPanel.GetComponent<AudioSettingsController>() == null)
+        {
+            soundSettingsPanel.AddComponent<AudioSettingsController>();
+        }
+
+        if (gameSettingsPanel != null && gameSettingsPanel.GetComponent<SensitivitySettingsController>() == null)
+        {
+            gameSettingsPanel.AddComponent<SensitivitySettingsController>();
+        }
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton7))

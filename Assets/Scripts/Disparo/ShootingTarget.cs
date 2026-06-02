@@ -121,7 +121,7 @@ public class ShootingTarget : MonoBehaviour
             AudioSource.PlayClipAtPoint(
                 targetHitSound,
                 transform.position,
-                hitVolume
+                hitVolume * (AudioManager.Instance != null ? AudioManager.Instance.SfxVolume : 1f)
             );
         }
 

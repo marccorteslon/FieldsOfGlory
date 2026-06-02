@@ -127,7 +127,7 @@ public class CrossbowBolt : MonoBehaviour
         if (clipToPlay != null)
         {
             // Creamos un audio source temporal para reproducir el sonido 3D en el punto de impacto
-            AudioSource.PlayClipAtPoint(clipToPlay, transform.position, soundVolume);
+            AudioSource.PlayClipAtPoint(clipToPlay, transform.position, soundVolume * (AudioManager.Instance != null ? AudioManager.Instance.SfxVolume : 1f));
         }
     }
 }

@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -9.81f;
     public bool canMove = true;
 
-    [Header("Cámara")]
+    [Header("CÃ¡mara")]
     public Transform cameraTransform;
     public float mouseSensitivity = 100f;
 
@@ -97,6 +97,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (audioSource != null && footstepClip != null)
         {
+            audioSource.volume = AudioManager.Instance != null ? AudioManager.Instance.SfxVolume : 1f;
             audioSource.PlayOneShot(footstepClip);
         }
     }
@@ -111,8 +112,9 @@ public class PlayerMovement : MonoBehaviour
 
     void RotateCamera()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float currentMult = PlayerPrefs.GetFloat("MouseSensitivityMultiplier", 1.0f);
+        float mouseX = Input.GetAxis("Mouse X") * (mouseSensitivity * currentMult) * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * (mouseSensitivity * currentMult) * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
