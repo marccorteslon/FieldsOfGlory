@@ -263,7 +263,9 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 12109664074072064
-    m_Localized: "SEG\xDCENT RONDA\n"
+    m_Localized: 'Reanudar Partida
+
+'
     m_Metadata:
       m_Items: []
   - m_Id: 12109689747406848
@@ -341,6 +343,25 @@ MonoBehaviour:
   - m_Id: 12417610322542592
     m_Localized: "APUNTAR: Rtol\xED / Joystick Dret\nDISPARAR: Click Esq / R2\nSPRINT:
       Shift Esq / Bot\xF3 A"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12453288179662848
+    m_Localized: 'JOC
+
+      PAUSAT'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12462149330534400
+    m_Localized: 'WASD -> Moure''s pel mapa
+
+
+
+      ENTER -> Confirmar Moviment
+
+
+
+      X
+      -> Entrar al Poble'
     m_Metadata:
       m_Items: []
   references:
