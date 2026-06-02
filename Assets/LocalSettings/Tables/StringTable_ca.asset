@@ -117,11 +117,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 359915792891904
-    m_Localized: Botiga del poble
+    m_Localized: BOTIGA
     m_Metadata:
       m_Items: []
   - m_Id: 360117073346560
-    m_Localized: Sortir del poble
+    m_Localized: SORTIR
     m_Metadata:
       m_Items: []
   - m_Id: 360258241036288
@@ -129,11 +129,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 360387907944448
-    m_Localized: Anar a la justa
+    m_Localized: JUSTA
     m_Metadata:
       m_Items: []
   - m_Id: 360609912455168
-    m_Localized: Esperar
+    m_Localized: ESPERAR
     m_Metadata:
       m_Items: []
   - m_Id: 803455545630720
@@ -272,6 +272,70 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 12109710093975552
     m_Localized: "Tornar al Men\xFA Principal"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952586162176
+    m_Localized: 'Cavall:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379904
+    m_Localized: "Llan\xE7a:"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379905
+    m_Localized: 'Escut:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379906
+    m_Localized: 'Armadura:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379907
+    m_Localized: "For\xE7a d'Impacte (BF):"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574208
+    m_Localized: "Precisi\xF3 de Llan\xE7a (BL):"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574209
+    m_Localized: 'Maniobrabilitat (M):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574210
+    m_Localized: 'Defensa d''Escut (BB):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574211
+    m_Localized: 'Velocitat del Cavall (MV):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574212
+    m_Localized: 'Fase del Cavall:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574213
+    m_Localized: 'Fase d''Atac:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574214
+    m_Localized: 'Fase de Defensa:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574215
+    m_Localized: Justa d'Exemple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574216
+    m_Localized: ELIMINAR DADES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12384867740024832
+    m_Localized: Or guanyat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12385016985944064
+    m_Localized: Objecte Obtingut
     m_Metadata:
       m_Items: []
   references:

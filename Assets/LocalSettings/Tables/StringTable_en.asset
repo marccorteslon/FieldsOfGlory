@@ -128,11 +128,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 359915792891904
-    m_Localized: Town shop
+    m_Localized: SHOP
     m_Metadata:
       m_Items: []
   - m_Id: 360117073346560
-    m_Localized: Exit town
+    m_Localized: EXIT
     m_Metadata:
       m_Items: []
   - m_Id: 360258241036288
@@ -140,11 +140,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 360387907944448
-    m_Localized: Go to joust
+    m_Localized: JOUST
     m_Metadata:
       m_Items: []
   - m_Id: 360609912455168
-    m_Localized: Wait
+    m_Localized: WAIT
     m_Metadata:
       m_Items: []
   - m_Id: 803455545630720
@@ -301,6 +301,70 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 12109710093975552
     m_Localized: Return to Main Menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952586162176
+    m_Localized: 'Horse:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379904
+    m_Localized: 'Lance:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379905
+    m_Localized: 'Shield:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379906
+    m_Localized: 'Armor:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379907
+    m_Localized: 'Impact Force (BF):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574208
+    m_Localized: 'Lance Accuracy (BL):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574209
+    m_Localized: 'Maneuverability (M):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574210
+    m_Localized: 'Shield Defense (BB):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574211
+    m_Localized: 'Horse Speed (MV):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574212
+    m_Localized: 'Horse Phase:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574213
+    m_Localized: 'Attack Phase:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574214
+    m_Localized: 'Defense Phase:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574215
+    m_Localized: Example Joust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574216
+    m_Localized: DELETE DATA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12384867740024832
+    m_Localized: Gold gained
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12385016985944064
+    m_Localized: Object Obtained
     m_Metadata:
       m_Items: []
   references:

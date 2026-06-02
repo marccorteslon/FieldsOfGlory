@@ -117,11 +117,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 359915792891904
-    m_Localized: Tienda del pueblo
+    m_Localized: TIENDA
     m_Metadata:
       m_Items: []
   - m_Id: 360117073346560
-    m_Localized: Salir del pueblo
+    m_Localized: SALIR
     m_Metadata:
       m_Items: []
   - m_Id: 360258241036288
@@ -129,11 +129,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 360387907944448
-    m_Localized: Ir a la justa
+    m_Localized: JUSTA
     m_Metadata:
       m_Items: []
   - m_Id: 360609912455168
-    m_Localized: Esperar
+    m_Localized: ESPERAR
     m_Metadata:
       m_Items: []
   - m_Id: 803455545630720
@@ -270,6 +270,70 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 12109710093975552
     m_Localized: "Volver al Men\xFA Principal"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952586162176
+    m_Localized: 'Caballo:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379904
+    m_Localized: 'Lanza:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379905
+    m_Localized: 'Escudo:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379906
+    m_Localized: 'Armadura:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379907
+    m_Localized: 'Fuerza de Impacto (BF):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574208
+    m_Localized: "Precisi\xF3n de Lanza (BL):"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574209
+    m_Localized: 'Maniobrabilidad (M):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574210
+    m_Localized: 'Defensa Escudo (BB):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574211
+    m_Localized: 'Velocidad Caballo (MV):'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574212
+    m_Localized: 'Fase Caballo:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574213
+    m_Localized: 'Fase Ataque:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574214
+    m_Localized: 'Fase Defensa:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574215
+    m_Localized: Justa Ejemplo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574216
+    m_Localized: ELIMINAR DATOS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12384867740024832
+    m_Localized: Oro ganado
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12385016985944064
+    m_Localized: Objeto Obtenido
     m_Metadata:
       m_Items: []
   references:

@@ -235,6 +235,70 @@ MonoBehaviour:
     m_Key: map_menu
     m_Metadata:
       m_Items: []
+  - m_Id: 12379952586162176
+    m_Key: endPanel_horse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379904
+    m_Key: endPanel_lance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379905
+    m_Key: endPanel_escudo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379906
+    m_Key: endPanel_Armature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952720379907
+    m_Key: endPanel_BF
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574208
+    m_Key: endPanel_BL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574209
+    m_Key: endPanel_M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574210
+    m_Key: endPanel_BB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574211
+    m_Key: endPanel_MV
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574212
+    m_Key: endPanel_horsePhase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574213
+    m_Key: endPanel_lancePhase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574214
+    m_Key: endPanel_escudoPhase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12384867740024832
+    m_Key: endPanel_gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12385016985944064
+    m_Key: endPanel_object
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574215
+    m_Key: menu_exampleJoust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12379952724574216
+    m_Key: menu_deleteData
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:
