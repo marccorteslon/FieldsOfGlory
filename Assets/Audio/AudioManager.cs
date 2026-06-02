@@ -38,12 +38,23 @@ public class AudioManager : MonoBehaviour
         {
             musicSource.loop = true;
             musicSource.playOnAwake = false;
+            musicSource.pitch = 1f;
+            // Ignorar la pausa del AudioListener para que el audio de música
+            // no se vea afectado por Time.timeScale = 0 (pausa de juego)
+            musicSource.ignoreListenerPause = true;
+            // 2D puro: evita que la distancia al AudioManager afecte al volumen/pitch
+            musicSource.spatialBlend = 0f;
+            musicSource.dopplerLevel = 0f;
         }
 
         if (sfxSource != null)
         {
             sfxSource.loop = false;
             sfxSource.playOnAwake = false;
+            sfxSource.pitch = 1f;
+            sfxSource.ignoreListenerPause = true;
+            sfxSource.spatialBlend = 0f;
+            sfxSource.dopplerLevel = 0f;
         }
     }
 

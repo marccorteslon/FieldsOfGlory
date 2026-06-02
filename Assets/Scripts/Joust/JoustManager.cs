@@ -180,11 +180,11 @@ public class JoustManager : MonoBehaviour
             {
                 activeCityId = progressManager.CurrentCityId;
 
-                if (progressManager.PracticeDifficultyOverride.HasValue)
+                if (ProgressManager.PracticeDifficultyOverride.HasValue)
                 {
-                    difficulty = progressManager.PracticeDifficultyOverride.Value;
-                    progressManager.PracticeDifficultyOverride = null;
-                    Debug.Log($"[JoustManager] Practice difficulty detected: {difficulty}");
+                    difficulty = ProgressManager.PracticeDifficultyOverride.Value;
+                    ProgressManager.PracticeDifficultyOverride = null;
+                    Debug.Log($"[JoustManager] Difficulty override detected: {difficulty}");
                 }
                 else if (tournamentManager != null)
                 {
@@ -207,44 +207,55 @@ public class JoustManager : MonoBehaviour
             }
 
             // 2. Activar/Desactivar escenarios locales basados en la ciudad actual
+            Debug.Log($"[JoustManager] Ciudad activa leída del ProgressManager: '{activeCityId}'");
+            Debug.Log($"[JoustManager] Entradas en cityMaps: {cityMaps.Count}");
+            for (int i = 0; i < cityMaps.Count; i++)
+            {
+                var m = cityMaps[i];
+                Debug.Log($"[JoustManager]   [{i}] cityId='{m.cityId}' | GameObject={(m.mapGameObject != null ? m.mapGameObject.name : "NULL")}");
+            }
+
             if (!string.IsNullOrEmpty(activeCityId))
             {
-                bool mapFound = false;
+                // Primero encontramos qué GameObject debe activarse
+                GameObject activeMapObject = null;
                 foreach (var mapping in cityMaps)
                 {
-                    if (mapping.mapGameObject != null)
+                    if (mapping.mapGameObject != null &&
+                        string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase))
                     {
-                        bool isCurrentCityMap = string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase);
-                        mapping.mapGameObject.SetActive(isCurrentCityMap);
-                        if (isCurrentCityMap)
-                        {
-                            mapFound = true;
-                            Debug.Log($"[JoustManager] Escenario activado para la ciudad: {activeCityId}");
-                        }
+                        activeMapObject = mapping.mapGameObject;
+                        Debug.Log($"[JoustManager] ✓ Escenario encontrado para '{activeCityId}' → '{activeMapObject.name}'");
+                        break;
                     }
                 }
 
-                if (defaultMap != null)
-                {
-                    defaultMap.SetActive(!mapFound);
-                    if (!mapFound)
-                    {
-                        Debug.Log($"[JoustManager] Ciudad {activeCityId} sin mapa asignado en la lista. Activado mapa por defecto.");
-                    }
-                }
-            }
-            else
-            {
-                if (defaultMap != null)
-                {
-                    defaultMap.SetActive(true);
-                }
+                // Luego hacemos UN SOLO pase para activar/desactivar
+                // (evita que dos entradas con el mismo GameObject se pisen entre sí)
+                HashSet<GameObject> seen = new();
                 foreach (var mapping in cityMaps)
                 {
-                    if (mapping.mapGameObject != null)
+                    if (mapping.mapGameObject == null) continue;
+                    if (seen.Contains(mapping.mapGameObject)) continue;
+                    seen.Add(mapping.mapGameObject);
+
+                    mapping.mapGameObject.SetActive(mapping.mapGameObject == activeMapObject);
+                }
+
+                bool mapFound = activeMapObject != null;
+                if (defaultMap != null)
+                {
+                    if (defaultMap == activeMapObject)
                     {
-                        mapping.mapGameObject.SetActive(false);
+                        defaultMap.SetActive(true);
                     }
+                    else
+                    {
+                        defaultMap.SetActive(!mapFound);
+                    }
+
+                    if (!mapFound)
+                        Debug.LogWarning($"[JoustManager] ⚠ No se encontró mapa para '{activeCityId}' en la lista cityMaps. Activado mapa por defecto.");
                 }
             }
 
@@ -341,8 +352,8 @@ public class JoustManager : MonoBehaviour
                 break;
 
             case JoustDifficulty.Normal:
-                horsePhaseDuration = 5f;
-                horsePhaseSpeed = 12f;
+                horsePhaseDuration = 4.5f;
+                horsePhaseSpeed = 11.7f;
                 combatPhaseSpeed = 6f;
                 if (winManager != null) winManager.winPoints = basePoints + 10; // 50
                 if (defensePart != null)

@@ -339,7 +339,13 @@ public class DisparoGameplayManager : MonoBehaviour
                 statsPanelController.finishButton.onClick.RemoveAllListeners();
                 if (won)
                 {
-                    statsPanelController.finishButton.onClick.AddListener(() => SceneManager.LoadScene(statsPanelController.nextSceneName));
+                    statsPanelController.finishButton.onClick.AddListener(() => 
+                    {
+                        ProgressManager.ReturnToTownFirstPerson = true;
+                        string sceneName = GetReturnSceneName();
+                        Debug.Log($"[Disparo] Finalizando minijuego. Regresando a: '{sceneName}' en modo 1ª persona.");
+                        SceneManager.LoadScene(sceneName);
+                    });
                 }
                 else
                 {
@@ -348,6 +354,18 @@ public class DisparoGameplayManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    string GetReturnSceneName()
+    {
+        if (progressManager != null)
+        {
+            string nodeId = progressManager.CurrentNodeId ?? "";
+            if (nodeId.ToLower().Contains("tutorial"))
+                return "TutorialWorld";
+        }
+        string fallback = (statsPanelController != null && !string.IsNullOrEmpty(statsPanelController.nextSceneName)) ? statsPanelController.nextSceneName : "World";
+        return fallback;
     }
 
     // Reiniciar juego completo (para reintentar tras derrota)

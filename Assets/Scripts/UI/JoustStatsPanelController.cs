@@ -53,7 +53,7 @@ public class JoustStatsPanelController : MonoBehaviour
                 panelObject = this.gameObject;
             }
         }
-        
+
         if (finishButton != null)
         {
             finishButton.onClick.RemoveAllListeners();
@@ -84,14 +84,14 @@ public class JoustStatsPanelController : MonoBehaviour
             {
                 if (matchDecided)
                 {
-                    resultTitleText.text = won 
-                        ? $"<color=#48e085>¡VICTORIA EN EL TORNEO ({winManager.playerRoundWins} - {winManager.enemyRoundWins})!</color>" 
+                    resultTitleText.text = won
+                        ? $"<color=#48e085>¡VICTORIA EN EL TORNEO ({winManager.playerRoundWins} - {winManager.enemyRoundWins})!</color>"
                         : $"<color=#ef5350>¡DERROTA EN EL TORNEO ({winManager.playerRoundWins} - {winManager.enemyRoundWins})!</color>";
                 }
                 else
                 {
-                    resultTitleText.text = won 
-                        ? $"<color=#48e085>¡RONDA {winManager.roundNumber} GANADA!</color>" 
+                    resultTitleText.text = won
+                        ? $"<color=#48e085>¡RONDA {winManager.roundNumber} GANADA!</color>"
                         : $"<color=#ef5350>¡RONDA {winManager.roundNumber} PERDIDA!</color>";
                 }
             }
@@ -108,7 +108,7 @@ public class JoustStatsPanelController : MonoBehaviour
             if (horseScoreText != null) horseScoreText.text = $"+{score.horsePhaseScore} Ptos";
             if (attackScoreText != null) attackScoreText.text = $"+{score.attackPhaseScore} Ptos";
             if (defenseScoreText != null) defenseScoreText.text = $"{score.defensePhaseScore} Ptos"; // puede ser penalización negativa
-            
+
             if (winManager != null && winManager.playerWonRoundsScores.Count > 0)
             {
                 int totalWonScores = 0;
@@ -163,12 +163,12 @@ public class JoustStatsPanelController : MonoBehaviour
         {
             rewardsItemText.text = !string.IsNullOrEmpty(itemEarnedName) ? $"¡{itemEarnedName}!" : "Ninguno";
         }
-        
+
         // Poner focus en el botón y cambiar su texto dinámicamente
         if (finishButton != null)
         {
             finishButton.gameObject.SetActive(true);
-            
+
             TMP_Text btnTxtComp = finishButton.GetComponentInChildren<TMP_Text>();
             if (btnTxtComp == null)
             {
@@ -195,32 +195,44 @@ public class JoustStatsPanelController : MonoBehaviour
 
         if (matchDecided)
         {
-            Debug.Log($"[Tournament] Finalizando justa y regresando al mapa. Cargando siguiente escena: {nextSceneName}");
-            
-            // Limpiamos los efectos climatológicos y de cartas al salir de la escena
+            // Limpiar efectos activos
             EffectManager effectManager = FindFirstObjectByType<EffectManager>();
             if (effectManager != null)
-            {
                 effectManager.DisableAllEffects();
-            }
 
-            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+            // Marcar que al llegar al mundo debemos entrar directamente al pueblo en 1ª persona
+            ProgressManager.ReturnToTownFirstPerson = true;
+
+            // Determinar la escena correcta: World o TutorialWorld según el nodo actual
+            string sceneToLoad = GetReturnSceneName();
+            Debug.Log($"[Tournament] Finalizando justa. Regresando a: '{sceneToLoad}' en modo 1ª persona.");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(sceneToLoad);
         }
         else
         {
             Debug.Log("[Tournament] Botón Siguiente Ronda pulsado. Avanzando...");
-            
-            // Ocultar panel
-            if (panelObject != null)
-            {
-                panelObject.SetActive(false);
-            }
 
-            // Avisar a WinManager que inicie la siguiente ronda
+            if (panelObject != null)
+                panelObject.SetActive(false);
+
             if (winManager != null)
-            {
                 winManager.StartNextRoundFromStatsPanel();
-            }
         }
     }
+
+    string GetReturnSceneName()
+    {
+        ProgressManager pm = FindFirstObjectByType<ProgressManager>();
+        if (pm != null)
+        {
+            // Si el nodo actual contiene "tutorial", volvemos a TutorialWorld
+            string nodeId = pm.CurrentNodeId ?? "";
+            if (nodeId.ToLower().Contains("tutorial"))
+                return "TutorialWorld";
+        }
+
+        // Por defecto y para todos los torneos normales, volvemos a World
+        return string.IsNullOrEmpty(nextSceneName) ? "World" : nextSceneName;
+    }
 }
+

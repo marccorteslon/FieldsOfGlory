@@ -96,7 +96,14 @@ public class ProgressManager : MonoBehaviour
     public int CurrentDay => data.currentDay;
     public int CurrentMonth => data.currentMonth;
 
-    public JoustDifficulty? PracticeDifficultyOverride { get; set; }
+    public static JoustDifficulty? PracticeDifficultyOverride { get; set; }
+
+    /// <summary>
+    /// Cuando es true, al cargar la escena World/TutorialWorld el juego arranca
+    /// directamente en modo primera persona dentro del pueblo actual.
+    /// Se activa al salir de Justa o Disparo y se consume en TownNode.EnterTown().
+    /// </summary>
+    public static bool ReturnToTownFirstPerson { get; set; } = false;
 
     public void AddMoney(int amount)
     {

@@ -107,14 +107,27 @@ public class TownInteractable : MonoBehaviour
                 break;
 
             case TownInteractionType.TournamentJoust:
+                TournamentManager tm = FindFirstObjectByType<TournamentManager>();
+                ProgressManager pmInst = FindFirstObjectByType<ProgressManager>();
+                if (tm != null && pmInst != null)
+                {
+                    var todayTournament = tm.GetTournamentForCityAndDate(
+                        pmInst.CurrentCityId,
+                        pmInst.CurrentDay,
+                        pmInst.CurrentMonth
+                    );
+                    if (todayTournament != null)
+                    {
+                        ProgressManager.PracticeDifficultyOverride = todayTournament.difficulty;
+                        Debug.Log($"[TownInteractable] Dificultad del torneo de hoy '{todayTournament.difficulty}' asignada como override estático.");
+                    }
+                }
                 if (sceneChanger != null)
                     sceneChanger.ChangeScene();
                 break;
 
             case TownInteractionType.PracticeJoust:
-                ProgressManager pm = FindFirstObjectByType<ProgressManager>();
-                if (pm != null)
-                    pm.PracticeDifficultyOverride = practiceDifficulty;
+                ProgressManager.PracticeDifficultyOverride = practiceDifficulty;
                 if (sceneChanger != null)
                     sceneChanger.ChangeScene();
                 break;

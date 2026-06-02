@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -123,13 +123,30 @@ public class ShopPanelController : MonoBehaviour
                 ui.iconImage.enabled = item.icon != null;
             }
 
-            if (ui.priceText) ui.priceText.text = item.price.ToString();
+            // Comprobar si ya tenemos este objeto equipado
+            bool isEquipped = false;
+            if (equipment != null)
+            {
+                var currentSlotItem = equipment.GetEquipped(item.slot);
+                if (currentSlotItem != null && currentSlotItem.id == item.id)
+                {
+                    isEquipped = true;
+                }
+            }
+
+            if (isEquipped)
+            {
+                if (ui.priceText) ui.priceText.text = "EQUIPADO";
+                if (ui.purchaseButton) ui.purchaseButton.interactable = false;
+            }
+            else
+            {
+                if (ui.priceText) ui.priceText.text = item.price.ToString();
+                if (ui.purchaseButton) ui.purchaseButton.interactable = true;
+            }
 
             if (ui.modifiersText)
                 ui.modifiersText.text = FormatModifiers(item);
-
-            if (ui.purchaseButton)
-                ui.purchaseButton.interactable = true;
         }
     }
 
@@ -175,6 +192,7 @@ public class ShopPanelController : MonoBehaviour
         equipment.Equip(item);
         progress.SaveEquipped();
         RefreshMoneyUI();
+        RefreshShopUI(); // <- Actualizar la tienda para reflejar que está equipado
 
         Debug.Log($"[Shop] Comprado y equipado: {item.displayName} ({item.id}) por {cost}.");
     }

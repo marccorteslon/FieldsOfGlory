@@ -43,6 +43,12 @@ public class WorldMapManager : MonoBehaviour
 
     private bool isMoving;
 
+    /// <summary>True mientras el jugador está dentro de un pueblo (modo primera persona).
+    /// Bloquea todo el input de navegación del mapa.</summary>
+    public static bool IsInTown { get; private set; }
+
+    public static void SetInTown(bool value) => IsInTown = value;
+
     void Awake()
     {
         if (progressManager == null)
@@ -76,13 +82,35 @@ public class WorldMapManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         PlacePlayerAtCurrentNode();
         RefreshAvailableRoutes();
+
+        // Si venimos de un minijuego y debemos regresar en primera persona
+        if (ProgressManager.ReturnToTownFirstPerson)
+        {
+            ProgressManager.ReturnToTownFirstPerson = false;
+            
+            if (progressManager != null)
+            {
+                MapNodeView nodeView = GetNodeView(progressManager.CurrentNodeId);
+                if (nodeView != null)
+                {
+                    TownNode townNode = nodeView.GetComponent<TownNode>();
+                    if (townNode != null)
+                    {
+                        Debug.Log($"[WorldMapManager] Retorno al mundo -> Auto-entrando al pueblo: {progressManager.CurrentNodeId}");
+                        // Esperar un frame más para asegurar que la UI y todo ha inicializado
+                        yield return null; 
+                        townNode.EnterTown();
+                    }
+                }
+            }
+        }
     }
 
     void Update()
     {
         UpdatePlayerAnimation();
 
-        if (isMoving || PauseMenuController.IsPaused)
+        if (isMoving || PauseMenuController.IsPaused || IsInTown)
             return;
 
         HandleCityInteractionInput();

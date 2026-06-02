@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tournamentId: davronne_18_01
   displayName: Torneo de Campeones
-  cityId: city_Davronne
+  cityId: city_davronne
   day: 18
   month: 1
   difficulty: 3

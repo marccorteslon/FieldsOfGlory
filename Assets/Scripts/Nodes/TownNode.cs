@@ -24,6 +24,10 @@ public class TownNode : MonoBehaviour
 
     public PlayerMovement playerMovement;
 
+    [Header("World Spawn")]
+    [Tooltip("Punto donde aparecerá el WalkingPlayer al entrar a este pueblo (pulsar X en el mapa).")]
+    public TownObjectSpawn townObjectSpawn;
+
     public void EnterTown()
     {
         if (progressManager == null)
@@ -31,25 +35,56 @@ public class TownNode : MonoBehaviour
 
         if (progressManager == null)
         {
-            Debug.LogError("TownNode: no se encontrÃ¯Â¿Â½ ProgressManager.");
+            Debug.LogError("TownNode: no se encontró ProgressManager.");
             return;
         }
 
-        // SOLO puedes abrir el pueblo en el que estÃ¯Â¿Â½s
+        // SOLO puedes abrir el pueblo en el que estás
         if (progressManager.CurrentCityId != cityId)
         {
             Debug.Log($"Primero debes viajar a {cityId}.");
             return;
         }
 
+        // Teletransportar al WalkingPlayer al punto de spawn del pueblo
+        TeleportPlayerToSpawn();
+
         if (mapButtonsObject != null)
             mapButtonsObject.SetActive(false);
+
+        // Bloquear el input de navegación del mapa mientras estemos en el pueblo
+        WorldMapManager.SetInTown(true);
 
         GameManager.dataRepository.GetCityById(
             cityId,
             OnCityLoaded,
             OnError
         );
+    }
+
+    void TeleportPlayerToSpawn()
+    {
+        if (townObjectSpawn == null)
+            return;
+
+        Transform player = playerMovement != null ? playerMovement.transform : null;
+
+        if (player == null)
+        {
+            Debug.LogWarning("TownNode: no hay WalkingPlayer asignado para teletransportar.");
+            return;
+        }
+
+        // El CharacterController bloquea la teleportación; hay que desactivarlo un frame
+        CharacterController cc = player.GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+
+        player.position = townObjectSpawn.transform.position;
+        player.rotation = townObjectSpawn.transform.rotation;
+
+        if (cc != null) cc.enabled = true;
+
+        Debug.Log($"[TownNode] WalkingPlayer teletransportado al spawn de '{cityId}' en {townObjectSpawn.transform.position}");
     }
 
     public void EnterShop()
@@ -149,6 +184,9 @@ public class TownNode : MonoBehaviour
 
         if (playerMovement != null)
             playerMovement.canMove = true;
+
+        // Reanudar el input de navegación del mapa
+        WorldMapManager.SetInTown(false);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
