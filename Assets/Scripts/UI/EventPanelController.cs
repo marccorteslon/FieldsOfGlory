@@ -34,6 +34,9 @@ public class EventPanelController : MonoBehaviour
 
     public void LoadEvent(EventNodeDefinition ev, RPGEventNode node)
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (ev == null)
         {
             ClosePanel();
@@ -113,6 +116,9 @@ public class EventPanelController : MonoBehaviour
 
     private void ClosePanel()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         if (currentNode != null)
         {
             currentNode.ExitEventNode();

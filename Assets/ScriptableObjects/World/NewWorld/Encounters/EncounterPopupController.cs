@@ -24,6 +24,9 @@ public class EncounterPopupController : MonoBehaviour
 
     private RandomEncounterDefinition currentEncounter;
     private bool resultShown = false;
+    private string rootEncounterId;
+    private bool rootHasRequiredFlagOptions = false;
+    private bool choseRequiredFlagOption = false;
 
     void Awake()
     {
@@ -44,8 +47,31 @@ public class EncounterPopupController : MonoBehaviour
 
     public void OpenEncounter(RandomEncounterDefinition encounter)
     {
+        rootEncounterId = encounter != null ? encounter.encounterId : null;
+        rootHasRequiredFlagOptions = false;
+        choseRequiredFlagOption = false;
+        OpenEncounterInternal(encounter);
+    }
+
+    private void OpenEncounterInternal(RandomEncounterDefinition encounter)
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         currentEncounter = encounter;
         resultShown = false;
+
+        if (encounter != null && encounter.options != null)
+        {
+            foreach (var opt in encounter.options)
+            {
+                if (!string.IsNullOrEmpty(opt.requiredFlag))
+                {
+                    rootHasRequiredFlagOptions = true;
+                    break;
+                }
+            }
+        }
 
         if (panelObject != null)
             panelObject.SetActive(true);
@@ -120,6 +146,12 @@ public class EncounterPopupController : MonoBehaviour
         if (index < 0 || index >= currentEncounter.options.Count) return;
 
         EncounterOptionDefinition option = currentEncounter.options[index];
+
+        if (!string.IsNullOrEmpty(option.requiredFlag))
+        {
+            choseRequiredFlagOption = true;
+            Debug.Log($"[Encounter] Player chose an option with required flag: {option.requiredFlag}");
+        }
 
         int statValue = GetStat(option.statToCheck);
         int roll = Random.Range(1, 21);
@@ -243,10 +275,23 @@ public class EncounterPopupController : MonoBehaviour
         
         if (nextEvent != null)
         {
-            OpenEncounter(nextEvent);
+            OpenEncounterInternal(nextEvent);
         }
         else
         {
+            if (progressManager != null && !string.IsNullOrEmpty(rootEncounterId))
+            {
+                bool shouldMarkCompleted = !rootHasRequiredFlagOptions || choseRequiredFlagOption;
+                if (shouldMarkCompleted)
+                {
+                    progressManager.MarkEncounterCompleted(rootEncounterId);
+                    Debug.Log($"[Encounter] Root encounter '{rootEncounterId}' marked as completed.");
+                }
+                else
+                {
+                    Debug.Log($"[Encounter] Root encounter '{rootEncounterId}' NOT marked as completed because the player did not complete the required flag option.");
+                }
+            }
             Close();
         }
     }
@@ -264,5 +309,8 @@ public class EncounterPopupController : MonoBehaviour
 
         if (panelObject != null)
             panelObject.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

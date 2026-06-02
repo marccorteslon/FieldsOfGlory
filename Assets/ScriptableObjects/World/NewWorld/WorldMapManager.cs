@@ -35,6 +35,15 @@ public class WorldMapManager : MonoBehaviour
     public KeyCode joystickInteractKey = KeyCode.JoystickButton2; // BotÃ³n X en mando Xbox
     public float inputDeadzone = 0.6f;
 
+    [Header("Target Indicator (UI)")]
+    [Tooltip("El RectTransform del indicador UI que se moverá sobre el nodo destino seleccionado.")]
+    public RectTransform targetIndicatorUI;
+    [Tooltip("Offset de posición para el indicador visual en el Canvas.")]
+    public Vector3 targetIndicatorOffset = new Vector3(0, 50f, 0);
+
+    private Vector3 targetIndicatorBasePosition;
+    private bool isTargetIndicatorActive;
+
     private MapNodeView[] nodeViews;
     private MapConnectionView[] connectionViews;
 
@@ -109,6 +118,7 @@ public class WorldMapManager : MonoBehaviour
     void Update()
     {
         UpdatePlayerAnimation();
+        UpdateTargetIndicatorBobbing();
 
         if (isMoving || PauseMenuController.IsPaused || IsInTown)
             return;
@@ -261,6 +271,8 @@ public class WorldMapManager : MonoBehaviour
         {
             Debug.Log($"Ruta seleccionada: {destinationNode.displayName} | DÃƒÂ­as: {destinationNode.travelDaysCost} | Peligro: {destinationNode.dangerIndex}");
         }
+
+        UpdateTargetIndicator(destinationId);
     }
 
     IEnumerator TravelSelectedRoute()
@@ -269,6 +281,7 @@ public class WorldMapManager : MonoBehaviour
             yield break;
 
         isMoving = true;
+        ClearTargetIndicator();
 
         string currentNodeId = progressManager.CurrentNodeId;
         string destinationNodeId = mapDatabase.GetOtherNodeId(currentNodeId, selectedConnection);
@@ -284,8 +297,27 @@ public class WorldMapManager : MonoBehaviour
 
         Transform[] path = selectedConnectionView.waypoints;
 
-        for (int i = 0; i < path.Length; i++)
-            yield return MoveToPoint(path[i].position);
+        bool reversePath = false;
+        if (path != null && path.Length > 0 && mapPlayerIcon != null)
+        {
+            float distToStart = Vector3.Distance(mapPlayerIcon.position, path[0].position);
+            float distToEnd = Vector3.Distance(mapPlayerIcon.position, path[path.Length - 1].position);
+            if (distToEnd < distToStart)
+            {
+                reversePath = true;
+            }
+        }
+
+        if (reversePath)
+        {
+            for (int i = path.Length - 1; i >= 0; i--)
+                yield return MoveToPoint(path[i].position);
+        }
+        else
+        {
+            for (int i = 0; i < path.Length; i++)
+                yield return MoveToPoint(path[i].position);
+        }
 
         MapNodeView destinationView = GetNodeView(destinationNodeId);
 
@@ -386,6 +418,7 @@ public class WorldMapManager : MonoBehaviour
 
         selectedConnection = null;
         selectedConnectionView = null;
+        ClearTargetIndicator();
     }
 
     MapNodeView GetNodeView(string nodeId)
@@ -437,6 +470,50 @@ public class WorldMapManager : MonoBehaviour
         RefreshAvailableRoutes();
 
         Debug.Log($"[Map] Movido forzosamente a nodo: {nodeId}");
+    }
+
+    void UpdateTargetIndicatorBobbing()
+    {
+        if (isTargetIndicatorActive && targetIndicatorUI != null)
+        {
+            // Bobbing in UI space using Sin
+            float bob = Mathf.Sin(Time.time * 5f) * 15f; // Bob up to 15 pixels/units
+            targetIndicatorUI.position = targetIndicatorBasePosition + targetIndicatorOffset + new Vector3(0, bob, 0);
+        }
+    }
+
+    void UpdateTargetIndicator(string destinationNodeId)
+    {
+        if (string.IsNullOrEmpty(destinationNodeId))
+        {
+            ClearTargetIndicator();
+            return;
+        }
+
+        MapNodeView targetView = GetNodeView(destinationNodeId);
+        if (targetView == null)
+        {
+            ClearTargetIndicator();
+            return;
+        }
+
+        targetIndicatorBasePosition = targetView.transform.position;
+        isTargetIndicatorActive = true;
+
+        if (targetIndicatorUI != null)
+        {
+            targetIndicatorUI.gameObject.SetActive(true);
+            targetIndicatorUI.position = targetIndicatorBasePosition + targetIndicatorOffset;
+        }
+    }
+
+    void ClearTargetIndicator()
+    {
+        isTargetIndicatorActive = false;
+        if (targetIndicatorUI != null)
+        {
+            targetIndicatorUI.gameObject.SetActive(false);
+        }
     }
 }
 

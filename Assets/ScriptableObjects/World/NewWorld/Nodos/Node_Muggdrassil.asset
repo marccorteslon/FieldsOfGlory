@@ -15,7 +15,7 @@ MonoBehaviour:
   nodeId: node_muggdrassil
   displayName: Muggdrassil
   travelDaysCost: 1
-  dangerIndex: 0
+  dangerIndex: 100
   isCrossroad: 0
   isTown: 0
   cityId: 
