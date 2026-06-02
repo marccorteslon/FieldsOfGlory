@@ -76072,8 +76072,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 982178159}
   m_HandleRect: {fileID: 982178158}
   m_Direction: 2
-  m_Value: -0.000004827562
-  m_Size: 0.80961955
+  m_Value: -0.0000028965371
+  m_Size: 0.8099995
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -270730,10 +270730,10 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.3
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -344449,6 +344449,7 @@ GameObject:
   - component: {fileID: 1597615349}
   - component: {fileID: 1597615348}
   - component: {fileID: 1597615347}
+  - component: {fileID: 1597615350}
   m_Layer: 0
   m_Name: Btn_ReturnToMenu
   m_TagString: Untagged
@@ -344520,13 +344521,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PauseMenuController, Assembly-CSharp
-        m_MethodName: ReturnToMainMenu
+      - m_Target: {fileID: 1597615350}
+        m_TargetAssemblyTypeName: SceneChanger, Assembly-CSharp
+        m_MethodName: ChangeScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -344570,6 +344571,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1597615345}
   m_CullTransparentMesh: 1
+--- !u!114 &1597615350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597615345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105fb31d06885bd41b978b348843d2c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneName: MainMenu
 --- !u!1001 &1597757187
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -350072,7 +350086,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 126.43125}
+  m_AnchoredPosition: {x: 0, y: 126.430984}
   m_SizeDelta: {x: 0, y: 665.475}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1620084760
@@ -461185,7 +461199,7 @@ PrefabInstance:
     - target: {fileID: 8015551626756332740, guid: 1baf879b7922ddb488afaf0e81480cb4, type: 3}
       propertyPath: footstepClip
       value: 
-      objectReference: {fileID: 8300000, guid: a9c0ff630721acb488d998886d3b9a85, type: 3}
+      objectReference: {fileID: 8300000, guid: e52e8b3fe67904b459d2eece6787e335, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
