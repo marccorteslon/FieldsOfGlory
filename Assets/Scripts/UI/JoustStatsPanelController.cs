@@ -70,11 +70,16 @@ public class JoustStatsPanelController : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        bool isTutorialScene = currentSceneName.ToLower().Contains("tutorial");
+
         WinManager winManager = FindFirstObjectByType<WinManager>();
         bool matchDecided = false;
         if (winManager != null)
         {
-            matchDecided = (winManager.playerRoundWins >= 2 || winManager.enemyRoundWins >= 2);
+            matchDecided = (winManager.playerRoundWins >= 2 || winManager.enemyRoundWins >= 2) || 
+                            (winManager.joustManager != null && winManager.joustManager.isTutorialMode) ||
+                            isTutorialScene;
         }
 
         // 1. Mostrar Resultado
@@ -186,11 +191,16 @@ public class JoustStatsPanelController : MonoBehaviour
 
     public void FinishTournament()
     {
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        bool isTutorialScene = currentSceneName.ToLower().Contains("tutorial");
+
         WinManager winManager = FindFirstObjectByType<WinManager>();
         bool matchDecided = false;
         if (winManager != null)
         {
-            matchDecided = (winManager.playerRoundWins >= 2 || winManager.enemyRoundWins >= 2);
+            matchDecided = (winManager.playerRoundWins >= 2 || winManager.enemyRoundWins >= 2) || 
+                            (winManager.joustManager != null && winManager.joustManager.isTutorialMode) ||
+                            isTutorialScene;
         }
 
         if (matchDecided)
@@ -222,6 +232,23 @@ public class JoustStatsPanelController : MonoBehaviour
 
     string GetReturnSceneName()
     {
+        if (!string.IsNullOrEmpty(ProgressManager.ReturnSceneName))
+        {
+            return ProgressManager.ReturnSceneName;
+        }
+
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (currentSceneName.ToLower().Contains("tutorial"))
+        {
+            return "TutorialWorld";
+        }
+
+        WinManager winManager = FindFirstObjectByType<WinManager>();
+        if (winManager != null && winManager.joustManager != null && winManager.joustManager.isTutorialMode)
+        {
+            return "TutorialWorld";
+        }
+
         ProgressManager pm = FindFirstObjectByType<ProgressManager>();
         if (pm != null)
         {

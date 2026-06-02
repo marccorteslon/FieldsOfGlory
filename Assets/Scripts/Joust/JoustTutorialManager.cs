@@ -59,6 +59,10 @@ public class JoustTutorialManager : MonoBehaviour
 
     void Awake()
     {
+        // Asegurar que el cursor esté visible y desbloqueado en la escena de la justa/tutorial
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (isTutorialScene)
         {
             SetupTutorialPanel();

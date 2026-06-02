@@ -1,4 +1,4 @@
-using System.IO;
+ï»¿using System.IO;
 using UnityEngine;
 
 public static class ProgressSaveSystem
@@ -39,7 +39,7 @@ public static class ProgressSaveSystem
     {
         if (data == null)
         {
-            Debug.LogError("[Save] Se intentó guardar data null.");
+            Debug.LogError("[Save] Se intentï¿½ guardar data null.");
             return;
         }
 
@@ -71,7 +71,7 @@ public static class ProgressSaveSystem
 
         if (string.IsNullOrWhiteSpace(json) || json.Contains("nullnull"))
         {
-            Debug.LogWarning("[Save] JSON vacío o corrupto. Recreando save.");
+            Debug.LogWarning("[Save] JSON vacï¿½o o corrupto. Recreando save.");
             ProgressSaveData defaultData = CreateDefaultData();
             Save(defaultData);
             return defaultData;
@@ -81,7 +81,7 @@ public static class ProgressSaveSystem
 
         if (data == null)
         {
-            Debug.LogWarning("[Save] JSON inválido. Recreando save.");
+            Debug.LogWarning("[Save] JSON invï¿½lido. Recreando save.");
             ProgressSaveData defaultData = CreateDefaultData();
             Save(defaultData);
             return defaultData;
@@ -103,7 +103,7 @@ public static class ProgressSaveSystem
 
         if (string.IsNullOrWhiteSpace(saveFileName))
         {
-            Debug.LogWarning("[Save] El nombre de la partida está vacío.");
+            Debug.LogWarning("[Save] El nombre de la partida estï¿½ vacï¿½o.");
             return false;
         }
 
@@ -116,7 +116,7 @@ public static class ProgressSaveSystem
 
         if (string.IsNullOrWhiteSpace(saveFileName))
         {
-            Debug.LogWarning("[Save] El nombre de la partida no es válido.");
+            Debug.LogWarning("[Save] El nombre de la partida no es vï¿½lido.");
             return false;
         }
 
@@ -144,7 +144,7 @@ public static class ProgressSaveSystem
     {
         if (string.IsNullOrWhiteSpace(sourceFilePath))
         {
-            Debug.LogWarning("[Save] Ruta de archivo vacía.");
+            Debug.LogWarning("[Save] Ruta de archivo vacï¿½a.");
             return false;
         }
 
@@ -165,7 +165,7 @@ public static class ProgressSaveSystem
     {
         if (string.IsNullOrWhiteSpace(filePath))
         {
-            Debug.LogWarning("[Save] Ruta de borrado vacía.");
+            Debug.LogWarning("[Save] Ruta de borrado vacï¿½a.");
             return false;
         }
 
@@ -178,5 +178,15 @@ public static class ProgressSaveSystem
         File.Delete(filePath);
         Debug.Log($"[Save] Archivo borrado: {filePath}");
         return true;
+    }
+
+    public static void DeleteMainSave()
+    {
+        string path = GetPath();
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+            Debug.Log($"[Save] Archivo de progreso principal borrado: {path}");
+        }
     }
 }

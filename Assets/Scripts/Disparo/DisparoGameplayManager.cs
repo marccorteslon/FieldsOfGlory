@@ -76,40 +76,72 @@ public class DisparoGameplayManager : MonoBehaviour
             crossbowController = FindFirstObjectByType<CrossbowController>();
 
         if (statsPanelController == null)
-            statsPanelController = FindFirstObjectByType<JoustStatsPanelController>();
-
-        // Activar el mapa correspondiente a la ciudad
-        if (progressManager != null)
         {
-            string activeCityId = progressManager.CurrentCityId;
-            if (!string.IsNullOrEmpty(activeCityId))
+            statsPanelController = FindFirstObjectByType<JoustStatsPanelController>();
+            if (statsPanelController == null)
             {
-                bool mapFound = false;
-                foreach (var mapping in cityMaps)
+                JoustStatsPanelController[] panels = Resources.FindObjectsOfTypeAll<JoustStatsPanelController>();
+                foreach (var panel in panels)
                 {
-                    if (mapping.mapGameObject != null)
+                    if (panel.gameObject.scene.isLoaded)
                     {
-                        bool isCurrentCityMap = string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase);
-                        mapping.mapGameObject.SetActive(isCurrentCityMap);
-                        if (isCurrentCityMap)
-                        {
-                            mapFound = true;
-                        }
+                        statsPanelController = panel;
+                        break;
                     }
                 }
-                
-                if (defaultMap != null)
-                {
-                    defaultMap.SetActive(!mapFound);
-                }
             }
-            else
+        }
+
+        // Activar el mapa correspondiente a la ciudad
+        {
+            string activeCityId = progressManager != null ? progressManager.CurrentCityId : "";
+            GameObject activeMapObject = null;
+
+            // 1. Intentar encontrar el mapa para la ciudad activa
+            if (!string.IsNullOrEmpty(activeCityId))
             {
-                if (defaultMap != null) defaultMap.SetActive(true);
                 foreach (var mapping in cityMaps)
                 {
-                    if (mapping.mapGameObject != null) mapping.mapGameObject.SetActive(false);
+                    if (mapping.mapGameObject != null &&
+                        string.Equals(mapping.cityId, activeCityId, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        activeMapObject = mapping.mapGameObject;
+                        Debug.Log($"[DisparoGameplayManager] Escenario encontrado para '{activeCityId}': '{activeMapObject.name}'");
+                        break;
+                    }
                 }
+            }
+
+            // 2. Si no se encontró (o no hay ciudad), usar el mapa por defecto
+            if (activeMapObject == null)
+            {
+                activeMapObject = defaultMap;
+                if (activeMapObject != null)
+                {
+                    if (!string.IsNullOrEmpty(activeCityId))
+                        Debug.LogWarning($"[DisparoGameplayManager] No se encontró mapa para '{activeCityId}'. Activado mapa por defecto: '{activeMapObject.name}'");
+                    else
+                        Debug.Log($"[DisparoGameplayManager] No hay ciudad activa o ProgressManager. Activado mapa por defecto: '{activeMapObject.name}'");
+                }
+            }
+
+            // 3. Activar únicamente el mapa seleccionado y desactivar todos los demás
+            System.Collections.Generic.HashSet<GameObject> processedMaps = new System.Collections.Generic.HashSet<GameObject>();
+
+            // Procesar todos los mapas de la lista
+            foreach (var mapping in cityMaps)
+            {
+                if (mapping.mapGameObject == null) continue;
+                if (processedMaps.Contains(mapping.mapGameObject)) continue;
+                processedMaps.Add(mapping.mapGameObject);
+
+                mapping.mapGameObject.SetActive(mapping.mapGameObject == activeMapObject);
+            }
+
+            // Procesar el mapa por defecto si no estaba en la lista
+            if (defaultMap != null && !processedMaps.Contains(defaultMap))
+            {
+                defaultMap.SetActive(defaultMap == activeMapObject);
             }
         }
 
@@ -358,6 +390,17 @@ public class DisparoGameplayManager : MonoBehaviour
 
     string GetReturnSceneName()
     {
+        if (!string.IsNullOrEmpty(ProgressManager.ReturnSceneName))
+        {
+            return ProgressManager.ReturnSceneName;
+        }
+
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (currentSceneName.ToLower().Contains("tutorial"))
+        {
+            return "TutorialWorld";
+        }
+
         if (progressManager != null)
         {
             string nodeId = progressManager.CurrentNodeId ?? "";
