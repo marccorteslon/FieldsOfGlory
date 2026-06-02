@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Balsa_Lance
   displayName: Lanza de Madera de Balso
-  icon: {fileID: 21300000, guid: 724aa17f8c4c6ae4789075ccb352d44d, type: 3}
+  icon: {fileID: 21300000, guid: 9c2029add98115f4a9a059d1d5aaf279, type: 3}
   description: "Una lanza ligera y fr\xE1gil hecha de madera de Balso."
   price: 40
   visualPrefab: {fileID: 6931688607105719967, guid: d3d5ca4218064c9409f393d50024f394, type: 3}

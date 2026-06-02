@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Shadow_Horse
   displayName: Sombra
-  icon: {fileID: 21300000, guid: db4ce7b700aea79419e877e63d0abff2, type: 3}
+  icon: {fileID: 21300000, guid: f445059fad874b748a37294b52e18376, type: 3}
   description: 'Un caballo negro famoso por su velocidad. '
   price: 50
   visualPrefab: {fileID: 919132149155446097, guid: 55f95a310dc2560489b10866629af5ca, type: 3}
