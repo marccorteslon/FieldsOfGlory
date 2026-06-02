@@ -336,6 +336,11 @@ MonoBehaviour:
     m_Localized: Objeto Obtenido
     m_Metadata:
       m_Items: []
+  - m_Id: 12417610322542592
+    m_Localized: "APUNTAR: Rat\xF3n / Joystick Der\nDISPARAR: Click Izq / R2\nSPRINT:
+      Shift Izq / Bot\xF3n A"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

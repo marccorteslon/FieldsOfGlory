@@ -30,6 +30,11 @@ public class ShootingTarget : MonoBehaviour
     public float moveSpeed = 2f;
     public Vector3 moveDirection = Vector3.right;
 
+    [Header("Audio")]
+    public AudioClip targetHitSound;
+    [Range(0f, 1f)]
+    public float hitVolume = 1f;
+
     private bool isPoppedUp = false;
     [HideInInspector] public bool isHit = false;
     private Vector3 initialLocalPosition;
@@ -108,11 +113,20 @@ public class ShootingTarget : MonoBehaviour
     public void OnHit(CrossbowBolt bolt)
     {
         if (isHit) return;
+
         isHit = true;
 
-        Debug.Log($"🎯 ¡Diana golpeada! Tipo: {targetType} | +{scorePoints} puntos.");
+        if (targetHitSound != null)
+        {
+            AudioSource.PlayClipAtPoint(
+                targetHitSound,
+                transform.position,
+                hitVolume
+            );
+        }
 
-        // Registrar la puntuación en el manager
+        Debug.Log($"¡Diana golpeada! Tipo: {targetType} | +{scorePoints} puntos.");
+
         if (gameplayManager != null)
         {
             gameplayManager.AddScore(scorePoints, targetType);

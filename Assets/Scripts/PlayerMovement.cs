@@ -12,13 +12,24 @@ public class PlayerMovement : MonoBehaviour
     public Transform cameraTransform;
     public float mouseSensitivity = 100f;
 
+    [Header("Sonido de pasos")]
+    public AudioSource audioSource;
+    public AudioClip footstepClip;
+    public float stepInterval = 0.5f;
+
     private CharacterController controller;
     private Vector3 velocity;
     private float xRotation = 0f;
+    private float stepTimer = 0f;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -27,7 +38,10 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         if (!canMove)
+        {
+            StopFootstepSound();
             return;
+        }
 
         MovePlayer();
         RotateCamera();
@@ -48,6 +62,8 @@ public class PlayerMovement : MonoBehaviour
         Vector3 move = transform.right * x + transform.forward * z;
         controller.Move(move * speed * Time.deltaTime);
 
+        HandleFootstepSound(move, isGrounded);
+
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -55,6 +71,43 @@ public class PlayerMovement : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    void HandleFootstepSound(Vector3 move, bool isGrounded)
+    {
+        bool isMoving = move.magnitude > 0.1f;
+
+        if (isGrounded && isMoving)
+        {
+            stepTimer -= Time.deltaTime;
+
+            if (stepTimer <= 0f)
+            {
+                PlayFootstepSound();
+                stepTimer = stepInterval;
+            }
+        }
+        else
+        {
+            stepTimer = 0f;
+            StopFootstepSound();
+        }
+    }
+
+    void PlayFootstepSound()
+    {
+        if (audioSource != null && footstepClip != null)
+        {
+            audioSource.PlayOneShot(footstepClip);
+        }
+    }
+
+    void StopFootstepSound()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
     }
 
     void RotateCamera()
