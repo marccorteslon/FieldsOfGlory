@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Fast_Horse
   displayName: Purasangre Aerieno
-  icon: {fileID: 21300000, guid: db4ce7b700aea79419e877e63d0abff2, type: 3}
+  icon: {fileID: 21300000, guid: 404a303474357814798607c8b073c57a, type: 3}
   description: "Un purasangre \xFAnico"
   price: 30
   visualPrefab: {fileID: 919132149155446097, guid: 55f95a310dc2560489b10866629af5ca, type: 3}
