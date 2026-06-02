@@ -125,7 +125,6 @@ public class EffectManager : MonoBehaviour
         List<NegativeType> availableNegatives = new List<NegativeType>
         {
             NegativeType.Fog,
-            NegativeType.Rain,
             NegativeType.IncreaseWinPoints,
             NegativeType.IncreaseDefenseSpeed
         };
@@ -170,7 +169,7 @@ public class EffectManager : MonoBehaviour
                     choiceButton.defenseSpeedMultiplier = 1f;
                     break;
                 case NegativeType.IncreaseWinPoints:
-                    choiceButton.extraWinPoints = UnityEngine.Random.Range(2, 4) * 10; // +20 o +30 puntos requeridos
+                    choiceButton.extraWinPoints = UnityEngine.Random.Range(2, 4) * 5; // +20 o +30 puntos requeridos
                     choiceButton.negativeName = $"+{choiceButton.extraWinPoints} Puntos Requeridos";
                     choiceButton.defenseSpeedMultiplier = 1f;
                     break;
