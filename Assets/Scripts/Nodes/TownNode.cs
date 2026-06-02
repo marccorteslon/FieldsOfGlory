@@ -55,6 +55,9 @@ public class TownNode : MonoBehaviour
         // Bloquear el input de navegación del mapa mientras estemos en el pueblo
         WorldMapManager.SetInTown(true);
 
+        if (playerMovement != null)
+            playerMovement.SetCursorLocked(true);
+
         GameManager.dataRepository.GetCityById(
             cityId,
             OnCityLoaded,
@@ -188,8 +191,13 @@ public class TownNode : MonoBehaviour
         // Reanudar el input de navegación del mapa
         WorldMapManager.SetInTown(false);
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (playerMovement != null)
+            playerMovement.SetCursorLocked(false);
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     void OnCityLoaded(CityDefinition city)

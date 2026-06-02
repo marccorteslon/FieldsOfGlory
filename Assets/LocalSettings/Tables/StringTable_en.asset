@@ -376,6 +376,25 @@ MonoBehaviour:
       Shift left / Button A'
     m_Metadata:
       m_Items: []
+  - m_Id: 12453288179662848
+    m_Localized: 'GAME
+
+      PAUSED'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12462149330534400
+    m_Localized: 'WASD -> Move through map
+
+
+
+      ENTER -> Confirm Movement
+
+
+
+      X
+      -> Enter Town'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

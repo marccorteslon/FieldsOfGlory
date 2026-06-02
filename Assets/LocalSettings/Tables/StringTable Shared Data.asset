@@ -248,7 +248,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 12379952720379906
-    m_Key: endPanel_Armature
+    m_Key: endPanel_armature
     m_Metadata:
       m_Items: []
   - m_Id: 12379952720379907
@@ -301,6 +301,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 12417610322542592
     m_Key: disparo_controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12453288179662848
+    m_Key: map_gamePaused
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12462149330534400
+    m_Key: map_control
     m_Metadata:
       m_Items: []
   m_Metadata:

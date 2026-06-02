@@ -341,6 +341,25 @@ MonoBehaviour:
       Shift Izq / Bot\xF3n A"
     m_Metadata:
       m_Items: []
+  - m_Id: 12453288179662848
+    m_Localized: 'JUEGO
+
+      PAUSADO'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 12462149330534400
+    m_Localized: 'WASD -> Moverse por el mapa
+
+
+
+      ENTER -> Confirmar Movimiento
+
+
+
+      X
+      -> Entrar en el Pueblo'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
